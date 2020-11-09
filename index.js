@@ -18,6 +18,9 @@ var db = new sqlite3.Database("skåp.db");
 
 // bcrypt.hash("admin", saltRounds, function (err, hash) {
 //   console.log(hash);
+//   db.run(
+//     "create table IF NOT EXISTS users(username TEXT primary key, password TEXT not null);"
+//   );
 //   db.run("insert into users(username,password) values(?,?)", ["admin", hash]);
 // });
 app.use(bodyParser.urlencoded({ extended: true }));
