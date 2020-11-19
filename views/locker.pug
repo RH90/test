@@ -1,0 +1,53 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script
+			include script.js
+		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+	body
+		div(id="overlay")
+			div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
+				button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
+		span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
+		div(id="mySidenav",class="sidenav")
+			a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
+			a(href="#")!="Elever"
+			a(href="#")!="Personal"
+			a(href="#")!="Skåp"
+			a(href="#")!="Historia"
+			a(href="#")!="Datorer"
+			a(href="#")!="Platser"
+			a(href="#")!="Misc"
+			a(href="/logout")!="Logout"
+		div(style="background:violet;")
+			h1(style="margin:0")=message
+		ul
+			each val in list
+				li!= val.namn+", "+val.plan
+		form(action="",method="POST")
+			input(type="text",name="search")
+			button(type="submit")!="Search"
+		h3= searchRes
+		table(class="sortable")
+			tr(style="background:gray")
+				td!="Skåp"
+				td!="Status"
+				td!="Förnamn"
+				td!="Efternamn"
+				td!="Klass"
+				td!="Ge/Ta bort"
+			each val in rows
+				tr
+					td!=val["number"]
+					td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLockerColor[val["status"]])!=statusLockerText[val["status"]]
+					td!=val.firstname
+					td!=val.lastname
+					td!=(val.grade+val.classP)||""
+					if val.firstname
+						td(onclick="overlayOn()")!="Ta bort"
+					else
+						td!="Ge bort"
+		center
+			img(src=img.src)

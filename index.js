@@ -29,6 +29,45 @@ app.use(cookieParser());
 
 app.set("view engine", "pug");
 
+var middleware = function (req, res, next) {
+  console.log("Time:", Date.now());
+  //console.log(req.route);
+  console.log(req.originalUrl);
+
+  console.log("token:" + req.cookies.token);
+  if (req.originalUrl == "/login" || req.originalUrl == "/auth") {
+    console.log("login!!,auth");
+    next();
+  } else if (req.cookies) {
+    try {
+      console.log("chech cookie");
+      const decoded = jwt.verify(req.cookies.token, process.env.TOKEN_SECRET);
+      console.log("decoded" + decoded);
+      const token = jwt.sign(
+        { username: decoded.username },
+        process.env.TOKEN_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+      console.log("token: " + token);
+      console.log(decoded);
+      res.cookie("token", token);
+      console.log();
+      next();
+    } catch {
+      console.log("error decode");
+      res.redirect("/login");
+      res.end();
+    }
+  } else {
+    res.redirect("/login");
+  }
+  //next();
+};
+
+app.use(middleware);
+
 verifytoken = function (token, secret, callback) {
   jwt.verify(token, secret, function (err, vt) {
     if (err) {
@@ -40,54 +79,49 @@ verifytoken = function (token, secret, callback) {
     }
   });
 };
-
 app.all("/", (req, res) => {
-  console.log(process.env.TOKEN_SECRET);
+  res.redirect("/skap");
+});
+app.all("/skap/:lockerNumb", (req, res) => {
+  console.log(req.params.lockerNumb);
+  //res.redirect("/skap");
+  res.sendStatus(404);
+});
+
+app.all("/skap", (req, res) => {
+  //console.log(process.env.TOKEN_SECRET);
   var search = "";
   if (req.body && req.body.search) {
     search = req.body.search.toLowerCase();
-    console.log("Search: " + search);
+    //console.log("Search: " + search);
   }
-  if (req.cookies) {
-    try {
-      var decoded = jwt.verify(req.cookies.token, process.env.TOKEN_SECRET);
-      console.log(decoded);
-      var query =
-        "select " +
-        " locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname" +
-        " from locker " +
-        " left join pupil on pupil.id = locker.owner_id " +
-        " where instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR locker.number=?" +
-        " OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?=''";
-      db.all(query, [search, search, search, search, search, search], function (
-        err,
-        rows
-      ) {
-        const token = jwt.sign(
-          { username: decoded.username },
-          process.env.TOKEN_SECRET,
-          {
-            expiresIn: "1h",
-          }
-        );
-        console.log(token);
-        res.cookie("token", token);
-        res.render("index", {
-          title: "Guru",
-          message: "Welcome",
-          img: {
-            src:
-              "https://www.guru99.com/images/NodeJS/010716_0613_NodejsExpre7.png",
-          },
-          list: { 1: { namn: 1, plan: 2 }, 2: { namn: 300, plan: 3 } },
-          rows,
-          searchRes: rows.length + ' results for: "' + search + '"',
-        });
-      });
-    } catch {
-      res.redirect("/login");
-    }
-  }
+  console.log("search: " + search);
+  var query =
+    "select " +
+    " locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname" +
+    " from locker " +
+    " left join pupil on pupil.id = locker.owner_id " +
+    " where instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR locker.number=?" +
+    " OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?=''";
+  db.all(query, [search, search, search, search, search, search], function (
+    err,
+    rows
+  ) {
+    //console.log(rows[0]);
+    res.render("locker", {
+      title: "Guru",
+      message: "Welcome",
+      img: {
+        src:
+          "https://www.guru99.com/images/NodeJS/010716_0613_NodejsExpre7.png",
+      },
+      list: { 1: { namn: 1, plan: 2 }, 2: { namn: 300, plan: 3 } },
+      rows,
+      searchRes: rows.length + ' results for: "' + search + '"',
+      statusLockerText,
+      statusLockerColor,
+    });
+  });
 });
 app.get("/logout", (req, res) => {
   res.cookie("token", "");
@@ -126,7 +160,7 @@ app.post("/auth", (req, res) => {
               );
               console.log(token);
               res.cookie("token", token);
-              res.redirect("..");
+              res.redirect("/skap");
             } else {
               res.sendStatus(401);
             }
@@ -142,10 +176,23 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
 
-const seasons = {
-  0: "summer",
-  1: "winter",
-  2: "spring",
-  3: "autumn",
-  4: "",
+const statusLockerText = {
+  0: "ELEVE HAR SLÅPET",
+  1: "LÅST AV SKOLAN",
+  2: "ELEV MED EGET LÅS",
+  3: "SKÅPET REPARERAS",
+  4: "LÅST M. MULTILÅS",
+  5: "ELEV MED DED. SKÅP",
+  6: "ANVÄNDS EJ",
+  7: "UTAN NYCKEL ELEVINNEHÅLL",
+};
+const statusLockerColor = {
+  0: "LIMEGREEN",
+  1: "PINK",
+  2: "YELLOW",
+  3: "ORANGE",
+  4: "BLUE",
+  5: "GRAY",
+  6: "LIGHTGRAY",
+  7: "purple",
 };

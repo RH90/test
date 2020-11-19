@@ -14,3 +14,24 @@
 //       return acc;
 //     }, {});
 // console.log(parseCookie(document.cookie).token);
+function openNav() {
+  document.getElementById("mySidenav").style.display = "block";
+}
+function closeNav() {
+  document.getElementById("mySidenav").style.display = "none";
+}
+
+function overlayOn() {
+  document.getElementById("overlay").style.display = "block";
+}
+
+function overlayOff() {
+  document.getElementById("overlay").style.display = "none";
+}
+
+document.addEventListener("click", function (evnt) {
+  console.log(evnt.target);
+  if (evnt.target.id != "sideNavButton") {
+    closeNav();
+  }
+});
