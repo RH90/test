@@ -14,6 +14,10 @@
 //       return acc;
 //     }, {});
 // console.log(parseCookie(document.cookie).token);
+function geUt(locker, pupil) {
+  console.log("locker: " + locker + ", pupil: " + pupil);
+}
+
 function openNav() {
   document.getElementById("mySidenav").style.display = "block";
 }
@@ -29,6 +33,25 @@ function overlayOff() {
   document.getElementById("overlay").style.display = "none";
 }
 
+function clearLocker(numb, search) {
+  if (confirm("Ta bort elev från skåp?")) {
+    console.log("numb");
+    let data = { idItem: numb, table: "locker" };
+    fetch("/checkin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      console.log("Request complete! response:", res);
+      var input = document.getElementById("inputSearch");
+      input.value = search;
+      var b = document.getElementById("buttonSearch");
+      b.click();
+    });
+  }
+}
 document.addEventListener("click", function (evnt) {
   console.log(evnt.target);
   if (evnt.target.id != "sideNavButton") {

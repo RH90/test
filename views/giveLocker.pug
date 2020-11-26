@@ -23,28 +23,22 @@ html
 			a(href="/logout")!="Logout"
 		div(style="background:violet;")
 			h1(style="margin:0")=message
-		form(action="",method="POST")
-			input(id="inputSearch",type="text",name="search")
-			button(id="buttonSearch",type="submit")!="Search"
-		h3= rows.length + " Resuslts for: \"" + search + "\""
 		table(class="sortable")
 			tr(style="background:gray")
-				td!="Skåp"
-				td!="Status"
 				td!="Förnamn"
 				td!="Efternamn"
 				td!="Klass"
-				td!="Ge/Ta bort"
+				td!="Ge Ut"
 			each val in rows
 				tr
-					td!=val["number"]
-					td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLockerColor[val["status"]])!=statusLockerText[val["status"]]
 					td!=val.firstname
 					td!=val.lastname
 					td!=(val.grade+val.classP)||""
-					if val.firstname
-						td(onclick="clearLocker("+val["number"]+",\""+search+"\")")!="Ta bort"
-					else
-						td(onclick="location.href='/skap/"+val["number"]+"/geut'")!="Ge bort"
+					td
+						form(action="/checkout" method="POST")
+							input(type="hidden" name="table" value="locker")
+							input(type="hidden" name="idItem" value=lockerNumb)
+							input(type="hidden" name="idPupil" value=val.id)
+							button(type="submit")!="Ge ut"
 		center
 			img(src=img.src)

@@ -32,6 +32,7 @@ app.set("view engine", "pug");
 var middleware = function (req, res, next) {
   console.log("Time:", Date.now());
   //console.log(req.route);
+
   console.log(req.originalUrl);
 
   console.log("token:" + req.cookies.token);
@@ -63,65 +64,119 @@ var middleware = function (req, res, next) {
   } else {
     res.redirect("/login");
   }
+  console.log("\n");
   //next();
 };
 
 app.use(middleware);
 
-verifytoken = function (token, secret, callback) {
-  jwt.verify(token, secret, function (err, vt) {
-    if (err) {
-      // decide what to do with the error...
-      callback(false);
-    } else {
-      console.log(vt);
-      callback(vt);
-    }
-  });
-};
 app.all("/", (req, res) => {
   res.redirect("/skap");
 });
-app.all("/skap/:lockerNumb", (req, res) => {
-  console.log(req.params.lockerNumb);
-  //res.redirect("/skap");
-  res.sendStatus(404);
-});
 
-app.all("/skap", (req, res) => {
-  //console.log(process.env.TOKEN_SECRET);
-  var search = "";
-  if (req.body && req.body.search) {
-    search = req.body.search.toLowerCase();
-    //console.log("Search: " + search);
-  }
-  console.log("search: " + search);
+app.all("/skap/:lockerNumb/geut", (req, res) => {
+  console.log(req.params.lockerNumb);
   var query =
-    "select " +
-    " locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname" +
-    " from locker " +
-    " left join pupil on pupil.id = locker.owner_id " +
-    " where instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR locker.number=?" +
-    " OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?=''";
-  db.all(query, [search, search, search, search, search, search], function (
-    err,
-    rows
-  ) {
-    //console.log(rows[0]);
-    res.render("locker", {
+    "select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id);";
+  db.all(query, function (err, rows) {
+    res.render("giveLocker", {
       title: "Guru",
-      message: "Welcome",
+      lockerNumb: req.params.lockerNumb,
+      message: "Give locker " + req.params.lockerNumb,
       img: {
         src:
           "https://www.guru99.com/images/NodeJS/010716_0613_NodejsExpre7.png",
       },
       list: { 1: { namn: 1, plan: 2 }, 2: { namn: 300, plan: 3 } },
       rows,
-      searchRes: rows.length + ' results for: "' + search + '"',
-      statusLockerText,
-      statusLockerColor,
     });
   });
+});
+app.all("/checkin", (req, res) => {
+  console.log("Checkout");
+  console.log(req.body);
+
+  if (!req.body) {
+    res.sendStatus(404);
+  } else if (req.body.table == "locker") {
+    db.run(
+      "UPDATE locker set owner_id=null,status=1 where locker.number=?",
+      [req.body.idItem],
+      function (err) {
+        if (err) {
+          console.log(err.message);
+        }
+        console.log(this);
+        res.sendStatus(200);
+      }
+    );
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+app.post("/checkout", (req, res) => {
+  console.log("Checkout");
+  console.log(req.body);
+
+  if (!req.body) {
+    res.sendStatus(404);
+  } else if (req.body.table == "locker") {
+    db.run(
+      "UPDATE locker set owner_id=?,status=0 where locker.number=? AND locker.owner_id is NULL",
+      [req.body.idPupil, req.body.idItem],
+      function (err) {
+        if (err) {
+          console.log(err.message);
+        }
+        console.log(this);
+        res.redirect("/skap");
+      }
+    );
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+app.all("/skap", (req, res) => {
+  console.log(req.body);
+  //console.log(process.env.TOKEN_SECRET);
+  var search = "";
+  if (req.body && req.body.search) {
+    search = req.body.search.toLowerCase();
+    //console.log("Search: " + search);
+  }
+  if (req.body.clearLocker) {
+  }
+  var query =
+    "select " +
+    " locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname" +
+    " from locker " +
+    " left join pupil on pupil.id = locker.owner_id " +
+    " where instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR locker.number=?" +
+    " OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
+    " OR (grade||classP)=?";
+  db.all(
+    query,
+    [search, search, search, search, search, search, search],
+    function (err, rows) {
+      console.log(err);
+      //console.log(rows[0]);
+      res.render("locker", {
+        title: "Guru",
+        message: "Welcome",
+        img: {
+          src:
+            "https://www.guru99.com/images/NodeJS/010716_0613_NodejsExpre7.png",
+        },
+        list: { 1: { namn: 1, plan: 2 }, 2: { namn: 300, plan: 3 } },
+        rows,
+        search,
+        statusLockerText,
+        statusLockerColor,
+      });
+    }
+  );
 });
 app.get("/logout", (req, res) => {
   res.cookie("token", "");
@@ -145,27 +200,28 @@ app.post("/auth", (req, res) => {
         } else {
           console.log(row.username);
           console.log(row.password);
-          bcrypt.compare(req.body.password, row.password, function (
-            err,
-            resCrypt
-          ) {
-            if (resCrypt) {
-              //request.session.token
-              const token = jwt.sign(
-                { username: row.username },
-                process.env.TOKEN_SECRET,
-                {
-                  expiresIn: "1h",
-                }
-              );
-              console.log(token);
-              res.cookie("token", token);
-              res.redirect("/skap");
-            } else {
-              res.sendStatus(401);
+          bcrypt.compare(
+            req.body.password,
+            row.password,
+            function (err, resCrypt) {
+              if (resCrypt) {
+                //request.session.token
+                const token = jwt.sign(
+                  { username: row.username },
+                  process.env.TOKEN_SECRET,
+                  {
+                    expiresIn: "1h",
+                  }
+                );
+                console.log(token);
+                res.cookie("token", token);
+                res.redirect("/skap");
+              } else {
+                res.sendStatus(401);
+              }
+              res.end();
             }
-            res.end();
-          });
+          );
         }
       }
     );
