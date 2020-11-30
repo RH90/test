@@ -77,7 +77,7 @@ app.all("/", (req, res) => {
 app.all("/skap/:lockerNumb/geut", (req, res) => {
   console.log(req.params.lockerNumb);
   var query =
-    "select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id);";
+    "select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) ORDER BY grade,classP,lastname,firstname ASC";
   db.all(query, function (err, rows) {
     res.render("giveLocker", {
       title: "Guru",
@@ -137,7 +137,14 @@ app.post("/checkout", (req, res) => {
     res.sendStatus(404);
   }
 });
-
+app.get("/skap/:lockerNumb", (req, res) => {
+  console.log(req.params.lockerNumb);
+  res.render("lockerinfo", {
+    title: "Guru",
+    lockerNumb: req.params.lockerNumb,
+    message: req.params.lockerNumb,
+  });
+});
 app.all("/skap", (req, res) => {
   console.log(req.body);
   //console.log(process.env.TOKEN_SECRET);
@@ -155,7 +162,8 @@ app.all("/skap", (req, res) => {
     " left join pupil on pupil.id = locker.owner_id " +
     " where instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR locker.number=?" +
     " OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
-    " OR (grade||classP)=?";
+    " OR (grade||classP)=? " +
+    " ORDER BY grade,classP,lastname,firstname,status ASC";
   db.all(
     query,
     [search, search, search, search, search, search, search],
@@ -178,11 +186,8 @@ app.all("/skap", (req, res) => {
     }
   );
 });
-app.get("/logout", (req, res) => {
-  res.cookie("token", "");
-  res.send("Logged out!");
-});
 app.get("/login", (req, res) => {
+  res.cookie("token", "");
   res.sendFile(path.join(__dirname + "/login.html"));
 });
 app.post("/auth", (req, res) => {

@@ -7,44 +7,51 @@ html
 			include script.js
 		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
 	body
-		div(id="overlay")
-			div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
-				button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
-		span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
-		div(id="mySidenav",class="sidenav")
-			a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
-			a(href="#")!="Elever"
-			a(href="#")!="Personal"
-			a(href="/skap")!="Skåp"
-			a(href="#")!="Historia"
-			a(href="#")!="Datorer"
-			a(href="#")!="Platser"
-			a(href="#")!="Misc"
-			a(href="/logout")!="Logout"
-		div(style="background:violet;")
-			h1(style="margin:0")=message
-		form(action="",method="POST")
-			input(id="inputSearch",type="text",name="search")
-			button(id="buttonSearch",type="submit")!="Search"
-		h3= rows.length + " Resuslts for: \"" + search + "\""
-		table(class="sortable")
-			tr(style="background:gray")
-				td!="Skåp"
-				td!="Status"
-				td!="Förnamn"
-				td!="Efternamn"
-				td!="Klass"
-				td!="Ge/Ta bort"
-			each val in rows
-				tr
-					td!=val["number"]
-					td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLockerColor[val["status"]])!=statusLockerText[val["status"]]
-					td!=val.firstname
-					td!=val.lastname
-					td!=(val.grade+val.classP)||""
-					if val.firstname
-						td(onclick="clearLocker("+val["number"]+",\""+search+"\")")!="Ta bort"
-					else
-						td(onclick="location.href='/skap/"+val["number"]+"/geut'")!="Ge bort"
-		center
-			img(src=img.src)
+		div(class="top")
+			div(id="overlay")
+				div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
+					button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
+			span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
+			div(id="mySidenav",class="sidenav")
+				a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
+				a(href="#")!="Elever"
+				a(href="#")!="Personal"
+				a(href="/skap")!="Skåp"
+				a(href="#")!="Historia"
+				a(href="#")!="Datorer"
+				a(href="#")!="Platser"
+				a(href="#")!="Misc"
+				a(href="/login")!="Logout"
+			div(style="background:violet;")
+				h1(style="margin:0")=message
+			form(action="",method="POST")
+				input(id="inputSearch",type="text",name="search")
+				button(id="buttonSearch",type="submit")!="Search"
+			h3= rows.length + " Resuslts for: \"" + search + "\""
+		div(class="tableFixHead")
+			table(class="sortable")
+				thead
+					tr
+						th!="Skåp"
+						th!="Plan"
+						th!="Nycklar"
+						th!="Status"
+						th!="Förnamn"
+						th!="Efternamn"
+						th!="Klass"
+						th!="Ge/Ta bort"
+				each val in rows
+					tr
+						td
+							a(href="/skap/"+val["number"])!=val["number"]
+						td!=val.floor
+						td!=val.keys
+						td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLockerColor[val["status"]])!=statusLockerText[val["status"]]
+						td
+							a(href="/pupil/"+val["owner_id"])!=val["firstname"]
+						td!=val.lastname
+						td!=(val.grade+val.classP)||""
+						if val.firstname
+							td(onclick="clearLocker("+val["number"]+",\""+search+"\")")!="Ta bort"
+						else
+							td(onclick="location.href='/skap/"+val["number"]+"/geut'")!="Ge bort"

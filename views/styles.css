@@ -1,3 +1,6 @@
+.top {
+  height: 15vh;
+}
 body {
   background: lightblue;
 }
@@ -16,6 +19,16 @@ li {
   float: left;
   margin: 0 1.875rem 0 0;
 }
+.tableFixHead {
+  height: 80vh;
+  overflow-y: auto;
+}
+.tableFixHead thead th {
+  background: darkgray;
+  position: sticky;
+  top: 0;
+}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;

@@ -1,0 +1,66 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script
+			include script.js
+		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+	body
+		div(id="overlay")
+			div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
+				button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
+		span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
+		div(id="mySidenav",class="sidenav")
+			a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
+			a(href="#")!="Elever"
+			a(href="#")!="Personal"
+			a(href="/skap")!="Skåp"
+			a(href="#")!="Historia"
+			a(href="#")!="Datorer"
+			a(href="#")!="Platser"
+			a(href="#")!="Misc"
+			a(href="/logout")!="Logout"
+		div(style="background:violet;")
+			h1(style="margin:0")=message
+		div(style="display: flex;margin: auto;width: auto;")
+			form(action="/skap/" + message,method="POST")
+				table(style="width:auto")
+					tr
+						td!="Skåp"
+						td!=message
+					tr
+						td!="Nycklar"
+						td
+							input(type="number", name="keys")
+					tr
+						td!="Status"
+						td
+							select(name="status")
+								option(value="0")!="Elev har skåp"
+								option(value="1")!="Låst av skolan"
+								option(value="2")!="Elev med eget lås"
+								option(value="3")!="Skåp repareras"
+								option(value="4")!="Multilås"
+								option(value="4")!="Elev Med d. skåp"
+								option(value="4")!="Andvänds ej"
+								option(value="4")!="Utan nyckel elev innehåll"
+					tr
+						td
+						td
+							button(type="submit")!="Spara"
+			form(action="/skap/" + message,method="POST")
+				table(style="width:auto")
+					tr
+						td
+							input(type="text", name="comment")
+						td
+							button(type="submit")!="Lägg till commentar"
+			table(class="sortable",style="width:auto")
+				thread
+					tr
+						td!="Date"
+						td!="Comment"
+					tr
+						td!="2020-01-01"
+						td!="test"
