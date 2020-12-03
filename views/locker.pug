@@ -12,7 +12,7 @@ html
 				div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
 					div(id="container")
 					button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
-			span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
+			span(id="sideNavButton",style="position:fixed;background:lightblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776;"
 			div(id="mySidenav",class="sidenav")
 				a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
 				a(href="/pupil")!="Elever"
@@ -24,7 +24,7 @@ html
 				a(href="#")!="Misc"
 				a(href="/login")!="Logout"
 			div(style="background:violet;")
-				h1(style="margin:0")=message
+				h1(style="margin:0")=title
 			form(action="/skap",method="POST")
 				input(id="inputSearch",type="text",name="search")
 				select(name="plan")
@@ -67,7 +67,8 @@ html
 							a(href="/pupil/"+val["owner_id"])!=val["firstname"]
 						td!=val.lastname
 						td!=(val.grade+val.classP)||""
-						if val.firstname
-							td(onclick="clearLocker("+val["number"]+",\""+search+"\")")!="Ta bort"
-						else
-							td(onclick="location.href='/skap/"+val["number"]+"/geut?search="+search+"&plan="+floor+"&status="+status+"'")!="Ge bort"
+						td
+							if val.firstname
+								button(onclick="clearLocker("+val["number"]+",\""+search+"\")")!="Ta bort"
+							else
+								button(onclick="location.href='/skap/"+val["number"]+"/geut?search="+search+"&plan="+floor+"&status="+status+"'")!="Ge bort"

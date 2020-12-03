@@ -22,24 +22,33 @@ html
 			a(href="#")!="Misc"
 			a(href="/logout")!="Logout"
 		div(style="background:violet;")
-			h1(style="margin:0")=message
-		table(class="sortable")
-			tr(style="background:gray")
-				td!="Förnamn"
-				td!="Efternamn"
-				td!="Klass"
-				td!="Ge Ut"
-			each val in rows
-				tr
-					td!=val.firstname
-					td!=val.lastname
-					td!=(val.grade+val.classP)||""
-					td
-						form(action="/checkout" method="POST")
-							input(type="hidden" name="table" value="locker")
-							input(type="hidden" name="idItem" value=lockerNumb)
-							input(type="hidden" name="idPupil" value=val.id)
-							input(type="hidden" name="search" value=search)
-							input(type="hidden" name="plan" value=plan)
-							input(type="hidden" name="status" value=status)
-							button(type="submit")!="Ge ut"
+			h1(style="margin:0")=title
+		CENTER
+			div(style="display:inline-block")
+				div(style="display: flex;")
+					form(action="/pupil/add",method="POST")
+						table(style="width:auto;margin-right:10px")
+							tr
+								td!="Förnamn"
+								td
+									input(type="text", name="firstname")
+							tr
+								td!="Efternamn"
+								td
+									input(type="text", name="lastname")
+							tr
+								td!="Årskurs"
+								td
+									input(type="text", name="grade")
+							tr
+								td!="Klass"
+								td
+									input(type="text", name="classP")
+							tr
+								td!="År"
+								td
+									input(type="text", name="year")
+							tr
+								td
+								td
+									button(type="submit")!="Lägg Till"

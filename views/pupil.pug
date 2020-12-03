@@ -12,7 +12,7 @@ html
 				div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
 					div(id="container")
 					button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
-			span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
+			span(id="sideNavButton",style="position:fixed;background:lightblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776;"
 			div(id="mySidenav",class="sidenav")
 				a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
 				a(href="/pupil")!="Elever"
@@ -25,8 +25,11 @@ html
 				a(href="/login")!="Logout"
 			div(style="background:violet;")
 				h1(style="margin:0")=title
-			form(action="/pupil",method="POST")
-				input(id="inputSearch",type="text",name="search")
+			div
+				form(style="float:left;margin-right:10px",action="/pupil",method="POST")
+					input(id="inputSearch",type="text",name="search")
+					button(type="submit")!="Search"
+				button(onclick="location.href='/pupil/add'")!="Lägg till Elev"
 			h3= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead")
 			table(class="sortable")

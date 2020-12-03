@@ -79,22 +79,56 @@ app.all("/skap/:lockerNumb/geut", (req, res) => {
   var query =
     "select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) ORDER BY grade,classP,lastname,firstname ASC";
   db.all(query, function (err, rows) {
-    console.log(rows);
+    //console.log(rows);
     res.render("giveLocker", {
       title: "Guru",
       lockerNumb: req.params.lockerNumb,
       message: "Give locker " + req.params.lockerNumb,
-      img: {
-        src:
-          "https://www.guru99.com/images/NodeJS/010716_0613_NodejsExpre7.png",
-      },
-      list: { 1: { namn: 1, plan: 2 }, 2: { namn: 300, plan: 3 } },
       search: req.query.search,
       plan: req.query.plan,
       status: req.query.status,
       rows,
     });
   });
+});
+app.get("/pupil/add", (req, res) => {
+  console.log("Add pupil");
+  res.render("pupiladd", {
+    title: "Add Pupil",
+  });
+});
+app.post("/pupil/add", (req, res) => {
+  console.log("Addpupil");
+  console.log(req.body);
+  if (!req.body) {
+    res.sendStatus(404);
+  } else if (
+    req.body.firstname &&
+    req.body.lastname &&
+    req.body.grade &&
+    req.body.classP &&
+    req.body.year
+  ) {
+    db.run(
+      "insert into pupil(firstname,lastname,grade,classP,year) VALUES (?,?,?,?,?)",
+      [
+        req.body.firstname,
+        req.body.lastname,
+        req.body.grade,
+        req.body.classP,
+        req.body.year,
+      ],
+      function (err) {
+        if (err) {
+          console.log(err.message);
+        }
+        console.log(this);
+        res.redirect("/pupil");
+      }
+    );
+  } else {
+    res.sendStatus(404);
+  }
 });
 app.all("/checkin", (req, res) => {
   console.log("Checkout");
@@ -351,7 +385,7 @@ app.all("/pupil", (req, res) => {
       //console.log(rows[0]);
 
       res.render("pupil", {
-        title: "pupil",
+        title: "Pupil",
         rows,
         search,
       });
@@ -381,10 +415,14 @@ app.all("/skap", (req, res) => {
     req.body.status = req.query.status;
   }
 
-  if (req.body.plan && req.body.plan != -1) {
+  if (req.body.plan && req.body.plan != "undefined" && req.body.plan != -1) {
     plan = " and floor=" + req.body.plan;
   }
-  if (req.body.status && req.body.status != -1) {
+  if (
+    req.body.status &&
+    req.body.status != "undefined" &&
+    req.body.status != -1
+  ) {
     status = " and status=" + req.body.status;
   }
 
@@ -407,13 +445,7 @@ app.all("/skap", (req, res) => {
       //console.log(rows[0]);
 
       res.render("locker", {
-        title: "Guru",
-        message: "Welcome",
-        img: {
-          src:
-            "https://www.guru99.com/images/NodeJS/010716_0613_NodejsExpre7.png",
-        },
-        list: { 1: { namn: 1, plan: 2 }, 2: { namn: 300, plan: 3 } },
+        title: "Locker",
         rows,
         search,
         floor: req.body.plan,

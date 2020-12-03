@@ -1,7 +1,28 @@
--ELEV list
-    -Lägg till ELEV
-    -
--Hårdvara list
-    -Lägg til Hårdvara
--Plats lista
-    -Lägg til plats
+- ELEV list
+    - Lägg till ELEV (addPupil)
+    - Fält
+- Hårdvara list
+    - Lägg til Hårdvara
+    - Fält
+        - name
+        - maker
+        - status
+        - type
+        - owner_id
+        - owner_table
+            - pupil
+            - location
+        - serial
+- Plats lista
+    - Lägg till plats
+    - Fält
+        - name
+        - type
+        - projector?
+- History
+    - origin
+        --1: general 
+        - 0: pupil
+        - 1: locker
+        - 2: hardware
+        - 3: location
