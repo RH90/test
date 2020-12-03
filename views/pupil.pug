@@ -1,0 +1,45 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script
+			include script.js
+		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+	body
+		div(class="top")
+			div(id="overlay")
+				div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
+					div(id="container")
+					button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
+			span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
+			div(id="mySidenav",class="sidenav")
+				a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
+				a(href="/pupil")!="Elever"
+				a(href="#")!="Personal"
+				a(href="/skap")!="Skåp"
+				a(href="#")!="Historia"
+				a(href="#")!="Datorer"
+				a(href="#")!="Platser"
+				a(href="#")!="Misc"
+				a(href="/login")!="Logout"
+			div(style="background:violet;")
+				h1(style="margin:0")=title
+			form(action="/pupil",method="POST")
+				input(id="inputSearch",type="text",name="search")
+			h3= rows.length + " Resuslts for: \"" + search + "\""
+		div(class="tableFixHead")
+			table(class="sortable")
+				thead
+					tr
+						th!="Förnamn"
+						th!="Efternamn"
+						th!="Klass"
+						th!="År"
+				each val in rows
+					tr
+						td
+							a(href="/pupil/"+val["id"])!=val["firstname"]
+						td!=val.lastname
+						td!=(val.grade+val.classP)||""
+						td!=(val.year)

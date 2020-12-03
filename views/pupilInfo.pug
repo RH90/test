@@ -22,44 +22,47 @@ html
 			a(href="#")!="Misc"
 			a(href="/logout")!="Logout"
 		div(style="background:violet;")
-			h1(style="margin:0")=row.number
+			h1(style="margin:0")=(row.firstname+" "+row.lastname)
 		CENTER
 			div(style="display:inline-block")
 				div(style="display: flex;")
-					form(action="/skap/" + row.number,method="POST")
+					form(action="/pupil/" + row.id,method="POST")
 						table(style="width:auto;margin-right:10px")
 							tr
+								td!="Förnamn"
+								td
+									input(type="text", name="firstname",value=(row.firstname))
+							tr
+								td!="Efternamn"
+								td
+									input(type="text", name="lastname",value=(row.lastname))
+							tr
+								td!="Årskurs"
+								td
+									input(type="text", name="grade",value=(row.grade))
+							tr
+								td!="Klass"
+								td
+									input(type="text", name="classP",value=(row.classP))
+							tr
+								td!="År"
+								td!=(row.year)
+							tr
 								td!="Skåp"
-								td!=row.number
-							tr
-								td!="Nycklar"
 								td
-									input(type="number", name="keys",value=row.keys)
-							tr
-								td!="Status"
-								td
-									select(name="status")
-										option(value="0",selected=statusSelected[0])!="Elev har skåp"
-										option(value="1",selected=statusSelected[1])!="Låst av skolan"
-										option(value="2",selected=statusSelected[2])!="Elev med eget lås"
-										option(value="3",selected=statusSelected[3])!="Skåp repareras"
-										option(value="4",selected=statusSelected[4])!="Multilås"
-										option(value="5",selected=statusSelected[5])!="Elev Med d. skåp"
-										option(value="6",selected=statusSelected[6])!="Andvänds ej"
-										option(value="7",selected=statusSelected[7])!="Utan nyckel elev innehåll"
-							tr
-								td!="Plan"
-								td!=row.floor
-							tr
-								td!="Ägare"
-								td
-									a(href= (row.firstname)? ("/pupil/"+row.owner_id): false )!=(row.firstname) ? (row.firstname+" "+row.lastname+", "+row.grade+row.classP) : row.owner_id+""
+									a(href="/skap/"+row.number)!=row.number
 							tr
 								td
 								td
 									button(type="submit")!="Spara"
+					table(style="width:auto;margin-right:10px")
+						tr
+							td!="Datorer och tillbehör"
+						tr
+							td!="Typ"
+							td!="Serienummer"
 					table(style="width:auto")
-						form(action="/skap/" + message,method="POST")
+						form(action="/pupil/" + row.id ,method="POST")
 							tr
 								td
 									textarea(rows="3",cols="40",name="comment")

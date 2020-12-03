@@ -25,11 +25,22 @@ function closeNav() {
   document.getElementById("mySidenav").style.display = "none";
 }
 
-function overlayOn() {
+function overlayOn(number) {
+  var container = document.getElementById("container");
   document.getElementById("overlay").style.display = "block";
+  fetch("/skap/" + number + "/geut", {
+    method: "GET",
+  }).then((res) => {
+    res.text().then(function (data) {
+      container.innerHTML = data;
+    });
+    console.log("Request complete! response:", res);
+  });
 }
 
 function overlayOff() {
+  var container = document.getElementById("container");
+  container.innerHTML = "";
   document.getElementById("overlay").style.display = "none";
 }
 

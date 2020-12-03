@@ -13,7 +13,7 @@ html
 		span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
 		div(id="mySidenav",class="sidenav")
 			a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
-			a(href="#")!="Elever"
+			a(href="/pupil")!="Elever"
 			a(href="#")!="Personal"
 			a(href="/skap")!="Skåp"
 			a(href="#")!="Historia"
@@ -39,4 +39,7 @@ html
 							input(type="hidden" name="table" value="locker")
 							input(type="hidden" name="idItem" value=lockerNumb)
 							input(type="hidden" name="idPupil" value=val.id)
+							input(type="hidden" name="search" value=search)
+							input(type="hidden" name="plan" value=plan)
+							input(type="hidden" name="status" value=status)
 							button(type="submit")!="Ge ut"

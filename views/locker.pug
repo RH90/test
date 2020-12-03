@@ -10,11 +10,12 @@ html
 		div(class="top")
 			div(id="overlay")
 				div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
+					div(id="container")
 					button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
 			span(id="sideNavButton",style="position:fixed;background:darkblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776; open"
 			div(id="mySidenav",class="sidenav")
 				a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
-				a(href="#")!="Elever"
+				a(href="/pupil")!="Elever"
 				a(href="#")!="Personal"
 				a(href="/skap")!="Skåp"
 				a(href="#")!="Historia"
@@ -24,8 +25,23 @@ html
 				a(href="/login")!="Logout"
 			div(style="background:violet;")
 				h1(style="margin:0")=message
-			form(action="",method="POST")
+			form(action="/skap",method="POST")
 				input(id="inputSearch",type="text",name="search")
+				select(name="plan")
+					option(value="-1")!="Plan"
+					option(value="1")!="Plan 1"
+					option(value="2")!="Plan 2"
+					option(value="3")!="Plan 3"
+				select(name="status")
+					option(value="-1")!="Status"
+					option(value="0")!="Elev har skåp"
+					option(value="1")!="Låst av skolan"
+					option(value="2")!="Elev med eget lås"
+					option(value="3")!="Skåp repareras"
+					option(value="4")!="Multilås"
+					option(value="5")!="Elev Med d. skåp"
+					option(value="6")!="Andvänds ej"
+					option(value="7")!="Utan nyckel elev innehåll"
 				button(id="buttonSearch",type="submit")!="Search"
 			h3= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead")
@@ -54,4 +70,4 @@ html
 						if val.firstname
 							td(onclick="clearLocker("+val["number"]+",\""+search+"\")")!="Ta bort"
 						else
-							td(onclick="location.href='/skap/"+val["number"]+"/geut'")!="Ge bort"
+							td(onclick="location.href='/skap/"+val["number"]+"/geut?search="+search+"&plan="+floor+"&status="+status+"'")!="Ge bort"
