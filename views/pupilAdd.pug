@@ -7,22 +7,7 @@ html
 			include script.js
 		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
 	body
-		div(id="overlay")
-			div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
-				button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
-		span(id="sideNavButton",style="position:fixed;background:lightblue;font-size:20px;cursor:pointer",onclick="openNav()")!="&#9776;"
-		div(id="mySidenav",class="sidenav")
-			a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
-			a(href="/pupil")!="Elever"
-			a(href="#")!="Personal"
-			a(href="/skap")!="Skåp"
-			a(href="#")!="Historia"
-			a(href="#")!="Datorer"
-			a(href="#")!="Platser"
-			a(href="#")!="Misc"
-			a(href="/logout")!="Logout"
-		div(style="background:violet;")
-			h1(style="margin:0")=title
+		include head.pug
 		CENTER
 			div(style="display:inline-block")
 				div(style="display: flex;")

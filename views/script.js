@@ -44,8 +44,12 @@ function overlayOff() {
   document.getElementById("overlay").style.display = "none";
 }
 
-function clearLocker(numb, search) {
-  if (confirm("Ta bort elev från skåp?")) {
+function clearLocker(firstname, lastname, numb, search) {
+  if (
+    confirm(
+      "Ta bort " + firstname + " " + lastname + " från skåp " + numb + "?"
+    )
+  ) {
     console.log("numb");
     let data = { idItem: numb, table: "locker" };
     fetch("/checkin", {

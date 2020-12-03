@@ -80,10 +80,9 @@ app.all("/skap/:lockerNumb/geut", (req, res) => {
     "select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) ORDER BY grade,classP,lastname,firstname ASC";
   db.all(query, function (err, rows) {
     //console.log(rows);
-    res.render("giveLocker", {
-      title: "Guru",
+    res.render("lockerGive", {
+      title: "Give locker " + req.params.lockerNumb,
       lockerNumb: req.params.lockerNumb,
-      message: "Give locker " + req.params.lockerNumb,
       search: req.query.search,
       plan: req.query.plan,
       status: req.query.status,
@@ -219,7 +218,7 @@ app.get("/skap/:lockerNumb", (req, res) => {
             statusSelected[row.status] = true;
             //console.log(statusSelected);
             res.render("lockerinfo", {
-              title: "Guru",
+              title: req.params.lockerNumb,
               lockerNumb: req.params.lockerNumb,
               message: req.params.lockerNumb,
               row,
@@ -255,7 +254,7 @@ app.get("/pupil/:pupilId", (req, res) => {
             }
             //console.log(statusSelected);
             res.render("pupilInfo", {
-              title: "Guru",
+              title: row.firstname + " " + row.lastname,
               row,
               history,
             });
@@ -399,32 +398,36 @@ app.all("/skap", (req, res) => {
   console.log(Object.keys(req.query).length);
   console.log("body");
   console.log(req.body);
+
+  var planValue = req.body.plan;
+  var statusValue = req.body.status;
   //console.log(process.env.TOKEN_SECRET);
   var search = "";
   if (req.body && req.body.search) {
     search = req.body.search.toLowerCase();
     //console.log("Search: " + search);
   }
-  if (req.body.clearLocker) {
-  }
+
   var plan = "";
   var status = "";
   if (Object.keys(req.query).length) {
     search = req.query.search;
-    req.body.plan = req.query.plan;
-    req.body.status = req.query.status;
+    planValue = req.query.plan;
+    statusValue = req.query.status;
   }
 
-  if (req.body.plan && req.body.plan != "undefined" && req.body.plan != -1) {
-    plan = " and floor=" + req.body.plan;
+  if (planValue && planValue != "undefined" && planValue != -1) {
+    plan = " and floor=" + planValue;
+  } else {
+    planValue = -1;
   }
-  if (
-    req.body.status &&
-    req.body.status != "undefined" &&
-    req.body.status != -1
-  ) {
-    status = " and status=" + req.body.status;
+
+  if (statusValue && statusValue != "undefined" && statusValue != -1) {
+    status = " and status=" + statusValue;
+  } else {
+    statusValue = -1;
   }
+  console.log("status: " + status + "," + statusValue);
 
   var query =
     "select " +
@@ -448,8 +451,8 @@ app.all("/skap", (req, res) => {
         title: "Locker",
         rows,
         search,
-        floor: req.body.plan,
-        status: req.body.status,
+        planValue,
+        statusValue,
         statusLockerText,
         statusLockerColor,
       });
