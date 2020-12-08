@@ -64,11 +64,11 @@ var middleware = function (req, res, next) {
   //next();
 };
 
-app.all("/", middleware, (req, res) => {
+app.get("/", middleware, (req, res) => {
   res.redirect("/locker");
 });
 
-app.all("/locker/:lockerNumb/geut", middleware, (req, res) => {
+app.get("/locker/:lockerNumb/geut", middleware, (req, res) => {
   console.log(req.params.lockerNumb);
   var query =
     "select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) ORDER BY grade,classP,lastname,firstname ASC";
@@ -124,7 +124,8 @@ app.post("/pupil/add", middleware, (req, res) => {
   }
 });
 //TODO lägg till historia
-app.all("/checkin", middleware, (req, res) => {
+//TODO lägg till hårdvara
+app.post("/checkin", middleware, (req, res) => {
   console.log("Checkout");
   console.log(req.body);
 
@@ -147,6 +148,7 @@ app.all("/checkin", middleware, (req, res) => {
   }
 });
 //TODO lägg till historia
+//TODO lägg till hårdvara
 app.post("/checkout", middleware, (req, res) => {
   console.log("Checkout");
   console.log(req.body);
@@ -355,7 +357,7 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
   }
 });
 
-app.all("/pupil", middleware, (req, res) => {
+app.get("/pupil", middleware, (req, res) => {
   console.log("body");
   console.log(req.body);
   //console.log(process.env.TOKEN_SECRET);
@@ -387,7 +389,7 @@ app.all("/pupil", middleware, (req, res) => {
     }
   );
 });
-app.all("/history", middleware, (req, res) => {
+app.get("/history", middleware, (req, res) => {
   var query =
     "select \n" +
     "\tCASE \n" +
@@ -431,7 +433,7 @@ app.all("/history", middleware, (req, res) => {
   });
 });
 
-app.all("/locker", middleware, (req, res) => {
+app.get("/locker", middleware, (req, res) => {
   console.log("query");
   console.log(req.query);
   console.log(Object.keys(req.query).length);
