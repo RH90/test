@@ -21,7 +21,12 @@ html
 				each val in rows
 					tr
 						td!=val.owner
-						td!=val.res
+						
+						if val.link
+							td
+								a(href=val.link)!=val.res
+						else
+							td!=val.res
 						td!=val.type
 						td!=val.comment
 						td!=val.date

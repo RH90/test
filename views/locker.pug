@@ -9,7 +9,7 @@ html
 	body
 		div(class="top")
 			include head.pug
-			form(action="/skap",method="POST")
+			form(action="/locker",method="POST")
 				input(id="inputSearch",type="text",name="search")
 				select(name="plan")
 					option(value="-1")!="Plan"
@@ -43,7 +43,7 @@ html
 				each val in rows
 					tr
 						td
-							a(href="/skap/"+val["number"])!=val["number"]
+							a(href="/locker/"+val["number"])!=val["number"]
 						td!=val.floor
 						td!=val.keys
 						td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLockerColor[val["status"]])!=statusLockerText[val["status"]]
@@ -55,4 +55,4 @@ html
 							if val.firstname
 								button(onclick="clearLocker('"+val.firstname+"','"+val.lastname+"',"+val["number"]+",\""+search+"\")")!="Ta bort"
 							else
-								button(onclick="location.href='/skap/"+val["number"]+"/geut?search="+search+"&plan="+planValue+"&status="+statusValue+"'")!="Ge bort"
+								button(onclick="location.href='/locker/"+val["number"]+"/geut?search="+search+"&plan="+planValue+"&status="+statusValue+"'")!="Ge bort"
