@@ -2,7 +2,7 @@ div(id="overlay")
     div(id="iframeContainer",style="background:white;width:80%;height:80vh;top:25px;position:absolute;left:10%")
         div(id="container")
         button(style="right:0px;position:absolute",onclick="overlayOff()")!="X"
-span(id="sideNavButton",style="position:fixed;background:blue;font-size:26px;cursor:pointer",onclick="openNav()")!="&#9776;"
+span(id="sideNavButton",style="text-align:center;position:fixed;background:blue;font-size:26px;width:35px;cursor:pointer",onclick="openNav()")!="&#9776;"
 div(id="mySidenav",class="sidenav")
     a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
     a(href="/pupil")!="Elever"
@@ -14,4 +14,4 @@ div(id="mySidenav",class="sidenav")
     a(href="#")!="Misc"
     a(href="/login")!="Logout"
 div(style="background:violet;")
-    h1(style="margin:0;font-size:30px")=title
+    h1(style="margin:0;font-size:4vh")=title

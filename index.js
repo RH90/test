@@ -357,7 +357,7 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
   }
 });
 
-app.get("/pupil", middleware, (req, res) => {
+app.all("/pupil", middleware, (req, res) => {
   console.log("body");
   console.log(req.body);
   //console.log(process.env.TOKEN_SECRET);
@@ -433,7 +433,7 @@ app.get("/history", middleware, (req, res) => {
   });
 });
 
-app.get("/locker", middleware, (req, res) => {
+app.all("/locker", middleware, (req, res) => {
   console.log("query");
   console.log(req.query);
   console.log(Object.keys(req.query).length);

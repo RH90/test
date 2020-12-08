@@ -1,5 +1,6 @@
 .top {
-  height: 15vh;
+  height: 6%;
+  display: flex;
 }
 body {
   background: lightblue;
@@ -20,7 +21,7 @@ li {
   margin: 0 1.875rem 0 0;
 }
 .tableFixHead {
-  height: 80vh;
+  height: 85%;
   overflow-y: auto;
 }
 .tableFixHead thead th {
@@ -44,7 +45,7 @@ th {
 }
 .sidenav {
   display: none;
-  height: 100%;
+  height: auto;
   position: fixed;
   z-index: 1;
   top: 0;
@@ -53,11 +54,12 @@ th {
   overflow-x: hidden;
   padding-top: 15px;
   padding-left: 10px;
-  padding-right: 10px;
+  padding-right: 15px;
+  padding-bottom: 20px;
 }
 
 .sidenav a {
-  padding: 4px 4px 4px 10px;
+  padding: 8px 4px 8px 10px;
   text-decoration: none;
   font-size: 20px;
   color: #818181;
@@ -74,7 +76,7 @@ th {
 .sidenav .closebtn {
   top: 0;
   right: 25px;
-  font-size: 20px;
+  font-size: 25px;
 }
 #overlay {
   position: fixed;

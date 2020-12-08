@@ -7,9 +7,9 @@ html
 			include script.js
 		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
 	body
+		include head.pug
 		div(class="top")
-			include head.pug
-			form(action="/locker",method="POST")
+			form(action="/locker",method="POST",style="margin-right:5px")
 				input(id="inputSearch",type="text",name="search")
 				select(name="plan")
 					option(value="-1")!="Plan"
@@ -27,7 +27,7 @@ html
 					option(value="6")!="Andvänds ej"
 					option(value="7")!="Utan nyckel elev innehåll"
 				button(id="buttonSearch",type="submit")!="Search"
-			h3= rows.length + " Resuslts for: \"" + search + "\""
+			b= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead")
 			table(class="sortable")
 				thead
