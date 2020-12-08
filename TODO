@@ -26,3 +26,5 @@
         - 1: locker
         - 2: hardware
         - 3: location
+- locker
+    - Add history on remove/add to locker

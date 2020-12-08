@@ -36,10 +36,7 @@ var middleware = function (req, res, next) {
   console.log(req.originalUrl);
   console.log(req.method);
   console.log("token:" + req.cookies.token);
-  if (req.originalUrl == "/login" || req.originalUrl == "/auth") {
-    console.log("login!!,auth");
-    next();
-  } else if (req.cookies) {
+  if (req.cookies) {
     try {
       console.log("chech cookie");
       const decoded = jwt.verify(req.cookies.token, process.env.TOKEN_SECRET);
@@ -48,7 +45,7 @@ var middleware = function (req, res, next) {
         { username: decoded.username },
         process.env.TOKEN_SECRET,
         {
-          expiresIn: "1h",
+          expiresIn: "24h",
         }
       );
       console.log("token: " + token);
@@ -58,8 +55,7 @@ var middleware = function (req, res, next) {
       next();
     } catch {
       console.log("error decode");
-      res.redirect("/login");
-      res.end();
+      res.redirect("/login?url=" + encodeURIComponent(req.originalUrl));
     }
   } else {
     res.redirect("/login");
@@ -68,13 +64,11 @@ var middleware = function (req, res, next) {
   //next();
 };
 
-app.use(middleware);
-
-app.all("/", (req, res) => {
+app.all("/", middleware, (req, res) => {
   res.redirect("/skap");
 });
 
-app.all("/skap/:lockerNumb/geut", (req, res) => {
+app.all("/skap/:lockerNumb/geut", middleware, (req, res) => {
   console.log(req.params.lockerNumb);
   var query =
     "select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) ORDER BY grade,classP,lastname,firstname ASC";
@@ -90,13 +84,13 @@ app.all("/skap/:lockerNumb/geut", (req, res) => {
     });
   });
 });
-app.get("/pupil/add", (req, res) => {
+app.get("/pupil/add", middleware, (req, res) => {
   console.log("Add pupil");
   res.render("pupiladd", {
     title: "Add Pupil",
   });
 });
-app.post("/pupil/add", (req, res) => {
+app.post("/pupil/add", middleware, (req, res) => {
   console.log("Addpupil");
   console.log(req.body);
   if (!req.body) {
@@ -129,7 +123,8 @@ app.post("/pupil/add", (req, res) => {
     res.sendStatus(404);
   }
 });
-app.all("/checkin", (req, res) => {
+//TODO lägg till historia
+app.all("/checkin", middleware, (req, res) => {
   console.log("Checkout");
   console.log(req.body);
 
@@ -151,8 +146,8 @@ app.all("/checkin", (req, res) => {
     res.sendStatus(404);
   }
 });
-
-app.post("/checkout", (req, res) => {
+//TODO lägg till historia
+app.post("/checkout", middleware, (req, res) => {
   console.log("Checkout");
   console.log(req.body);
   console.log(req.query);
@@ -181,7 +176,7 @@ app.post("/checkout", (req, res) => {
     res.sendStatus(404);
   }
 });
-app.get("/skap/:lockerNumb", (req, res) => {
+app.get("/skap/:lockerNumb", middleware, (req, res) => {
   console.log(req.params.lockerNumb);
   db.get(
     "select locker.id,keys,number,floor,status,owner_id,grade,classP,year,firstname,lastname,inschool " +
@@ -193,7 +188,7 @@ app.get("/skap/:lockerNumb", (req, res) => {
         res.sendStatus(404);
       } else {
         db.all(
-          "select type,comment,DATETIME(round(date/1000),'unixepoch') as date from history where origin=1 and owner_id=? ORDER by date DESC",
+          "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where origin=1 and owner_id=? ORDER by date DESC",
           [row.id],
           function (err, history) {
             //console.log(history);
@@ -220,10 +215,10 @@ app.get("/skap/:lockerNumb", (req, res) => {
             res.render("lockerinfo", {
               title: req.params.lockerNumb,
               lockerNumb: req.params.lockerNumb,
-              message: req.params.lockerNumb,
               row,
               statusSelected,
               history,
+              historyPost: req.originalUrl,
             });
           }
         );
@@ -231,7 +226,7 @@ app.get("/skap/:lockerNumb", (req, res) => {
     }
   );
 });
-app.get("/pupil/:pupilId", (req, res) => {
+app.get("/pupil/:pupilId", middleware, (req, res) => {
   console.log(req.params.pupilId);
   db.get(
     "select pupil.id,firstname,lastname,grade,classP,locker.number,year from pupil left join locker on pupil.id=locker.owner_id where pupil.id=?",
@@ -242,7 +237,7 @@ app.get("/pupil/:pupilId", (req, res) => {
         res.sendStatus(404);
       } else {
         db.all(
-          "select type,comment,DATETIME(round(date/1000),'unixepoch') as date from history where origin=0 and owner_id=? ORDER by date DESC",
+          "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where origin=0 and owner_id=? ORDER by date DESC",
           [row.id],
           function (err, history) {
             //console.log(history);
@@ -257,6 +252,7 @@ app.get("/pupil/:pupilId", (req, res) => {
               title: row.firstname + " " + row.lastname,
               row,
               history,
+              historyPost: req.originalUrl,
             });
           }
         );
@@ -264,7 +260,7 @@ app.get("/pupil/:pupilId", (req, res) => {
     }
   );
 });
-app.post("/skap/:lockerNumb", (req, res) => {
+app.post("/skap/:lockerNumb", middleware, (req, res) => {
   console.log(req.body);
   if (req.body && req.body["keys"]) {
     db.run(
@@ -314,7 +310,7 @@ app.post("/skap/:lockerNumb", (req, res) => {
   }
 });
 
-app.post("/pupil/:pupilId", (req, res) => {
+app.post("/pupil/:pupilId", middleware, (req, res) => {
   console.log(req.body);
   if (req.body && req.body["classP"]) {
     db.run(
@@ -359,7 +355,7 @@ app.post("/pupil/:pupilId", (req, res) => {
   }
 });
 
-app.all("/pupil", (req, res) => {
+app.all("/pupil", middleware, (req, res) => {
   console.log("body");
   console.log(req.body);
   //console.log(process.env.TOKEN_SECRET);
@@ -391,8 +387,43 @@ app.all("/pupil", (req, res) => {
     }
   );
 });
+app.all("/history", middleware, (req, res) => {
+  var query =
+    "select \n" +
+    "\tCASE \n" +
+    "\tWHEN origin=-1 then \n" +
+    "\t\t'general' \n" +
+    "\tWHEN origin=0 THEN\n" +
+    "\t\t'pupil'\n" +
+    "\tWHEN origin=1 THEN\n" +
+    "\t\t'locker'\n" +
+    "\tWHEN origin=2 THEN\n" +
+    "\t\t'computer'\n" +
+    "\tEND owner,\n" +
+    "\tCASE\n" +
+    "\tWHEN origin=0 THEN\n" +
+    "\t\t(firstname||' '||lastname||','||(grade||classP))\n" +
+    "\tWHEN origin=1 THEN\n" +
+    "\t\tlocker.number\n" +
+    "\tWHEN origin=2 THEN\n" +
+    "\t\tcomputer.serial\n" +
+    "\tEND res,\n" +
+    "\ttype,history.comment,DATETIME(round(date/1000),'unixepoch','localtime') as date\n" +
+    "\tfrom history\n" +
+    "\tleft JOIN pupil on owner='pupil' AND history.owner_id=pupil.id\n" +
+    "\tleft JOIN locker on owner='locker' AND history.owner_id=locker.id\n" +
+    "\tleft JOIN computer on owner='computer' AND history.owner_id=computer.id" +
+    "\tORDER BY date DESC";
+  db.all(query, function (err, rows) {
+    console.log(err);
+    res.render("history", {
+      title: "History",
+      rows,
+    });
+  });
+});
 
-app.all("/skap", (req, res) => {
+app.all("/skap", middleware, (req, res) => {
   console.log("query");
   console.log(req.query);
   console.log(Object.keys(req.query).length);
@@ -461,7 +492,8 @@ app.all("/skap", (req, res) => {
 });
 app.get("/login", (req, res) => {
   res.cookie("token", "");
-  res.sendFile(path.join(__dirname + "/login.html"));
+  res.render("login");
+  //res.sendFile(path.join(__dirname + "/login.html"));
 });
 app.post("/auth", (req, res) => {
   console.log(req.body);
@@ -488,7 +520,7 @@ app.post("/auth", (req, res) => {
                   { username: row.username },
                   process.env.TOKEN_SECRET,
                   {
-                    expiresIn: "1h",
+                    expiresIn: "24h",
                   }
                 );
                 console.log(token);
@@ -497,7 +529,7 @@ app.post("/auth", (req, res) => {
               } else {
                 res.sendStatus(401);
               }
-              res.end();
+              //res.end();
             }
           );
         }

@@ -63,6 +63,9 @@ th {
   color: #818181;
   display: block;
 }
+#sideNavButton:hover {
+  color: pink;
+}
 
 .sidenav a:hover {
   color: #f1f1f1;

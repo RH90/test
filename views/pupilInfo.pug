@@ -46,17 +46,4 @@ html
 						tr
 							td!="Typ"
 							td!="Serienummer"
-					table(style="width:auto")
-						form(action="/pupil/" + row.id ,method="POST")
-							tr
-								td
-									textarea(rows="3",cols="40",name="comment")
-								td
-									button(type="submit")!="Lägg till commentar"
-						tr
-							td!="Comment"
-							td!="Date"
-						each val in history
-							tr
-								td(style="white-space:pre")!=val.comment
-								td!=val.date
+					include historyTable

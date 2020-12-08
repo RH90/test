@@ -1,0 +1,27 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script
+			include script.js
+		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+	body
+		div(class="top")
+			include head.pug
+		div(class="tableFixHead")
+			table(class="sortable")
+				thead
+					tr
+						th!="Origin"
+						th!="Owner"
+						th!="type"
+						th!="Comment"
+						th!="Date"
+				each val in rows
+					tr
+						td!=val.owner
+						td!=val.res
+						td!=val.type
+						td!=val.comment
+						td!=val.date
