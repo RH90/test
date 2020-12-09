@@ -13,8 +13,8 @@ html
 				form(style="float:left;margin-right:10px",action="/pupil",method="POST")
 					input(id="inputSearch",type="text",name="search")
 					button(type="submit")!="Search"
-				button(onclick="location.href='/pupil/add'")!="Lägg till Elev"
-			h3= rows.length + " Resuslts for: \"" + search + "\""
+				button(onclick="location.href='/pupil/add'",style="margin-right:10px")!="Lägg till Elev"
+			b= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead")
 			table(class="sortable")
 				thead

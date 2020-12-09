@@ -84,12 +84,14 @@ app.get("/locker/:lockerNumb/geut", middleware, (req, res) => {
     });
   });
 });
+
 app.get("/pupil/add", middleware, (req, res) => {
   console.log("Add pupil");
   res.render("pupiladd", {
     title: "Add Pupil",
   });
 });
+//TODO add to general history
 app.post("/pupil/add", middleware, (req, res) => {
   console.log("Addpupil");
   console.log(req.body);
@@ -389,6 +391,7 @@ app.all("/pupil", middleware, (req, res) => {
     }
   );
 });
+//TODO computer->Hardware
 app.get("/history", middleware, (req, res) => {
   var query =
     "select \n" +
