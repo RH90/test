@@ -44,14 +44,21 @@ function overlayOff() {
   document.getElementById("overlay").style.display = "none";
 }
 
-function clearLocker(firstname, lastname, numb, search) {
+function clearLocker(owner_id, klass, firstname, lastname, numb, search) {
   if (
     confirm(
       "Ta bort " + firstname + " " + lastname + " från skåp " + numb + "?"
     )
   ) {
     console.log("numb");
-    let data = { idItem: numb, table: "locker" };
+    let data = {
+      firstname: firstname,
+      lastname: lastname,
+      klass: klass,
+      owner_id: owner_id,
+      idItem: numb,
+      table: "locker",
+    };
     fetch("/checkin", {
       method: "POST",
       headers: {

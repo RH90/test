@@ -105,7 +105,8 @@ app.post("/pupil/add", middleware, (req, res) => {
     req.body.year
   ) {
     db.run(
-      "insert into pupil(firstname,lastname,grade,classP,year) VALUES (?,?,?,?,?)",
+      "insert into pupil(firstname,lastname,grade,classP,year) VALUES (?,?,?,?,?);",
+      //"insert into history(origin,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
       [
         req.body.firstname,
         req.body.lastname,
@@ -128,7 +129,7 @@ app.post("/pupil/add", middleware, (req, res) => {
 //TODO lägg till historia
 //TODO lägg till hårdvara
 app.post("/checkin", middleware, (req, res) => {
-  console.log("Checkout");
+  console.log("checkin");
   console.log(req.body);
 
   if (!req.body) {
@@ -140,6 +141,36 @@ app.post("/checkin", middleware, (req, res) => {
       function (err) {
         if (err) {
           console.log(err.message);
+        } else {
+          db.get(
+            "select id from locker where number=?",
+            [req.body.idItem],
+            function (err, lockerId) {
+              console.log("lockerid: " + lockerId.id);
+              if (lockerId && lockerId.id) {
+                //locker
+                sqlInsertHistory(
+                  1,
+                  lockerId.id,
+                  "comment",
+                  req.body.firstname +
+                    " " +
+                    req.body.lastname +
+                    "," +
+                    req.body.klass +
+                    "->"
+                );
+
+                //pupil
+                sqlInsertHistory(
+                  0,
+                  req.body.owner_id,
+                  "locker",
+                  req.body.idItem + "->"
+                );
+              }
+            }
+          );
         }
         console.log(this);
         res.sendStatus(200);
@@ -150,7 +181,6 @@ app.post("/checkin", middleware, (req, res) => {
   }
 });
 //TODO lägg till historia
-//TODO lägg till hårdvara
 app.post("/checkout", middleware, (req, res) => {
   console.log("Checkout");
   console.log(req.body);
@@ -166,6 +196,35 @@ app.post("/checkout", middleware, (req, res) => {
           console.log(err.message);
         }
         console.log(this);
+        db.get(
+          "select id from locker where number=?",
+          [req.body.idItem],
+          function (err, lockerId) {
+            console.log("lockerid: " + lockerId.id);
+            if (lockerId && lockerId.id) {
+              //locker
+              sqlInsertHistory(
+                1,
+                lockerId.id,
+                "comment",
+                "->" +
+                  req.body.firstname +
+                  " " +
+                  req.body.lastname +
+                  "," +
+                  req.body.klass
+              );
+              //pupil
+              //[origin, req.body.idPupil, "locker", "->" + req.body.idItem, new Date()]
+              sqlInsertHistory(
+                0,
+                req.body.idPupil,
+                "locker",
+                "->" + req.body.idItem
+              );
+            }
+          }
+        );
         res.redirect(
           "/locker?search=" +
             req.body.search +
@@ -575,3 +634,9 @@ const statusLockerColor = {
   6: "LIGHTGRAY",
   7: "purple",
 };
+function sqlInsertHistory(origin, id, type, comment) {
+  db.run(
+    "insert into history(origin,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
+    [origin, id, type, comment, new Date()]
+  );
+}
