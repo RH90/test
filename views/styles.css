@@ -44,6 +44,7 @@ th {
   padding: 8px;
 }
 .sidenav {
+  border-radius: 0 0 25px 0;
   display: none;
   height: auto;
   position: fixed;
@@ -67,6 +68,9 @@ th {
 }
 #sideNavButton:hover {
   color: pink;
+}
+#sideNavButton {
+  border-radius: 5px;
 }
 
 .sidenav a:hover {

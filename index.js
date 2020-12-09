@@ -118,6 +118,18 @@ app.post("/pupil/add", middleware, (req, res) => {
         if (err) {
           console.log(err.message);
         }
+        sqlInsertHistory(
+          -1,
+          -1,
+          "added",
+          req.body.firstname +
+            " " +
+            req.body.lastname +
+            "," +
+            req.body.grade +
+            " " +
+            req.body.classP
+        );
         console.log(this);
         res.redirect("/pupil");
       }
@@ -126,7 +138,9 @@ app.post("/pupil/add", middleware, (req, res) => {
     res.sendStatus(404);
   }
 });
-//TODO lägg till historia
+app.post("/pupil/:pupilId/remove", middleware, (req, res) => {
+  res.sendStatus(404);
+});
 //TODO lägg till hårdvara
 app.post("/checkin", middleware, (req, res) => {
   console.log("checkin");
@@ -180,7 +194,7 @@ app.post("/checkin", middleware, (req, res) => {
     res.sendStatus(404);
   }
 });
-//TODO lägg till historia
+//TODO lägg till hårdvara
 app.post("/checkout", middleware, (req, res) => {
   console.log("Checkout");
   console.log(req.body);
