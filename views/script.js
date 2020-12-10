@@ -74,6 +74,23 @@ function clearLocker(owner_id, klass, firstname, lastname, numb, search) {
     });
   }
 }
+function removePupil(id) {
+  if (confirm("Ta bort Elev?")) {
+    let data = {
+      id: id,
+    };
+    fetch("/pupil/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      window.location.href = "/pupil";
+    });
+  }
+}
+
 document.addEventListener("click", function (evnt) {
   console.log(evnt.target);
   if (evnt.target.id != "sideNavButton") {

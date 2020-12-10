@@ -1,5 +1,57 @@
-Hardware
+Inventory
+CREATE TABLE "inventory" (
+	"id"	INTEGER UNIQUE,
+	"serial"	TEXT UNIQUE,
+	"type"	TEXT DEFAULT "",
+	"model"	TEXT DEFAULT "",
+	"status"	INTEGER DEFAULT 0,
+	"comment"	TEXT DEFAULT "",
+	"owner_table"	INTEGER,
+	"owner_id"	INTEGER,
+	"smarwater"	TEXT,
+	PRIMARY KEY("id")
+)
 
 Pupil
+CREATE TABLE "pupil" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"grade"	TEXT DEFAULT "",
+	"classP"	TEXT DEFAULT "",
+	"year"	TEXT DEFAULT "",
+	"firstname"	TEXT DEFAULT "",
+	"lastname"	TEXT DEFAULT "",
+	"comment"	TEXT DEFAULT "",
+	"inschool"	INTEGER DEFAULT 1
+)
 
 Locker
+CREATE TABLE "locker" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"keys"	Integer DEFAULT 0,
+	"number"	INTEGER UNIQUE,
+	"floor"	TEXT,
+	"status"	INTEGER DEFAULT 6,
+	"owner_id"	INTEGER UNIQUE,
+	"comment"	TEXT DEFAULT ""
+)
+
+Place
+    -
+
+History
+CREATE TABLE "history" (
+	"id"	INTEGER,
+	"owner_table"	INTEGER DEFAULT -1,
+	"owner_id"	INTEGER DEFAULT -1,
+	"type"	TEXT,
+	"comment"	TEXT,
+	"date"	INTEGER DEFAULT 0,
+	PRIMARY KEY("id" AUTOINCREMENT)
+)
+
+owner_table:
+   -1:General
+    0:Pupil
+    1:Locker
+    3:Inventory
+    4:Place

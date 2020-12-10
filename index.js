@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const path = require("path");
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
+const { type } = require("os");
 
 const saltRounds = 10;
 
@@ -106,7 +107,7 @@ app.post("/pupil/add", middleware, (req, res) => {
   ) {
     db.run(
       "insert into pupil(firstname,lastname,grade,classP,year) VALUES (?,?,?,?,?);",
-      //"insert into history(origin,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
+      //"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
       [
         req.body.firstname,
         req.body.lastname,
@@ -118,18 +119,18 @@ app.post("/pupil/add", middleware, (req, res) => {
         if (err) {
           console.log(err.message);
         }
-        sqlInsertHistory(
-          -1,
-          -1,
-          "added",
-          req.body.firstname +
+        sqlInsertHistory({
+          owner_table: -1,
+          id: -1,
+          type: "added",
+          comment:
+            req.body.firstname +
             " " +
             req.body.lastname +
             "," +
             req.body.grade +
-            " " +
-            req.body.classP
-        );
+            req.body.classP,
+        });
         console.log(this);
         res.redirect("/pupil");
       }
@@ -138,8 +139,29 @@ app.post("/pupil/add", middleware, (req, res) => {
     res.sendStatus(404);
   }
 });
-app.post("/pupil/:pupilId/remove", middleware, (req, res) => {
+app.post("/pupil/remove", middleware, (req, res) => {
   res.sendStatus(404);
+  // if (req.body.id) {
+  // db.get(
+  //   "Select * from pupil where id=?",
+  //   [req.body.id],
+  //   function (err, row) {
+  //     db.run("DELETE from pupil where id=?", [req.body.id], function (err) {
+  //       if (err) console.log(err);
+  //       res.sendStatus(200);
+  //       sqlInsertHistory(
+  //         -1,
+  //         -1,
+  //         "removed",
+  //         row.firstname + " " + row.lastname + "," + row.grade + row.classP
+  //       );
+  //     });
+  //   }
+  // );
+  // res.sendStatus(200);
+  // } else {
+  //   res.sendStatus(404);
+  // }
 });
 //TODO lägg till hårdvara
 app.post("/checkin", middleware, (req, res) => {
@@ -163,25 +185,26 @@ app.post("/checkin", middleware, (req, res) => {
               console.log("lockerid: " + lockerId.id);
               if (lockerId && lockerId.id) {
                 //locker
-                sqlInsertHistory(
-                  1,
-                  lockerId.id,
-                  "comment",
-                  req.body.firstname +
+                sqlInsertHistory({
+                  owner_table: 1,
+                  ird: lockerId.id,
+                  type: "comment",
+                  comment:
+                    req.body.firstname +
                     " " +
                     req.body.lastname +
                     "," +
                     req.body.klass +
-                    "->"
-                );
+                    "->",
+                });
 
                 //pupil
-                sqlInsertHistory(
-                  0,
-                  req.body.owner_id,
-                  "locker",
-                  req.body.idItem + "->"
-                );
+                sqlInsertHistory({
+                  owner_table: 0,
+                  id: req.body.owner_id,
+                  type: "locker",
+                  comment: req.body.idItem + "->",
+                });
               }
             }
           );
@@ -217,25 +240,25 @@ app.post("/checkout", middleware, (req, res) => {
             console.log("lockerid: " + lockerId.id);
             if (lockerId && lockerId.id) {
               //locker
-              sqlInsertHistory(
-                1,
-                lockerId.id,
-                "comment",
-                "->" +
+              sqlInsertHistory({
+                owner_table: 1,
+                id: lockerId.id,
+                type: "comment",
+                comment:
+                  "->" +
                   req.body.firstname +
                   " " +
                   req.body.lastname +
                   "," +
-                  req.body.klass
-              );
+                  req.body.klass,
+              });
               //pupil
-              //[origin, req.body.idPupil, "locker", "->" + req.body.idItem, new Date()]
-              sqlInsertHistory(
-                0,
-                req.body.idPupil,
-                "locker",
-                "->" + req.body.idItem
-              );
+              sqlInsertHistory({
+                owner_table: 0,
+                id: req.body.idPupil,
+                type: "locker",
+                comment: "->" + req.body.idItem,
+              });
             }
           }
         );
@@ -265,7 +288,7 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
         res.sendStatus(404);
       } else {
         db.all(
-          "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where origin=1 and owner_id=? ORDER by date DESC",
+          "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=1 and owner_id=? ORDER by date DESC",
           [row.id],
           function (err, history) {
             //console.log(history);
@@ -314,7 +337,7 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
         res.sendStatus(404);
       } else {
         db.all(
-          "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where origin=0 and owner_id=? ORDER by date DESC",
+          "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
           [row.id],
           function (err, history) {
             //console.log(history);
@@ -364,22 +387,14 @@ app.post("/locker/:lockerNumb", middleware, (req, res) => {
           return;
         }
 
-        const date = new Date();
-        const origin = 1;
-        const owner_id = row.id;
-        db.run(
-          "insert into history (origin, owner_id,type,comment,date) values(?,?,?,?,?)",
-          [origin, owner_id, "comment", req.body["comment"], date],
-          function (err) {
-            if (err) {
-              console.log(err);
-              res.sendStatus(404);
-            } else {
-              console.log("updateted");
-              res.redirect("/locker/" + req.params.lockerNumb);
-            }
-          }
-        );
+        sqlInsertHistory({
+          owner_table: 1,
+          id: row.id,
+          type: "comment",
+          comment: req.body["comment"],
+          res: res,
+          redirect: "/locker/" + req.params.lockerNumb,
+        });
       }
     );
   } else {
@@ -411,22 +426,15 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
     );
   } else if (req.body && req.body["comment"]) {
     console.log(req.body["comment"]);
-    const date = new Date();
-    const origin = 0;
-    const owner_id = req.params.pupilId;
-    db.run(
-      "insert into history (origin, owner_id,type,comment,date) values(?,?,?,?,?)",
-      [origin, owner_id, "comment", req.body["comment"], date],
-      function (err) {
-        if (err) {
-          console.log(err);
-          res.sendStatus(404);
-        } else {
-          console.log("updateted");
-          res.redirect("/pupil/" + req.params.pupilId);
-        }
-      }
-    );
+
+    sqlInsertHistory({
+      owner_table: 0,
+      id: req.params.pupilId,
+      type: "comment",
+      comment: req.body["comment"],
+      res: res,
+      redirect: "/pupil/" + req.params.pupilId,
+    });
   } else {
     res.sendStatus(404);
   }
@@ -464,34 +472,34 @@ app.all("/pupil", middleware, (req, res) => {
     }
   );
 });
-//TODO computer->Hardware
+//TODO computer->Inventory
 app.get("/history", middleware, (req, res) => {
   var query =
     "select \n" +
     "\tCASE \n" +
-    "\tWHEN origin=-1 then \n" +
+    "\tWHEN owner_table=-1 then \n" +
     "\t\t'general' \n" +
-    "\tWHEN origin=0 THEN\n" +
+    "\tWHEN owner_table=0 THEN\n" +
     "\t\t'pupil'\n" +
-    "\tWHEN origin=1 THEN\n" +
+    "\tWHEN owner_table=1 THEN\n" +
     "\t\t'locker'\n" +
-    "\tWHEN origin=2 THEN\n" +
+    "\tWHEN owner_table=2 THEN\n" +
     "\t\t'computer'\n" +
     "\tEND owner,\n" +
     "\tCASE\n" +
-    "\tWHEN origin=0 THEN\n" +
+    "\tWHEN owner_table=0 THEN\n" +
     "\t\t(firstname||' '||lastname||','||(grade||classP))\n" +
-    "\tWHEN origin=1 THEN\n" +
+    "\tWHEN owner_table=1 THEN\n" +
     "\t\tlocker.number\n" +
-    "\tWHEN origin=2 THEN\n" +
+    "\tWHEN owner_table=2 THEN\n" +
     "\t\tcomputer.serial\n" +
     "\tEND res,\n" +
     "\tCASE\n" +
-    "\tWHEN origin=0 THEN\n" +
+    "\tWHEN owner_table=0 THEN\n" +
     "\t\t'/pupil/'||pupil.id\n" +
-    "\tWHEN origin=1 THEN\n" +
+    "\tWHEN owner_table=1 THEN\n" +
     "\t\t'/locker/'||locker.number\n" +
-    "\tWHEN origin=2 THEN\n" +
+    "\tWHEN owner_table=2 THEN\n" +
     "\t\t'/computer/'||locker.number\n" +
     "\tEND link,\n" +
     "\ttype,history.comment,DATETIME(round(date/1000),'unixepoch','localtime') as date\n" +
@@ -648,9 +656,31 @@ const statusLockerColor = {
   6: "LIGHTGRAY",
   7: "purple",
 };
-function sqlInsertHistory(origin, id, type, comment) {
-  db.run(
-    "insert into history(origin,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
-    [origin, id, type, comment, new Date()]
-  );
+function sqlInsertHistory({
+  owner_table,
+  id,
+  type,
+  comment,
+  res,
+  redirect,
+  date = new Date(),
+}) {
+  console.log("commentlength: " + comment.length);
+  if (comment.length < 1000) {
+    db.run(
+      "insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
+      [owner_table, id, type, comment, date],
+      function (err) {
+        if (res) {
+          if (err) {
+            res.sendStatus(404);
+          } else {
+            res.redirect(redirect);
+          }
+        }
+      }
+    );
+  } else if (res) {
+    res.sendStatus(404);
+  }
 }

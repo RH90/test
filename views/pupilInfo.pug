@@ -10,6 +10,7 @@ html
 		include head.pug
 		CENTER
 			div(style="display:inline-block")
+				button(style="float: right;",onclick="removePupil("+row.id+")")!="Radera Elev"
 				div(style="display: flex;")
 					form(action="/pupil/" + row.id,method="POST")
 						table(style="width:auto;margin-right:10px")
