@@ -1,0 +1,43 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script
+			include script.js
+		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+	body
+		include head.pug
+		CENTER
+			div(style="display:inline-block")
+				div(style="display: flex;")
+					form(action="/inventory/add",method="POST")
+						table(style="width:auto;margin-right:10px")
+							tr
+								td!="Type"
+								td
+									select(name="type")
+										option!="Chromebook"
+										option!="PC"
+										option!="Charger"
+										option!="Projector"
+							tr
+								td!="Brand"
+								td
+									input(type="text", name="brand",value="")
+							tr
+								td!="Model"
+								td
+									input(type="text", name="model",value="")
+							tr
+								td!="Serial"
+								td
+									input(type="text", name="serial",value="")
+							tr
+								td!="Comment"
+								td
+									input(type="text", name="comment",value="")
+							tr
+								td
+								td
+									button(type="submit")!="Lägg Till"

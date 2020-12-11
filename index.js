@@ -7,7 +7,10 @@ const bcrypt = require("bcrypt");
 const path = require("path");
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
-const { type } = require("os");
+var favicon = require("serve-favicon");
+const { type, networkInterfaces } = require("os");
+const { json } = require("body-parser");
+var serverWifiIP = "null";
 
 const saltRounds = 10;
 
@@ -17,6 +20,34 @@ const port = 3333;
 
 var db = new sqlite3.Database("skåp.db");
 
+// or just '{}', an empty object
+
+setInterval(() => {
+  var nets = networkInterfaces();
+  var results = Object.create(null);
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      // skip over non-ipv4 and internal (i.e. 127.0.0.1) addresses
+      if (net.family === "IPv4" && !net.internal) {
+        if (!results[name]) {
+          results[name] = [];
+        }
+
+        results[name].push(net.address);
+      }
+    }
+  }
+  try {
+    if (results["Wi-Fi"] == undefined && serverWifiIP != "") {
+      serverWifiIP = "";
+      console.log("Current local ip: No wifi connection");
+    } else if (results["Wi-Fi"][0] != serverWifiIP) {
+      serverWifiIP = results["Wi-Fi"][0];
+      console.log("Current local ip: http://" + serverWifiIP + ":3333");
+    }
+  } catch (error) {}
+}, 5000);
+
 // bcrypt.hash("admin", saltRounds, function (err, hash) {
 //   console.log(hash);
 //   db.run(
@@ -24,24 +55,31 @@ var db = new sqlite3.Database("skåp.db");
 //   );
 //   db.run("insert into users(username,password) values(?,?)", ["admin", hash]);
 // });
+console.log(path.join(__dirname, "/images/favicon.ico"));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+// app.use(favicon(path.join(__dirname, "/images/favicon.ico")));
+// app.use("/images", express.static("images"));
 
 app.set("view engine", "pug");
 
 var middleware = function (req, res, next) {
-  console.log("Time:", Date.now());
-  //console.log(req.route);
-
-  console.log(req.originalUrl);
-  console.log(req.method);
-  console.log("token:" + req.cookies.token);
+  var ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  console.log("\n===Middleware===");
+  console.log("IP:     " + ip);
+  console.log("Time:   " + new Date(Date.now()).toString());
+  console.log("Route:  " + req.method + ", " + req.originalUrl);
+  console.log("\nbody:   " + JSON.stringify(req.body || {}));
+  console.log("query:  " + JSON.stringify(req.query || {}));
+  console.log("params: " + JSON.stringify(req.params || {}));
+  console.log("");
+  //console.log("token:" + req.cookies.token);
   if (req.cookies) {
     try {
-      console.log("chech cookie");
+      console.log("Decoded!");
       const decoded = jwt.verify(req.cookies.token, process.env.TOKEN_SECRET);
-      console.log("decoded" + decoded);
       const token = jwt.sign(
         { username: decoded.username },
         process.env.TOKEN_SECRET,
@@ -49,10 +87,7 @@ var middleware = function (req, res, next) {
           expiresIn: "24h",
         }
       );
-      console.log("token: " + token);
-      console.log(decoded);
       res.cookie("token", token);
-      console.log();
       next();
     } catch {
       console.log("error decode");
@@ -87,15 +122,54 @@ app.get("/locker/:lockerNumb/geut", middleware, (req, res) => {
 });
 
 app.get("/pupil/add", middleware, (req, res) => {
-  console.log("Add pupil");
   res.render("pupiladd", {
     title: "Add Pupil",
   });
 });
+app.get("/inventory/add", middleware, (req, res) => {
+  res.render("inventoryadd", {
+    title: "Add Inventory",
+  });
+});
 //TODO add to general history
+app.post("/inventory/add", middleware, (req, res) => {
+  if (!req.body && !(req.body.serial && req.body.type)) {
+    res.sendStatus(404);
+  } else {
+    db.run(
+      "insert into inventory(serial,type,brand,model,comment) VALUES (?,?,?,?,?);",
+      //"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
+      [
+        req.body.serial,
+        req.body.type,
+        req.body.brand,
+        req.body.model,
+        req.body.comment,
+      ],
+      function (err) {
+        if (err) {
+          console.log(err.message);
+        }
+        sqlInsertHistory({
+          owner_table: -1,
+          id: -1,
+          type: "added",
+          comment:
+            req.body.type +
+            ", " +
+            req.body.brand +
+            " " +
+            req.body.model +
+            ", " +
+            req.body.serial,
+        });
+        //console.log(this);
+        res.redirect("/inventory");
+      }
+    );
+  }
+});
 app.post("/pupil/add", middleware, (req, res) => {
-  console.log("Addpupil");
-  console.log(req.body);
   if (!req.body) {
     res.sendStatus(404);
   } else if (
@@ -131,7 +205,6 @@ app.post("/pupil/add", middleware, (req, res) => {
             req.body.grade +
             req.body.classP,
         });
-        console.log(this);
         res.redirect("/pupil");
       }
     );
@@ -165,9 +238,6 @@ app.post("/pupil/remove", middleware, (req, res) => {
 });
 //TODO lägg till hårdvara
 app.post("/checkin", middleware, (req, res) => {
-  console.log("checkin");
-  console.log(req.body);
-
   if (!req.body) {
     res.sendStatus(404);
   } else if (req.body.table == "locker") {
@@ -182,12 +252,11 @@ app.post("/checkin", middleware, (req, res) => {
             "select id from locker where number=?",
             [req.body.idItem],
             function (err, lockerId) {
-              console.log("lockerid: " + lockerId.id);
               if (lockerId && lockerId.id) {
                 //locker
                 sqlInsertHistory({
                   owner_table: 1,
-                  ird: lockerId.id,
+                  id: lockerId.id,
                   type: "comment",
                   comment:
                     req.body.firstname +
@@ -209,7 +278,6 @@ app.post("/checkin", middleware, (req, res) => {
             }
           );
         }
-        console.log(this);
         res.sendStatus(200);
       }
     );
@@ -219,9 +287,6 @@ app.post("/checkin", middleware, (req, res) => {
 });
 //TODO lägg till hårdvara
 app.post("/checkout", middleware, (req, res) => {
-  console.log("Checkout");
-  console.log(req.body);
-  console.log(req.query);
   if (!req.body) {
     res.sendStatus(404);
   } else if (req.body.table == "locker") {
@@ -232,12 +297,10 @@ app.post("/checkout", middleware, (req, res) => {
         if (err) {
           console.log(err.message);
         }
-        console.log(this);
         db.get(
           "select id from locker where number=?",
           [req.body.idItem],
           function (err, lockerId) {
-            console.log("lockerid: " + lockerId.id);
             if (lockerId && lockerId.id) {
               //locker
               sqlInsertHistory({
@@ -277,7 +340,6 @@ app.post("/checkout", middleware, (req, res) => {
   }
 });
 app.get("/locker/:lockerNumb", middleware, (req, res) => {
-  console.log(req.params.lockerNumb);
   db.get(
     "select locker.id,keys,number,floor,status,owner_id,grade,classP,year,firstname,lastname,inschool " +
       " from locker left join pupil on pupil.id=locker.owner_id where number=?",
@@ -291,8 +353,6 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
           "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=1 and owner_id=? ORDER by date DESC",
           [row.id],
           function (err, history) {
-            //console.log(history);
-            console.log(row);
             if (history) {
               console.log("history true");
             } else {
@@ -309,9 +369,9 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
               7: false,
               8: false,
             };
-            //console.log(rows[0]);
+
             statusSelected[row.status] = true;
-            //console.log(statusSelected);
+
             res.render("lockerinfo", {
               title: req.params.lockerNumb,
               lockerNumb: req.params.lockerNumb,
@@ -327,7 +387,6 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
   );
 });
 app.get("/pupil/:pupilId", middleware, (req, res) => {
-  console.log(req.params.pupilId);
   db.get(
     "select pupil.id,firstname,lastname,grade,classP,locker.number,year from pupil left join locker on pupil.id=locker.owner_id where pupil.id=?",
     [req.params.pupilId],
@@ -340,8 +399,6 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
           "select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
           [row.id],
           function (err, history) {
-            //console.log(history);
-            console.log(row);
             if (history) {
               console.log("history true");
             } else {
@@ -361,7 +418,6 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
   );
 });
 app.post("/locker/:lockerNumb", middleware, (req, res) => {
-  console.log(req.body);
   if (req.body && req.body["keys"]) {
     db.run(
       "update locker set keys=?,status=? where number=?",
@@ -371,13 +427,11 @@ app.post("/locker/:lockerNumb", middleware, (req, res) => {
           console.log(err);
           res.sendStatus(404);
         } else {
-          console.log("updateted");
           res.redirect("/locker/" + req.params.lockerNumb);
         }
       }
     );
   } else if (req.body && req.body["comment"]) {
-    console.log(req.body["comment"]);
     db.get(
       "select id from locker where number=?",
       [req.params.lockerNumb],
@@ -403,7 +457,6 @@ app.post("/locker/:lockerNumb", middleware, (req, res) => {
 });
 
 app.post("/pupil/:pupilId", middleware, (req, res) => {
-  console.log(req.body);
   if (req.body && req.body["classP"]) {
     db.run(
       "update pupil set firstname=?,lastname=?,classP=?,grade=? where id=?",
@@ -419,14 +472,11 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
           console.log(err);
           res.sendStatus(404);
         } else {
-          console.log("updateted");
           res.redirect("/pupil/" + req.params.pupilId);
         }
       }
     );
   } else if (req.body && req.body["comment"]) {
-    console.log(req.body["comment"]);
-
     sqlInsertHistory({
       owner_table: 0,
       id: req.params.pupilId,
@@ -441,13 +491,9 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
 });
 
 app.all("/pupil", middleware, (req, res) => {
-  console.log("body");
-  console.log(req.body);
-  //console.log(process.env.TOKEN_SECRET);
   var search = "";
   if (req.body && req.body.search) {
     search = req.body.search.toLowerCase();
-    //console.log("Search: " + search);
   }
   var query =
     "select " +
@@ -462,8 +508,6 @@ app.all("/pupil", middleware, (req, res) => {
     [search, search, search, search, search, search],
     function (err, rows) {
       console.log(err);
-      //console.log(rows[0]);
-
       res.render("pupil", {
         title: "Pupil",
         rows,
@@ -518,19 +562,11 @@ app.get("/history", middleware, (req, res) => {
 });
 
 app.all("/locker", middleware, (req, res) => {
-  console.log("query");
-  console.log(req.query);
-  console.log(Object.keys(req.query).length);
-  console.log("body");
-  console.log(req.body);
-
   var planValue = req.body.plan;
   var statusValue = req.body.status;
-  //console.log(process.env.TOKEN_SECRET);
   var search = "";
   if (req.body && req.body.search) {
     search = req.body.search.toLowerCase();
-    //console.log("Search: " + search);
   }
 
   var plan = "";
@@ -552,8 +588,6 @@ app.all("/locker", middleware, (req, res) => {
   } else {
     statusValue = -1;
   }
-  console.log("status: " + status + "," + statusValue);
-
   var query =
     "select " +
     " locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname" +
@@ -569,9 +603,6 @@ app.all("/locker", middleware, (req, res) => {
     query,
     [search, search, search, search, search, search, search],
     function (err, rows) {
-      console.log(err);
-      //console.log(rows[0]);
-
       res.render("locker", {
         title: "Locker",
         rows,
@@ -584,13 +615,31 @@ app.all("/locker", middleware, (req, res) => {
     }
   );
 });
+app.all("/inventory", middleware, (req, res) => {
+  var search = "";
+  if (req.body && req.body.search) {
+    search = req.body.search.toLowerCase();
+  }
+  var query =
+    "select " +
+    " * " +
+    " from inventory " +
+    " where (instr(LOWER(serial), ?) > 0 OR instr(LOWER(model), ?) > 0 OR instr(LOWER(type),?) > 0) ";
+  db.all(query, [search, search, search], function (err, rows) {
+    if (err) console.log(err.message);
+    res.render("inventory", {
+      title: "Inventory",
+      rows,
+      search,
+    });
+  });
+});
 app.get("/login", (req, res) => {
   res.cookie("token", "");
   res.render("login");
   //res.sendFile(path.join(__dirname + "/login.html"));
 });
 app.post("/auth", (req, res) => {
-  console.log(req.body);
   if (req.body) {
     db.get(
       "select * from users where username=?",
@@ -602,8 +651,7 @@ app.post("/auth", (req, res) => {
         } else if (!row) {
           res.sendStatus(401);
         } else {
-          console.log(row.username);
-          console.log(row.password);
+          console.log("Logging in: " + row.username);
           bcrypt.compare(
             req.body.password,
             row.password,
@@ -617,7 +665,7 @@ app.post("/auth", (req, res) => {
                     expiresIn: "24h",
                   }
                 );
-                console.log(token);
+                console.log("token: " + token);
                 res.cookie("token", token);
                 res.redirect("/locker");
               } else {
@@ -633,7 +681,7 @@ app.post("/auth", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Server started: http://localhost:${port}`);
 });
 
 const statusLockerText = {
@@ -656,6 +704,13 @@ const statusLockerColor = {
   6: "LIGHTGRAY",
   7: "purple",
 };
+const owner_table_Enum = {
+  "-1": "general",
+  0: "pupil",
+  1: "locker",
+  2: "inventory",
+  3: "place",
+};
 function sqlInsertHistory({
   owner_table,
   id,
@@ -665,7 +720,15 @@ function sqlInsertHistory({
   redirect,
   date = new Date(),
 }) {
-  console.log("commentlength: " + comment.length);
+  console.log("\nHistory insert: ");
+  console.log({
+    owner: owner_table_Enum[owner_table],
+    id,
+    type,
+    comment,
+    redirect,
+    dateString: date.toString(),
+  });
   if (comment.length < 1000) {
     db.run(
       "insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",

@@ -1,0 +1,35 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script
+			include script.js
+		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+	body
+		include head.pug
+		div(class="top")
+			div
+				form(style="float:left;margin-right:10px",action="/inventory",method="POST")
+					input(id="inputSearch",type="text",name="search")
+					button(type="submit")!="Search"
+				button(onclick="location.href='/inventory/add'",style="margin-right:10px")!="Lägg till inventarie"
+			b= rows.length + " Resuslts for: \"" + search + "\""
+		div(class="tableFixHead")
+			table(class="sortable")
+				thead
+					tr
+						th!="Type"
+						th!="Brand"
+						th!="Model"
+						th!="Serial"
+						th!="Status"
+						th!="Owner"
+				each val in rows
+					tr
+						th!=val.type
+						th!=val.brand
+						th!=val.model
+						th!=val.serial
+						th!=val.status
+						th!=val.owner
