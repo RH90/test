@@ -2,6 +2,7 @@ const express = require("express");
 var sqlite3 = require("sqlite3").verbose();
 const app = express();
 const dotenv = require("dotenv");
+var compression = require("compression");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const path = require("path");
@@ -65,6 +66,7 @@ setInterval(() => {
 // });
 console.log(path.join(__dirname, "/images/favicon.ico"));
 
+app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -74,6 +76,7 @@ app.use(cookieParser());
 app.set("view engine", "pug");
 
 var middleware = function (req, res, next) {
+	req.setTimeout(10000);
 	var ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 	var localNetwork = true;
 	const regex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g;

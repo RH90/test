@@ -48,13 +48,15 @@ table {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 }
-
+form {
+	display: table-cell;
+}
 td,
 th {
 	border-top: 1px solid #000000;
 	border-left: 1px solid #000000;
 	text-align: left;
-	padding: 3px;
+	padding: 3px !important;
 }
 tr:hover td {
 	background: rgba(111, 0, 201, 0.308) !important;
