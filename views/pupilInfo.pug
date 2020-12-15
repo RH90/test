@@ -3,14 +3,14 @@ html
 		title!=title
 		style
 			include styles.css
-		script
+		script(type="text/javascript")
 			include script.js
 		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
 	body
 		include head.pug
+		button(style="float:right",onclick="removePupil("+row.id+")")!="Radera Elev"
 		CENTER
 			div(style="display:inline-block")
-				button(style="float: right;",onclick="removePupil("+row.id+")")!="Radera Elev"
 				div(style="display: flex;")
 					form(action="/pupil/" + row.id,method="POST")
 						table(style="width:auto;margin-right:10px")
@@ -43,7 +43,7 @@ html
 									button(type="submit")!="Spara"
 					table(style="width:auto;margin-right:10px")
 						tr
-							td!="Datorer och tillbehör"
+							td(colspan="2")!="Inventarie"
 						tr
 							td!="Typ"
 							td!="Serienummer"

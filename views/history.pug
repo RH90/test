@@ -3,18 +3,19 @@ html
 		title!=title
 		style
 			include styles.css
-		script
+		script(type="text/javascript")
 			include script.js
-		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+		script(type="text/javascript")
+			include sorttable.js
 	body
 		include head.pug
 		div(class="tableFixHead")
 			table(class="sortable")
 				thead
 					tr
-						th!="Origin"
+						th!="Table"
 						th!="Owner"
-						th!="type"
+						th!="Type"
 						th!="Comment"
 						th!="Date"
 				each val in rows
@@ -28,4 +29,4 @@ html
 							td!=val.res
 						td!=val.type
 						td!=val.comment
-						td!=val.date
+						td(style="white-space:nowrap;")!=val.date

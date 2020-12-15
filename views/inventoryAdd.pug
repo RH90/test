@@ -17,10 +17,8 @@ html
 								td!="Type"
 								td
 									select(name="type")
-										option!="Chromebook"
-										option!="PC"
-										option!="Charger"
-										option!="Projector"
+										each val in rows
+											option!=val.name
 							tr
 								td!="Brand"
 								td

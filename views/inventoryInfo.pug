@@ -1,0 +1,42 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script
+			include script.js
+		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+	body
+		include head.pug
+		CENTER
+			div(style="display:inline-block")
+				div(style="display: flex;")
+					form(action="/inventory/" + row.id,method="POST")
+						table(style="width:auto;margin-right:10px")
+							tr
+								td!="Typ"
+								td!=row.type
+							tr
+								td!="Brand"
+								td!=row.brand
+							tr
+								td!="Model"
+								td!=row.model
+							tr
+								td!="Serial"
+								td!=row.serial
+							tr
+								td!="Comment"
+								td!=row.comment
+							tr
+								td!="Status"
+								td
+									select(name="status")
+										option(value="0",selected=statusSelected[0])!="Klar at ge ut"
+										option(value="1",selected=statusSelected[1])!="Sönder"
+										option(value="2",selected=statusSelected[2])!="Repareras"
+							tr
+								td
+								td
+									button(type="submit")!="Spara"
+					include historyTable

@@ -10,11 +10,15 @@ html
 		include head.pug
 		div(class="top")
 			div
-				form(style="float:left;margin-right:10px",action="/inventory",method="POST")
+				form(style="float:left;margin-right:10px;",action="/inventory",method="POST")
 					input(id="inputSearch",type="text",name="search")
 					button(type="submit")!="Search"
 				button(onclick="location.href='/inventory/add'",style="margin-right:10px")!="Lägg till inventarie"
 			b= rows.length + " Resuslts for: \"" + search + "\""
+			div(style="float: right;margin-left: auto;")
+				form(action="/inventoryAddType",method="POST")
+					input(id="inputSearch",type="text",name="type")
+					button(type="submit")!="Add Type"
 		div(class="tableFixHead")
 			table(class="sortable")
 				thead
@@ -27,9 +31,10 @@ html
 						th!="Owner"
 				each val in rows
 					tr
-						th!=val.type
-						th!=val.brand
-						th!=val.model
-						th!=val.serial
-						th!=val.status
-						th!=val.owner
+						td
+							a(href="/inventory/"+val.id)!=val.type
+						td!=val.brand
+						td!=val.model
+						td!=val.serial
+						td!=val.status
+						td!=val.owner

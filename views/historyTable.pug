@@ -1,4 +1,4 @@
-table(style="width:auto")
+table(style="width:auto;max-width:50vw")
 	form(action=historyPost,method="POST")
 		tr
 			td
@@ -10,5 +10,5 @@ table(style="width:auto")
 		td!="Date"
 	each val in history
 		tr
-			td(style="white-space:pre")!=val.comment
+			td(style="white-space:pre-wrap")!=val.comment
 			td!=val.date
