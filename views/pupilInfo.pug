@@ -5,7 +5,8 @@ html
 			include styles.css
 		script(type="text/javascript")
 			include script.js
-		script(src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js")
+		script(type="text/javascript")
+			include sorttable.js
 	body
 		include head.pug
 		button(style="float:right",onclick="removePupil("+row.id+")")!="Radera Elev"
