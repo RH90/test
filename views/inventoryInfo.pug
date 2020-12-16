@@ -37,7 +37,17 @@ html
 										option(value="1",selected=statusSelected[1])!="Sönder"
 										option(value="2",selected=statusSelected[2])!="Repareras"
 							tr
+								td!="Owner"
+								td
+									a(href=row.link)!=row.owner
+							tr
 								td
 								td
 									button(type="submit")!="Spara"
 					include historyTable
+					table(style="width:auto;margin-right:10px")
+						td
+							if row.owner
+								button!="Ta bort från ägare"
+							else
+								button!="Ge Till"

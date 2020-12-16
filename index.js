@@ -726,8 +726,21 @@ app.all("/inventory", middleware, (req, res) => {
 	}
 	var query =
 		"select " +
-		" * " +
+		"\tCase " +
+		"\tWHEN inventory.owner_table=0 THEN\n" +
+		"\t\t'pupil'\n" +
+		"\tEND owner,\n" +
+		"\tCASE\n" +
+		"\tWHEN inventory.owner_table=0 THEN\n" +
+		"\t\t(firstname||' '||lastname||','||(grade||classP))\n" +
+		"\tEND res,\n" +
+		"\tCASE\n" +
+		"\tWHEN inventory.owner_table=0 THEN\n" +
+		"\t\t'/pupil/'||pupil.id\n" +
+		"\tEND link,\n" +
+		"\ttype,brand,model,status,serial,inventory.id" +
 		" from inventory " +
+		"\tleft JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id\n" +
 		" where (instr(LOWER(serial), ?) > 0 OR instr(LOWER(model), ?) > 0 OR instr(LOWER(type),?) > 0) ";
 	db.all(query, [search, search, search], function (err, rows) {
 		if (err) console.log(err.message);

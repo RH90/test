@@ -38,4 +38,5 @@ html
 						td!=val.model
 						td!=val.serial
 						td!=val.status
-						td!=val.owner
+						td
+							a(href=val.link)!=val.res
