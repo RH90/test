@@ -46,8 +46,17 @@ html
 									button(type="submit")!="Spara"
 					include historyTable
 					table(style="width:auto;margin-right:10px")
-						td
-							if row.owner
-								button!="Ta bort från ägare"
-							else
-								button!="Ge Till"
+						if row.owner
+							tr
+								td
+									button!="Ta bort från ägare"
+						else
+							tr
+								td
+									button(onclick=`location.href='/inventory/${row.id}/give?table=0'`)!="Ge till elev"
+							tr
+								td
+									button(onclick=`location.href='/inventory/${row.id}/give?table=4'`)!="Ge till personal"
+							tr
+								td
+									button(onclick=`location.href='/inventory/${row.id}/give?table=3'`)!="Ge till plats"

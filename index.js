@@ -24,8 +24,11 @@ const port = 3333;
 var db = new sqlite3.Database("skåp.db");
 
 // or just '{}', an empty object
-
+getNetwork();
 setInterval(() => {
+	getNetwork();
+}, 5000);
+function getNetwork() {
 	try {
 		var nets = networkInterfaces();
 		var results = Object.create(null);
@@ -55,7 +58,7 @@ setInterval(() => {
 			);
 		}
 	} catch (error) {}
-}, 5000);
+}
 
 // bcrypt.hash("admin", saltRounds, function (err, hash) {
 //   console.log(hash);
@@ -64,11 +67,9 @@ setInterval(() => {
 //   );
 //   db.run("insert into users(username,password) values(?,?)", ["admin", hash]);
 // });
-console.log(path.join(__dirname, "/images/favicon.ico"));
-
 app.use(compression());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 // app.use(favicon(path.join(__dirname, "/images/favicon.ico")));
 // app.use("/images", express.static("images"));
@@ -134,7 +135,7 @@ app.get("/", middleware, (req, res) => {
 	res.redirect("/locker");
 });
 
-app.get("/locker/:lockerNumb/geut", middleware, (req, res) => {
+app.get("/locker/:lockerNumb/give", middleware, (req, res) => {
 	console.log(req.params.lockerNumb);
 	var query =
 		"select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) ORDER BY grade,classP,lastname,firstname ASC";
@@ -150,6 +151,9 @@ app.get("/locker/:lockerNumb/geut", middleware, (req, res) => {
 		});
 	});
 });
+app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
+	res.sendStatus(404);
+});
 
 app.get("/pupil/add", middleware, (req, res) => {
 	res.render("pupiladd", {
@@ -164,7 +168,6 @@ app.get("/inventory/add", middleware, (req, res) => {
 		});
 	});
 });
-//TODO add to general history
 app.post("/inventory/add", middleware, (req, res) => {
 	if (!req.body && !(req.body.serial && req.body.type)) {
 		res.sendStatus(404);

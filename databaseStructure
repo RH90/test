@@ -53,5 +53,6 @@ owner_table:
    -1:General
     0:Pupil
     1:Locker
-    3:Inventory
-    4:Place
+	2:Inventory
+    3:Place
+    4:Personel

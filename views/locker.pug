@@ -56,4 +56,4 @@ html
 							if val.firstname
 								button(onclick="clearLocker('"+val["owner_id"]+"','"+(val.grade+val.classP)+"','"+val.firstname+"','"+val.lastname+"',"+val["number"]+",\""+search+"\")")!="Ta bort"
 							else
-								button(onclick="location.href='/locker/"+val["number"]+"/geut?search="+search+"&plan="+planValue+"&status="+statusValue+"'")!="Ge bort"
+								button(onclick="location.href='/locker/"+val["number"]+"/give?search="+search+"&plan="+planValue+"&status="+statusValue+"'")!="Ge bort"

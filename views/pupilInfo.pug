@@ -9,7 +9,6 @@ html
 			include sorttable.js
 	body
 		include head.pug
-		button(style="float:right",onclick="removePupil("+row.id+")")!="Radera Elev"
 		CENTER
 			div(style="display:inline-block")
 				div(style="display: flex;")
@@ -49,3 +48,6 @@ html
 							td!="Typ"
 							td!="Serienummer"
 					include historyTable
+					table
+						td
+							button(onclick="removePupil("+row.id+")")!="Radera Elev"
