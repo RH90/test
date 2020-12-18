@@ -9,28 +9,22 @@ html
 			include sorttable.js
 	body
 		include head.pug
+		div(class="top")
+			div
+				form(style="float:left;margin-right:10px;",action="",method="GET")
+					input(id="inputSearch",type="text",name="search")
+					input(type="hidden",name="table",value=table)
+					button(type="submit")!="Search"
+			b= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead")
 			table(class="sortable")
 				thead
 					tr(style="background:gray")
-						th!="Förnamn"
-						th!="Efternamn"
-						th!="Klass"
-						th!="Ge Ut"
+						each valCols in cols
+							th!=valCols
+						th!="Give"
 				each val in rows
 					tr
-						td!=val.firstname
-						td!=val.lastname
-						td!=(val.grade+val.classP)||""
-						td
-							form(action="/checkout" method="POST")
-								input(type="hidden" name="table" value="locker")
-								input(type="hidden" name="idItem" value=lockerNumb)
-								input(type="hidden" name="idPupil" value=val.id)
-								input(type="hidden" name="search" value=search)
-								input(type="hidden" name="plan" value=plan)
-								input(type="hidden" name="status" value=status)
-								input(type="hidden" name="firstname" value=val.firstname)
-								input(type="hidden" name="lastname" value=val.lastname)
-								input(type="hidden" name="klass" value=(val.grade+val.classP))
-								button(type="submit")!="Ge till"
+						each valCols in cols
+							td!=val[valCols]
+						td!="placeholder"

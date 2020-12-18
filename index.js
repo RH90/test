@@ -151,8 +151,36 @@ app.get("/locker/:lockerNumb/give", middleware, (req, res) => {
 		});
 	});
 });
+//add search
 app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
-	res.sendStatus(404);
+	var query = "";
+	var cols = [];
+	var q = [];
+	var search = (req.query.search || "").toLowerCase();
+	if (req.query.table) {
+		if (req.query.table == 0) {
+			query =
+				"select id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil" +
+				" where (instr(LOWER(Firstname), ?) > 0 OR instr(LOWER(Lastname), ?) > 0 " +
+				" OR (instr(?, LOWER(Firstname)) > 0 AND instr(?, LOWER(Lastname)) > 0) OR ?='' " +
+				" OR (Klass)=?) order by Klass";
+			q = [search, search, search, search, search, search];
+			cols = ["Firstname", "Lastname", "Klass"];
+		} else if ((req.query.table = 3)) {
+		}
+		db.all(query, q, function (err, rows) {
+			if (err) console.log(err.message);
+			res.render("inventoryGive", {
+				title: "Give Inventory " + req.params.inventoryId,
+				search: req.query.search || "",
+				table: req.query.table,
+				cols,
+				rows,
+			});
+		});
+	} else {
+		res.sendStatus(404);
+	}
 });
 
 app.get("/pupil/add", middleware, (req, res) => {
@@ -334,6 +362,7 @@ app.post("/checkin", middleware, (req, res) => {
 				res.sendStatus(200);
 			}
 		);
+	} else if (req.body.table == "inventory") {
 	} else {
 		res.sendStatus(404);
 	}
