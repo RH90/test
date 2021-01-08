@@ -27,4 +27,9 @@ html
 					tr
 						each valCols in cols
 							td!=val[valCols]
-						td!="placeholder"
+						td
+							form(action="",method="POST")
+								input(type="hidden",name="table",value=table)
+								input(type="hidden",name="owner_id",value=val.owner_id)
+								button(type="submit")!="Ge till"
+						

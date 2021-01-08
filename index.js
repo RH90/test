@@ -160,7 +160,7 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 	if (req.query.table) {
 		if (req.query.table == 0) {
 			query =
-				"select id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil" +
+				"select id as owner_id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil" +
 				" where (instr(LOWER(Firstname), ?) > 0 OR instr(LOWER(Lastname), ?) > 0 " +
 				" OR (instr(?, LOWER(Firstname)) > 0 AND instr(?, LOWER(Lastname)) > 0) OR ?='' " +
 				" OR (Klass)=?) order by Klass";
@@ -178,6 +178,23 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 				rows,
 			});
 		});
+	} else {
+		res.sendStatus(404);
+	}
+});
+app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
+	var query = "";
+	var search = (req.query.search || "").toLowerCase();
+	if (req.body.table && req.body.owner_id) {
+		query = "UPDATE inventory SET owner_table=?,owner_id=? where id=?";
+		db.run(
+			query,
+			[req.body.table, req.body.owner_id, req.params.inventoryId],
+			function (err, rows) {
+				if (err) console.log(err.message);
+				res.redirect("/inventory/" + req.params.inventoryId);
+			}
+		);
 	} else {
 		res.sendStatus(404);
 	}
