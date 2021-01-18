@@ -19,7 +19,7 @@ const saltRounds = 10;
 
 dotenv.config();
 
-const port = 3333;
+const port = 80;
 
 var db = new sqlite3.Database("skåp.db");
 
