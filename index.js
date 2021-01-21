@@ -217,6 +217,10 @@ app.post("/inventory/add", middleware, (req, res) => {
 	if (!req.body && !(req.body.serial && req.body.type)) {
 		res.sendStatus(404);
 	} else {
+		req.body.serial = req.body.serial.trim();
+		if (req.body.serial == "") {
+			req.body.serial = null;
+		}
 		db.run(
 			"insert into inventory(serial,type,brand,model,comment) VALUES (?,?,?,?,?);",
 			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
@@ -512,14 +516,31 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 						};
 
 						statusSelected[row.status] = true;
-
-						res.render("inventoryInfo", {
-							title: "Inventarie,  " + req.params.inventoryId,
-							row,
-							statusSelected,
-							history,
-							historyPost: req.originalUrl,
-						});
+						if (owner_table_Enum[row.owner_table] == "pupil") {
+							db.get(
+								`select * from pupil where id=?`,
+								[row.owner_id],
+								function (err, pupil) {
+									res.render("inventoryInfo", {
+										title: "Inventarie,  " + req.params.inventoryId,
+										row,
+										statusSelected,
+										history,
+										historyPost: req.originalUrl,
+										owner: `${pupil.firstname} ${pupil.lastname},${pupil.grade}${pupil.classP}`,
+										link: `/pupil/${pupil.id}`,
+									});
+								}
+							);
+						} else {
+							res.render("inventoryInfo", {
+								title: "Inventarie,  " + req.params.inventoryId,
+								row,
+								statusSelected,
+								history,
+								historyPost: req.originalUrl,
+							});
+						}
 					}
 				);
 			}
