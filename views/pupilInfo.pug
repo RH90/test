@@ -45,7 +45,7 @@ html
 						tr
 							td(colspan="2")!="Inventarie"
 						tr
-							td!="Typ"
+							td!="Name"
 							td!="Serienummer"
 						each val in inventory
 							tr
@@ -53,6 +53,6 @@ html
 									a(href="/inventory/"+val.id)!=val.type+", "+val.model
 								td!=val.serial	
 					include historyTable
-					table
+					table(style="width:auto!important")
 						td
 							button(onclick="removePupil("+row.id+")")!="Radera Elev"
