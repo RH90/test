@@ -17,7 +17,8 @@ html
 							tr
 								td!="Type"
 								td
-									select(name="type")
+									input(list="datalist" name="type",required=true)
+									datalist(id="datalist")
 										each val in rows
 											option!=val.name
 							tr
@@ -27,7 +28,7 @@ html
 							tr
 								td!="Model"
 								td
-									input(type="text", name="model",value="")
+									input(type="text", name="model",value="",required=true)
 							tr
 								td!="Serial"
 								td

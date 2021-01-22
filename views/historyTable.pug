@@ -7,8 +7,10 @@ table(style="margin-right:10px;width:auto;max-width:50vw")
 				button(type="submit")!="Lägg till commentar"
 	tr
 		td!="Comment"
+		td!="type"
 		td!="Date"
 	each val in history
 		tr
 			td(style="white-space:pre-wrap")!=val.comment
+			td!=val.type
 			td!=val.date

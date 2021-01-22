@@ -191,8 +191,38 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 			query,
 			[req.body.table, req.body.owner_id, req.params.inventoryId],
 			function (err, rows) {
-				if (err) console.log(err.message);
-				res.redirect("/inventory/" + req.params.inventoryId);
+				if (err) {
+					console.log(err.message);
+				} else {
+					db.get(
+						"select * from inventory where id=?",
+						[req.params.inventoryId],
+						function (err, inventory) {
+							if (err) {
+							} else {
+								sqlInsertHistory({
+									owner_table: req.body.table,
+									id: req.body.owner_id,
+									type: "inventory",
+									comment:
+										"->" +
+										inventory.serial +
+										", " +
+										inventory.type +
+										", " +
+										inventory.model,
+								});
+								sqlInsertHistory({
+									owner_table: 2,
+									id: inventory.id,
+									type: "comment",
+									comment: "->" + req.body.historyOwner,
+								});
+							}
+							res.redirect("/inventory/" + req.params.inventoryId);
+						}
+					);
+				}
 			}
 		);
 	} else {
@@ -222,11 +252,16 @@ app.post("/inventory/add", middleware, (req, res) => {
 			req.body.serial = null;
 		}
 		db.run(
+			"insert into type (name) values (?)",
+			[req.body.type.toUpperCase()],
+			function (err) {}
+		);
+		db.run(
 			"insert into inventory(serial,type,brand,model,comment) VALUES (?,?,?,?,?);",
 			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
 			[
 				req.body.serial,
-				req.body.type,
+				req.body.type.toUpperCase(),
 				req.body.brand,
 				req.body.model,
 				req.body.comment,
@@ -234,22 +269,28 @@ app.post("/inventory/add", middleware, (req, res) => {
 			function (err) {
 				if (err) {
 					console.log(err.message);
+					db.all("select name from type", function (err, rows) {
+						res.render("inventoryadd", {
+							title: "Lägg till inventarie, Kunde inte lägga till inventarie!",
+							rows,
+						});
+					});
+				} else {
+					sqlInsertHistory({
+						owner_table: -1,
+						id: -1,
+						type: "added",
+						comment:
+							req.body.type +
+							", " +
+							req.body.brand +
+							" " +
+							req.body.model +
+							", " +
+							req.body.serial,
+					});
+					res.redirect("/inventory");
 				}
-				sqlInsertHistory({
-					owner_table: -1,
-					id: -1,
-					type: "added",
-					comment:
-						req.body.type +
-						", " +
-						req.body.brand +
-						" " +
-						req.body.model +
-						", " +
-						req.body.serial,
-				});
-				//console.log(this)
-				res.redirect("/inventory");
 			}
 		);
 	}
@@ -560,18 +601,25 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
 					"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
 					[row.id],
 					function (err, history) {
-						if (history) {
-							console.log("history true");
-						} else {
-							history = {};
-						}
-						//console.log(statusSelected);
-						res.render("pupilInfo", {
-							title: row.firstname + " " + row.lastname,
-							row,
-							history,
-							historyPost: req.originalUrl,
-						});
+						db.all(
+							"select * from inventory where owner_id=? AND owner_table=?",
+							[req.params.pupilId, 0],
+							function (err, inventory) {
+								if (history) {
+									console.log("history true");
+								} else {
+									history = {};
+								}
+								//console.log(statusSelected);
+								res.render("pupilInfo", {
+									title: row.firstname + " " + row.lastname,
+									row,
+									history,
+									historyPost: req.originalUrl,
+									inventory,
+								});
+							}
+						);
 					}
 				);
 			}

@@ -47,6 +47,11 @@ html
 						tr
 							td!="Typ"
 							td!="Serienummer"
+						each val in inventory
+							tr
+								td
+									a(href="/inventory/"+val.id)!=val.type+", "+val.model
+								td!=val.serial	
 					include historyTable
 					table
 						td
