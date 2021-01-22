@@ -186,43 +186,75 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 	var query = "";
 	var search = (req.query.search || "").toLowerCase();
 	if (req.body.table && req.body.owner_id) {
-		query = "UPDATE inventory SET owner_table=?,owner_id=? where id=?";
-		db.run(
-			query,
-			[req.body.table, req.body.owner_id, req.params.inventoryId],
-			function (err, rows) {
-				if (err) {
-					console.log(err.message);
-				} else {
-					db.get(
-						"select * from inventory where id=?",
-						[req.params.inventoryId],
-						function (err, inventory) {
-							if (err) {
-							} else {
-								sqlInsertHistory({
-									owner_table: req.body.table,
-									id: req.body.owner_id,
-									type: "inventory",
-									comment:
-										"->" +
-										inventory.serial +
-										", " +
-										inventory.type +
-										", " +
-										inventory.model,
-								});
-								sqlInsertHistory({
-									owner_table: 2,
-									id: inventory.id,
-									type: "comment",
-									comment: "->" + req.body.historyOwner,
-								});
-							}
-							res.redirect("/inventory/" + req.params.inventoryId);
-						}
-					);
+		db.get(
+			"select inventory.id,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial," +
+				"\tCASE" +
+				"\twhen inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade)" +
+				"\twhen inventory.owner_table=3 then place.name" +
+				"\tEND 'historyPreOwner',owner_id from inventory" +
+				"\tleft join pupil on owner_table=0 AND inventory.owner_id=pupil.id" +
+				"\tleft join place on owner_table=3 AND inventory.owner_id=place.id" +
+				"\twhere inventory.id=?",
+			[req.params.inventoryId],
+			function (err, preOwner) {
+				if (!err && preOwner.owner_id) {
+					sqlInsertHistory({
+						owner_table: preOwner.owner_table,
+						id: preOwner.owner_id,
+						type: "inventory",
+						comment:
+							preOwner.serial +
+							", " +
+							preOwner.type +
+							", " +
+							preOwner.model +
+							"->",
+					});
+					sqlInsertHistory({
+						owner_table: 2,
+						id: preOwner.id,
+						type: "comment",
+						comment: preOwner.historyPreOwner + "->",
+					});
 				}
+				db.run(
+					"UPDATE inventory SET owner_table=?,owner_id=? where id=?",
+					[req.body.table, req.body.owner_id, req.params.inventoryId],
+					function (err, rows) {
+						if (err) {
+							console.log(err.message);
+						} else {
+							db.get(
+								"select * from inventory where id=?",
+								[req.params.inventoryId],
+								function (err, inventory) {
+									if (err) {
+									} else {
+										sqlInsertHistory({
+											owner_table: req.body.table,
+											id: req.body.owner_id,
+											type: "inventory",
+											comment:
+												"->" +
+												inventory.serial +
+												", " +
+												inventory.type +
+												", " +
+												inventory.model,
+										});
+										sqlInsertHistory({
+											owner_table: 2,
+											id: inventory.id,
+											type: "comment",
+											comment: "->" + req.body.historyOwner,
+										});
+									}
+									res.redirect("/inventory/" + req.params.inventoryId);
+								}
+							);
+						}
+					}
+				);
 			}
 		);
 	} else {
@@ -963,6 +995,7 @@ const owner_table_Enum = {
 	1: "locker",
 	2: "inventory",
 	3: "place",
+	4: "teacher",
 };
 function sqlInsertHistory({
 	owner_table,
