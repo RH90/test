@@ -33,6 +33,6 @@ html
 						td!=val.brand
 						td!=val.model
 						td!=val.serial
-						td!=statusInventoryText[val.status]
+						td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventoryColor[val.status]}`)!=statusInventoryText[val.status]
 						td
 							a(href=val.link)!=val.res

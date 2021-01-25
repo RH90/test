@@ -33,5 +33,7 @@ html
 								input(type="hidden",name="owner_id",value=val.owner_id)
 								if table==0
 									input(type="hidden",name="historyOwner",value=`${val.Firstname} ${val.Lastname},${val.Klass}`)
+								if table==3
+									input(type="hidden",name="historyOwner",value=`${val.Name}`)
 								button(type="submit")!="Ge till"
 						

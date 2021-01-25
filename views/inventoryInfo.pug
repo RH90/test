@@ -28,7 +28,8 @@ html
 								td!=row.serial
 							tr
 								td!="Comment"
-								td!=row.comment
+								td
+									textarea(rows="3",cols="40",name="commentInventory")!=row.comment
 							tr
 								td!="Status"
 								td

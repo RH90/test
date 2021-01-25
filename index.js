@@ -158,6 +158,7 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 	var q = [];
 	var search = (req.query.search || "").toLowerCase();
 	if (req.query.table) {
+		var dbCheck = false;
 		if (req.query.table == 0) {
 			query =
 				"select id as owner_id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil" +
@@ -166,18 +167,27 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 				" OR (Klass)=?) order by Klass";
 			q = [search, search, search, search, search, search];
 			cols = ["Firstname", "Lastname", "Klass"];
-		} else if ((req.query.table = 3)) {
+			dbCheck = true;
+		} else if (req.query.table == 3) {
+			query =
+				"select id as owner_id,name as Name,type as Type from place order by Name";
+			q = [];
+			cols = ["Name", "Type"];
+			dbCheck = true;
+		} else if (req.query.table == 4) {
 		}
-		db.all(query, q, function (err, rows) {
-			if (err) console.log(err.message);
-			res.render("inventoryGive", {
-				title: "Give Inventory " + req.params.inventoryId,
-				search: req.query.search || "",
-				table: req.query.table,
-				cols,
-				rows,
+		if (dbCheck)
+			db.all(query, q, function (err, rows) {
+				if (err) console.log(err.message);
+				res.render("inventoryGive", {
+					title: "Give Inventory " + req.params.inventoryId,
+					search: req.query.search || "",
+					table: req.query.table,
+					cols,
+					rows,
+				});
 			});
-		});
+		else res.sendStatus(404);
 	} else {
 		res.sendStatus(404);
 	}
@@ -620,6 +630,24 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 									});
 								}
 							);
+						} else if (owner_table_Enum[row.owner_table] == "place") {
+							db.get(
+								`select * from place where id=?`,
+								[row.owner_id],
+								function (err, place) {
+									res.render("inventoryInfo", {
+										title: "Inventarie,  " + req.params.inventoryId,
+										row,
+										statusSelected,
+										history,
+										historyPost: req.originalUrl,
+										owner: `${place.name}`,
+										link: `/place/${place.id}`,
+										statusInventoryText,
+										statusInventoryColor,
+									});
+								}
+							);
 						} else {
 							res.render("inventoryInfo", {
 								title: "Inventarie,  " + req.params.inventoryId,
@@ -761,6 +789,23 @@ app.post("/inventory/:inventoryId", middleware, (req, res) => {
 			res: res,
 			redirect: "/inventory/" + req.params.inventoryId,
 		});
+	} else if (req.body) {
+		db.run(
+			"update inventory set comment=?,status=? where id=?",
+			[
+				req.body["commentInventory"],
+				req.body["status"],
+				req.params.inventoryId,
+			],
+			function (err) {
+				if (err) {
+					console.log(err);
+					res.sendStatus(404);
+				} else {
+					res.redirect("/inventory/" + req.params.inventoryId);
+				}
+			}
+		);
 	} else {
 		res.sendStatus(404);
 	}
@@ -977,19 +1022,26 @@ app.all("/inventory", middleware, (req, res) => {
 		"\tCase " +
 		"\tWHEN inventory.owner_table=0 THEN\n" +
 		"\t\t'pupil'\n" +
+		"\tWHEN inventory.owner_table=3 THEN\n" +
+		"\t\t'place'\n" +
 		"\tEND owner,\n" +
 		"\tCASE\n" +
 		"\tWHEN inventory.owner_table=0 THEN\n" +
 		"\t\t(firstname||' '||lastname||','||(grade||classP))\n" +
+		"\tWHEN inventory.owner_table=3 THEN\n" +
+		"\t\tname\n" +
 		"\tEND res,\n" +
 		"\tCASE\n" +
 		"\tWHEN inventory.owner_table=0 THEN\n" +
 		"\t\t'/pupil/'||pupil.id\n" +
+		"\tWHEN inventory.owner_table=3 THEN\n" +
+		"\t\t'/place/'||place.id\n" +
 		"\tEND link,\n" +
-		"\ttype,brand,model,status,serial,inventory.id" +
+		"\tinventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id" +
 		" from inventory " +
 		"\tleft JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id\n" +
-		" where (instr(LOWER(serial), ?) > 0 OR instr(LOWER(model), ?) > 0 OR instr(LOWER(type),?) > 0) ";
+		"\tleft JOIN place on owner='place' AND inventory.owner_id=place.id\n" +
+		" where (instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 OR instr(LOWER(inventory.type),?) > 0) ";
 	db.all(query, [search, search, search], function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("inventory", {
