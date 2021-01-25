@@ -24,7 +24,15 @@ function openNav() {
 function closeNav() {
 	document.getElementById("mySidenav").style.display = "none";
 }
-
+function copytable(el) {
+	var urlField = document.querySelector("." + el);
+	if (urlField) {
+		var range = document.createRange();
+		range.selectNode(urlField);
+		window.getSelection().addRange(range);
+		document.execCommand("copy");
+	}
+}
 // function overlayOn(number) {
 //   var container = document.getElementById("container");
 //   document.getElementById("overlay").style.display = "block";
