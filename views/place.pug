@@ -1,0 +1,25 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script(type="text/javascript")
+			include script.js
+		script(type="text/javascript")
+			include sorttable.js
+	body
+		include head.pug
+		div(class="top")
+			div
+				button(onclick="location.href='/place/add'",style="margin-right:10px")!="Lägg till Plats"
+		div(class="tableFixHead")
+			table(class="sortable")
+				thead
+					tr
+						th!="Name"
+						th!="Type"
+				each val in rows
+					tr
+						td
+							a(href="/place/"+val.id)!=val.name
+						td!=val.type

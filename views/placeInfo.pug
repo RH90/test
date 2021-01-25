@@ -1,0 +1,40 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script(type="text/javascript")
+			include script.js
+		script(type="text/javascript")
+			include sorttable.js
+	body
+		include head.pug
+		CENTER
+			div(style="display:inline-block")
+				div(style="display: flex;")
+					form(action="/place/" + row.id,method="POST")
+						table(style="width:auto;margin-right:10px")
+							tr
+								td!="Name"
+								td
+									input(type="text", name="name",value=(row.name))
+							tr
+								td!="Type"
+								td
+									input(type="text", name="type",value=(row.type))
+							tr
+								td
+								td
+									button(type="submit")!="Spara"
+					table(style="width:auto;margin-right:10px")
+						tr
+							td(colspan="2")!="Inventarie"
+						tr
+							td!="Name"
+							td!="Serienummer"
+						each val in inventory
+							tr
+								td
+									a(href="/inventory/"+val.id)!=val.type+", "+val.model
+								td!=val.serial	
+					include historyTable

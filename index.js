@@ -267,8 +267,13 @@ app.get("/pupil/add", middleware, (req, res) => {
 		title: "Lägg till elev",
 	});
 });
+app.get("/place/add", middleware, (req, res) => {
+	res.render("placeadd", {
+		title: "Lägg till Plats",
+	});
+});
 app.get("/inventory/add", middleware, (req, res) => {
-	db.all("select name from type", function (err, rows) {
+	db.all("select name from type order by name", function (err, rows) {
 		res.render("inventoryadd", {
 			title: "Lägg till inventarie",
 			rows,
@@ -364,6 +369,31 @@ app.post("/pupil/add", middleware, (req, res) => {
 						req.body.classP,
 				});
 				res.redirect("/pupil");
+			}
+		);
+	} else {
+		res.sendStatus(404);
+	}
+});
+app.post("/place/add", middleware, (req, res) => {
+	if (!req.body) {
+		res.sendStatus(404);
+	} else if (req.body.name && req.body.type) {
+		db.run(
+			"insert into place(name,type) VALUES (?,?);",
+			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
+			[req.body.name, req.body.type],
+			function (err) {
+				if (err) {
+					console.log(err.message);
+				}
+				sqlInsertHistory({
+					owner_table: -1,
+					id: -1,
+					type: "added",
+					comment: "Plats: " + req.body.name + "," + req.body.type,
+				});
+				res.redirect("/place");
 			}
 		);
 	} else {
@@ -645,6 +675,44 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
 		}
 	);
 });
+app.get("/place/:placeid", middleware, (req, res) => {
+	db.get(
+		"select * from place where id=?",
+		[req.params.placeid],
+		function (err, row) {
+			if (err || !row) {
+				console.log(err);
+				res.sendStatus(404);
+			} else {
+				db.all(
+					"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=3 and owner_id=? ORDER by date DESC",
+					[row.id],
+					function (err, history) {
+						db.all(
+							"select * from inventory where owner_id=? AND owner_table=3",
+							[req.params.placeid],
+							function (err, inventory) {
+								if (history) {
+									console.log("history true");
+								} else {
+									history = {};
+								}
+								//console.log(statusSelected);
+								res.render("placeinfo", {
+									title: row.name,
+									row,
+									history,
+									historyPost: req.originalUrl,
+									inventory,
+								});
+							}
+						);
+					}
+				);
+			}
+		}
+	);
+});
 app.post("/locker/:lockerNumb", middleware, (req, res) => {
 	if (req.body && req.body["keys"]) {
 		db.run(
@@ -730,7 +798,33 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
 		res.sendStatus(404);
 	}
 });
-
+app.post("/place/:placeid", middleware, (req, res) => {
+	if (req.body && req.body["name"]) {
+		db.run(
+			"update place set name=?,type=? where id=?",
+			[req.body["name"], req.body["type"], req.params.placeid],
+			function (err) {
+				if (err) {
+					console.log(err);
+					res.sendStatus(404);
+				} else {
+					res.redirect("/place/" + req.params.placeid);
+				}
+			}
+		);
+	} else if (req.body && req.body["comment"]) {
+		sqlInsertHistory({
+			owner_table: 3,
+			id: req.params.placeid,
+			type: "comment",
+			comment: req.body["comment"],
+			res: res,
+			redirect: "/place/" + req.params.placeid,
+		});
+	} else {
+		res.sendStatus(404);
+	}
+});
 app.all("/pupil", middleware, (req, res) => {
 	var search = "";
 	if (req.body && req.body.search) {
@@ -757,6 +851,16 @@ app.all("/pupil", middleware, (req, res) => {
 		}
 	);
 });
+app.all("/place", middleware, (req, res) => {
+	var query = "select * from place order by name";
+	db.all(query, function (err, rows) {
+		if (err) console.log(err.message);
+		res.render("place", {
+			title: "Platser",
+			rows,
+		});
+	});
+});
 //TODO computer->Inventory
 app.get("/history", middleware, (req, res) => {
 	var query =
@@ -770,6 +874,8 @@ app.get("/history", middleware, (req, res) => {
 		"\t\t'locker'\n" +
 		"\tWHEN history.owner_table=2 THEN\n" +
 		"\t\t'inventory'\n" +
+		"\tWHEN history.owner_table=3 THEN\n" +
+		"\t\t'place'\n" +
 		"\tEND owner,\n" +
 		"\tCASE\n" +
 		"\tWHEN history.owner_table=0 THEN\n" +
@@ -778,6 +884,8 @@ app.get("/history", middleware, (req, res) => {
 		"\t\tlocker.number\n" +
 		"\tWHEN history.owner_table=2 THEN\n" +
 		"\t\tinventory.serial|inventory.id\n" +
+		"\tWHEN history.owner_table=3 THEN\n" +
+		"\t\tplace.name\n" +
 		"\tEND res,\n" +
 		"\tCASE\n" +
 		"\tWHEN history.owner_table=0 THEN\n" +
@@ -786,12 +894,15 @@ app.get("/history", middleware, (req, res) => {
 		"\t\t'/locker/'||locker.number\n" +
 		"\tWHEN history.owner_table=2 THEN\n" +
 		"\t\t'/inventory/'||inventory.id\n" +
+		"\tWHEN history.owner_table=3 THEN\n" +
+		"\t\t'/place/'||place.id\n" +
 		"\tEND link,\n" +
 		"\thistory.type,history.comment,DATETIME(round(date/1000),'unixepoch','localtime') as date\n" +
 		"\tfrom history\n" +
 		"\tleft JOIN pupil on owner='pupil' AND history.owner_id=pupil.id\n" +
 		"\tleft JOIN locker on owner='locker' AND history.owner_id=locker.id\n" +
 		"\tleft JOIN inventory on owner='inventory' AND history.owner_id=inventory.id" +
+		"\tleft JOIN place on owner='place' AND history.owner_id=place.id" +
 		"\tOrder by history.date DESC";
 	db.all(query, function (err, rows) {
 		if (err) console.log(err.message);

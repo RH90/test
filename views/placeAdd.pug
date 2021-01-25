@@ -1,0 +1,28 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script(type="text/javascript")
+			include script.js
+		script(type="text/javascript")
+			include sorttable.js
+	body
+		include head.pug
+		CENTER
+			div(style="display:inline-block")
+				div(style="display: flex;")
+					form(action="/place/add",method="POST")
+						table(style="width:auto;margin-right:10px")
+							tr
+								td!="Name"
+								td
+									input(type="text", name="name",value="")
+							tr
+								td!="Type"
+								td
+									input(type="text", name="type",value="")
+							tr
+								td
+								td
+									button(type="submit")!="Lägg Till"
