@@ -54,5 +54,9 @@ html
 								td!=val.serial	
 					include historyTable
 					table(style="width:auto!important")
-						td
-							button(onclick="removePupil("+row.id+")")!="Radera Elev"
+						if row.inschool==1
+							td
+								button(onclick=`graduate(${row.id})`)!="Gå ur skolan"
+						else
+							td
+								button(onclick=`enroll(${row.id})`)!="Gå i skolan"

@@ -138,7 +138,7 @@ app.get("/", middleware, (req, res) => {
 app.get("/locker/:lockerNumb/give", middleware, (req, res) => {
 	console.log(req.params.lockerNumb);
 	var query =
-		"select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) ORDER BY grade,classP,lastname,firstname ASC";
+		"select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) AND inschool=1 ORDER BY grade,classP,lastname,firstname ASC";
 	db.all(query, function (err, rows) {
 		//console.log(rows);
 		res.render("lockerGive", {
@@ -162,9 +162,9 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 		if (req.query.table == 0) {
 			query =
 				"select id as owner_id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil" +
-				" where (instr(LOWER(Firstname), ?) > 0 OR instr(LOWER(Lastname), ?) > 0 " +
+				" where ((instr(LOWER(Firstname), ?) > 0 OR instr(LOWER(Lastname), ?) > 0 " +
 				" OR (instr(?, LOWER(Firstname)) > 0 AND instr(?, LOWER(Lastname)) > 0) OR ?='' " +
-				" OR (Klass)=?) order by Klass";
+				" OR (Klass)=?)) AND inschool=1 order by Klass";
 			q = [search, search, search, search, search, search];
 			cols = ["Firstname", "Lastname", "Klass"];
 			dbCheck = true;
@@ -410,29 +410,69 @@ app.post("/place/add", middleware, (req, res) => {
 		res.sendStatus(404);
 	}
 });
-app.post("/pupil/remove", middleware, (req, res) => {
-	res.sendStatus(404);
-	// if (req.body.id) {
-	// db.get(
-	//   "Select * from pupil where id=?",
-	//   [req.body.id],
-	//   function (err, row) {
-	//     db.run("DELETE from pupil where id=?", [req.body.id], function (err) {
-	//       if (err) console.log(err);
-	//       res.sendStatus(200);
-	//       sqlInsertHistory(
-	//         -1,
-	//         -1,
-	//         "removed",
-	//         row.firstname + " " + row.lastname + "," + row.grade + row.classP
-	//       );
-	//     });
-	//   }
-	// );
-	// res.sendStatus(200);
-	// } else {
-	//   res.sendStatus(404);
-	// }
+app.post("/pupil/graduate", middleware, (req, res) => {
+	if (req.body.id) {
+		db.run(
+			"UPDATE pupil set inschool=0 where id=?",
+			[req.body.id],
+			function (err) {
+				if (err) console.log(err);
+				res.sendStatus(200);
+				db.get(
+					"select * from pupil where id=?",
+					[req.body.id],
+					function (err, pupil) {
+						sqlInsertHistory({
+							owner_table: -1,
+							id: -1,
+							type: "graduated",
+							comment:
+								pupil.firstname +
+								" " +
+								pupil.lastname +
+								"," +
+								pupil.grade +
+								pupil.classP,
+						});
+					}
+				);
+			}
+		);
+	} else {
+		res.sendStatus(404);
+	}
+});
+app.post("/pupil/enroll", middleware, (req, res) => {
+	if (req.body.id) {
+		db.run(
+			"UPDATE pupil set inschool=1 where id=?",
+			[req.body.id],
+			function (err) {
+				if (err) console.log(err);
+				res.sendStatus(200);
+				db.get(
+					"select * from pupil where id=?",
+					[req.body.id],
+					function (err, pupil) {
+						sqlInsertHistory({
+							owner_table: -1,
+							id: -1,
+							type: "enrolled",
+							comment:
+								pupil.firstname +
+								" " +
+								pupil.lastname +
+								"," +
+								pupil.grade +
+								pupil.classP,
+						});
+					}
+				);
+			}
+		);
+	} else {
+		res.sendStatus(404);
+	}
 });
 //TODO lägg till hårdvara
 app.post("/checkin", middleware, (req, res) => {
@@ -667,7 +707,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 });
 app.get("/pupil/:pupilId", middleware, (req, res) => {
 	db.get(
-		"select pupil.id,firstname,lastname,grade,classP,locker.number,year from pupil left join locker on pupil.id=locker.owner_id where pupil.id=?",
+		"select pupil.id,firstname,lastname,grade,classP,locker.number,year,inschool from pupil left join locker on pupil.id=locker.owner_id where pupil.id=?",
 		[req.params.pupilId],
 		function (err, row) {
 			if (err || !row) {
@@ -875,17 +915,21 @@ app.all("/pupil", middleware, (req, res) => {
 	if (req.body && req.body.search) {
 		search = req.body.search.toLowerCase();
 	}
+	var inschool = 1;
+	if (req.query.inschool == 0) {
+		inschool = 0;
+	}
 	var query =
 		"select " +
 		" * " +
 		" from pupil " +
-		" where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 " +
+		" where ((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 " +
 		" OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
-		" OR (grade||classP)=?) " +
+		" OR (grade||classP)=?)) AND inschool=?" +
 		" ORDER BY grade,classP,lastname,firstname ASC";
 	db.all(
 		query,
-		[search, search, search, search, search, search],
+		[search, search, search, search, search, search, inschool],
 		function (err, rows) {
 			if (err) console.log(err.message);
 			res.render("pupil", {
@@ -987,7 +1031,7 @@ app.all("/locker", middleware, (req, res) => {
 	}
 	var query =
 		"select " +
-		" locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname" +
+		" locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname,inschool" +
 		" from locker " +
 		" left join pupil on pupil.id = locker.owner_id " +
 		" where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR locker.number=?" +

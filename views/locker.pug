@@ -50,7 +50,10 @@ html
 						td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLockerColor[val["status"]])!=statusLockerText[val["status"]]
 						td
 							a(href="/pupil/"+val["owner_id"])!=val["firstname"]
-						td!=val.lastname
+						if val.inschool==1
+							td!=val.lastname
+						else
+							td(style="color:red")!=val.lastname
 						td!=(val.grade+val.classP)||""
 						td
 							if val.firstname

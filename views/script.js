@@ -82,12 +82,28 @@ function clearLocker(owner_id, klass, firstname, lastname, numb, search) {
 		});
 	}
 }
-function removePupil(id) {
+function graduate(id) {
 	if (confirm("Ta bort Elev?")) {
 		let data = {
 			id: id,
 		};
-		fetch("/pupil/remove", {
+		fetch("/pupil/graduate", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		}).then((res) => {
+			window.location.href = "/pupil";
+		});
+	}
+}
+function enroll(id) {
+	if (confirm("Ta med Elev?")) {
+		let data = {
+			id: id,
+		};
+		fetch("/pupil/enroll", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

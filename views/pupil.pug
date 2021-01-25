@@ -11,10 +11,14 @@ html
 		include head.pug
 		div(class="top")
 			div
-				form(style="float:left;margin-right:10px",action="/pupil",method="POST")
+				form(style="float:left;margin-right:10px",action="",method="POST")
 					input(id="inputSearch",type="text",name="search")
 					button(type="submit")!="Search"
 				button(onclick="location.href='/pupil/add'",style="margin-right:10px")!="Lägg till Elev"
+			div
+				button(onclick="location.href='/pupil?inschool=0'",style="float:left;margin-right:10px")!="Graduated"
+			div
+				button(onclick="location.href='/pupil'",style="float:left;margin-right:10px")!="In school"
 			b= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead")
 			table(class="sortable")
