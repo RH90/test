@@ -16,10 +16,6 @@ html
 					button(type="submit")!="Search"
 				button(onclick="location.href='/inventory/add'",style="margin-right:10px")!="Lägg till inventarie"
 			b= rows.length + " Resuslts for: \"" + search + "\""
-			div(style="float: right;margin-left: auto;")
-				form(action="/inventoryAddType",method="POST")
-					input(id="inputSearch",type="text",name="type")
-					button(type="submit")!="Add Type"
 		div(class="tableFixHead")
 			table(class="sortable")
 				thead
@@ -37,6 +33,6 @@ html
 						td!=val.brand
 						td!=val.model
 						td!=val.serial
-						td!=val.status
+						td!=statusInventoryText[val.status]
 						td
 							a(href=val.link)!=val.res

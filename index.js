@@ -327,23 +327,6 @@ app.post("/inventory/add", middleware, (req, res) => {
 		);
 	}
 });
-app.post("/inventoryAddType", middleware, (req, res) => {
-	if (!req.body && !req.body.type) {
-		res.sendStatus(404);
-	} else {
-		db.run(
-			"insert into type(name) VALUES (?);",
-			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
-			[req.body.type.toUpperCase()],
-			function (err) {
-				if (err) {
-					console.log(err.message);
-				}
-				res.redirect("/inventory");
-			}
-		);
-	}
-});
 app.post("/pupil/add", middleware, (req, res) => {
 	if (!req.body) {
 		res.sendStatus(404);
@@ -602,6 +585,8 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 										historyPost: req.originalUrl,
 										owner: `${pupil.firstname} ${pupil.lastname},${pupil.grade}${pupil.classP}`,
 										link: `/pupil/${pupil.id}`,
+										statusInventoryText,
+										statusInventoryColor,
 									});
 								}
 							);
@@ -612,6 +597,8 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 								statusSelected,
 								history,
 								historyPost: req.originalUrl,
+								statusInventoryText,
+								statusInventoryColor,
 							});
 						}
 					}
@@ -898,6 +885,8 @@ app.all("/inventory", middleware, (req, res) => {
 			title: "Inventory",
 			rows,
 			search,
+			statusInventoryText,
+			statusInventoryColor,
 		});
 	});
 });
@@ -988,6 +977,16 @@ const statusLockerColor = {
 	5: "GRAY",
 	6: "LIGHTGRAY",
 	7: "purple",
+};
+const statusInventoryColor = {
+	0: "LIMEGREEN",
+	1: "RED",
+	2: "YELLOW",
+};
+const statusInventoryText = {
+	0: "OK",
+	1: "SÖNDER",
+	2: "REPARERAS",
 };
 const owner_table_Enum = {
 	"-1": "general",
