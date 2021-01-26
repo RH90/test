@@ -9,99 +9,131 @@ html
 			include sorttable.js
 	body(style="display:inline-block",onload=`lockerlayout()`)
 		include head.pug
-		div(class="grid-container")
-			- var cnt=0
-			while cnt<13
-				- var numb = 79+cnt,row= 4+ cnt,col=8
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt=0
-			while cnt<4
-				- var numb = 78-cnt, row= 6 + cnt, col=10
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<6
-				- var numb = 74-cnt, row= 11 + cnt, col=10
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<3
-				- var numb = 65-cnt, row= 17, col=12+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<3
-				- var numb = 49-cnt, row= 17, col=16+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<3
-				- var numb = 42-cnt, row= 17, col=20+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<3
-				- var numb = 68-cnt, row= 20, col=8+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<6
-				- var numb = 62-cnt, row= 20, col=12+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<5
-				- var numb = 56-cnt, row= 20, col=19+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<2
-				- var numb = 51-cnt, row= 20, col=25+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<4
-				- var numb = 46-cnt, row= 20, col=28+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<4
-				- var numb = 39-cnt, row= 20, col=33+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<5
-				- var numb = 35-cnt, row= 20, col=38+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<6
-				- var numb = 243-cnt, row= 20, col=44+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<5
-				- var numb = 5-cnt, row= 20, col=51+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<13
-				- var numb = 18-cnt, row= 3+cnt, col=47
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<3
-				- var numb = 20+cnt, row= 6+cnt, col=45
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<6
-				- var numb = 23+cnt, row= 10+cnt, col=45
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
-			- cnt =0
-			while cnt<2
-				- var numb = 30-cnt, row= 17, col=47+cnt
-				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
-				- cnt++
+		div
+			button(onclick=`location.href='/lockerlayout?tab=1'`)!="Plan 1"
+			button(onclick=`location.href='/lockerlayout?tab=2'`)!="Plan 2"
+			button(onclick=`location.href='/lockerlayout?tab=3'`)!="Plan 3"
+		if tab==1
+			div(class="grid-container")
+				- var cnt=0
+				while cnt<13
+					- var numb = 79+cnt,row= 4+ cnt,col=8
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt=0
+				while cnt<4
+					- var numb = 78-cnt, row= 6 + cnt, col=10
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<6
+					- var numb = 74-cnt, row= 11 + cnt, col=10
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<3
+					- var numb = 65-cnt, row= 17, col=12+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<3
+					- var numb = 49-cnt, row= 17, col=16+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<3
+					- var numb = 42-cnt, row= 17, col=20+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<3
+					- var numb = 68-cnt, row= 20, col=8+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<6
+					- var numb = 62-cnt, row= 20, col=12+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<5
+					- var numb = 56-cnt, row= 20, col=19+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<2
+					- var numb = 51-cnt, row= 20, col=25+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<4
+					- var numb = 46-cnt, row= 20, col=28+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<4
+					- var numb = 39-cnt, row= 20, col=33+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<5
+					- var numb = 35-cnt, row= 20, col=38+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<6
+					- var numb = 243-cnt, row= 20, col=44+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<5
+					- var numb = 5-cnt, row= 20, col=51+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<13
+					- var numb = 18-cnt, row= 3+cnt, col=47
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<3
+					- var numb = 20+cnt, row= 6+cnt, col=45
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<6
+					- var numb = 23+cnt, row= 10+cnt, col=45
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<2
+					- var numb = 30-cnt, row= 17, col=47+cnt
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<13
+					- var numb = 114-cnt, row= 22+cnt, col=4
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<6
+					- var numb = 92+cnt, row= 24+cnt, col=6
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt =0
+				while cnt<4
+					- var numb = 98+cnt, row= 31+cnt, col=6
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+		if tab==2
+			div(class="grid-container")
+				- var cnt=0
+				while cnt<13
+					- var numb = 79+cnt,row= 4+ cnt,col=8
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++
+				- cnt=0
+				while cnt<4
+					- var numb = 78-cnt, row= 6 + cnt, col=10
+					div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+					- cnt++

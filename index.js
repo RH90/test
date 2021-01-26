@@ -1107,10 +1107,15 @@ app.get("/lockerlayout", middleware, (req, res) => {
 			res.end();
 			console.log("lockerlayout get");
 		} else {
+			var tab = 1;
+			if (req.query.tab) {
+				tab = req.query.tab;
+			}
 			res.render("lockerlayout", {
 				title: "Locker layout",
 				rows,
 				statusLockerColor,
+				tab,
 			});
 		}
 	});

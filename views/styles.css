@@ -34,8 +34,14 @@ li {
 .grid-container {
 	display: grid;
 	background: brown;
-	grid-template-columns: repeat(60, 25px);
-	grid-template-rows: repeat(40, 25px);
+	grid-template-columns: repeat(60, 1.65vw);
+	grid-template-rows: repeat(40, 2.5vh);
+}
+.locker-cell {
+	text-shadow: -1px 1px 0 #000, -1px 1px 0 #000;
+	text-align: center;
+	font-size: 80%;
+	font-family: sans-serif;
 }
 .grid-container div {
 	border: 1px solid #000000;
@@ -49,10 +55,6 @@ table {
 	border-bottom: 1px solid #000000;
 }
 
-.locker-cell {
-	text-shadow: -1px 1px 0 #000, -1px 1px 0 #000;
-	text-align: center;
-}
 form {
 	display: table-cell;
 }

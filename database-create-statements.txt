@@ -32,6 +32,24 @@ CREATE TABLE "locker" (
 	"comment"	TEXT DEFAULT ""
 )
 
+CREATE TABLE "place" (
+	"id"	INTEGER UNIQUE,
+	"name"	TEXT UNIQUE,
+	"comment"	TEXT,
+	"accesspoint"	TEXT DEFAULT '',
+	"type"	TEXT DEFAULT '',
+	"casting"	TEXT DEFAULT '',
+	"lamptime"	TEXT DEFAULT '',
+	"projektor"	TEXT DEFAULT '',
+	"projektorContact"	TEXT DEFAULT '',
+	"SpeakerKontakt"	TEXT DEFAULT '',
+	"projektorComment"	TEXT DEFAULT '',
+	"cabelChannel"	TEXT DEFAULT '',
+	"ownerClass"	TEXT DEFAULT '',
+	"planning"	TEXT DEFAULT '',
+	PRIMARY KEY("id" AUTOINCREMENT)
+)
+
 CREATE TABLE "pupil" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"grade"	TEXT DEFAULT "",
@@ -49,6 +67,4 @@ CREATE TABLE "type" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 )
 
-CREATE TABLE users(
-	username TEXT primary key, 
-	password TEXT not null)
+CREATE TABLE users(username TEXT primary key, password TEXT not null)
