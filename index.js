@@ -1102,19 +1102,18 @@ app.all("/inventory", middleware, (req, res) => {
 app.get("/lockerlayout", middleware, (req, res) => {
 	db.all("select * from locker", function (err, rows) {
 		if (err) console.log(err.message);
-		// console.log(
-		//   rows.filter((rows) => {
-		//     return rows.number == 32;
-		//   })
-		// );
-		res.render("lockerlayout", {
-			title: "Locker layout",
-			rows,
-			statusLockerColor,
-		});
+		if (req.query.dataonly) {
+			res.json(rows);
+			res.end();
+			console.log("lockerlayout get");
+		} else {
+			res.render("lockerlayout", {
+				title: "Locker layout",
+				rows,
+				statusLockerColor,
+			});
+		}
 	});
-
-	//res.sendFile(path.join(__dirname + "/login.html"));
 });
 
 app.get("/login", (req, res) => {

@@ -7,19 +7,13 @@ html
 			include script.js
 		script(type="text/javascript")
 			include sorttable.js
-	body(style="display:inline-block")
+	body(style="display:inline-block",onload=`lockerlayout()`)
 		include head.pug
 		div(class="grid-container")
-			- var numb = 79
-			- var status = rows.filter((rows)=>{ return rows.number == numb })[0].status
-			div(style=`background:${statusLockerColor[status]};grid-row:3;grid-column:8`,onclick="location.href='/locker/"+numb+"'")!=numb
-			- numb = 78
-			div(style="background:white;grid-row:4;grid-column:8")!=numb
-			div(style="background:white;grid-row:5;grid-column:8")
-			div(style="background:white;grid-row:6;grid-column:8")
-			div(style="background:white;grid-row:7;grid-column:8")
-			div(style="background:white;grid-row:8;grid-column:8")
-			div(style="background:white;grid-row:9;grid-column:8")
-			div(style="background:white;grid-row:10;grid-column:8")
-			div(style="background:white;grid-row:11;grid-column:8")
-			div(style="background:white;grid-row:12;grid-column:8")
+			- var cnt=0
+			while cnt<=12
+				- var numb = 79+cnt,row= 4+ cnt,col=8
+				div(class="locker-cell",style=`grid-row:${row};grid-column:${col}`,onclick=`location.href='/locker/${numb}'`)!=numb
+				- cnt++
+			
+			
