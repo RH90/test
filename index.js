@@ -1085,8 +1085,10 @@ app.all("/inventory", middleware, (req, res) => {
 		" from inventory " +
 		"\tleft JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id\n" +
 		"\tleft JOIN place on owner='place' AND inventory.owner_id=place.id\n" +
-		" where (instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 OR instr(LOWER(inventory.type),?) > 0) ";
-	db.all(query, [search, search, search], function (err, rows) {
+		" where (instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 " +
+		" OR instr(LOWER(inventory.type),?) > 0) " +
+		" OR instr(LOWER(res),?) > 0";
+	db.all(query, [search, search, search, search], function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("inventory", {
 			title: "Inventory",
