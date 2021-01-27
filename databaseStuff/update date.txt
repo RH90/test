@@ -1,0 +1,3 @@
+UPDATE history set date=((date/10000)-62135596800000)  where date>72633757197603
+
+change origin->owner_table

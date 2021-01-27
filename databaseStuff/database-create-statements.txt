@@ -1,4 +1,4 @@
-CREATE TABLE "history" (
+CREATE TABLE IF NOT EXISTS "history" (
 	"id"	INTEGER,
 	"owner_table"	INTEGER DEFAULT -1,
 	"owner_id"	INTEGER DEFAULT -1,
@@ -6,9 +6,9 @@ CREATE TABLE "history" (
 	"comment"	TEXT,
 	"date"	INTEGER DEFAULT 0,
 	PRIMARY KEY("id" AUTOINCREMENT)
-)
+);
 
-CREATE TABLE "inventory" (
+CREATE TABLE IF NOT EXISTS "inventory" (
 	"id"	INTEGER UNIQUE,
 	"serial"	TEXT UNIQUE,
 	"type"	TEXT DEFAULT '',
@@ -20,9 +20,9 @@ CREATE TABLE "inventory" (
 	"smarwater"	TEXT DEFAULT '',
 	"brand"	TEXT DEFAULT '',
 	PRIMARY KEY("id")
-)
+);
 
-CREATE TABLE "locker" (
+CREATE TABLE IF NOT EXISTS "locker" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"keys"	Integer DEFAULT 0,
 	"number"	INTEGER UNIQUE,
@@ -30,9 +30,9 @@ CREATE TABLE "locker" (
 	"status"	INTEGER DEFAULT 6,
 	"owner_id"	INTEGER UNIQUE,
 	"comment"	TEXT DEFAULT ""
-)
+);
 
-CREATE TABLE "place" (
+CREATE TABLE IF NOT EXISTS "place" (
 	"id"	INTEGER UNIQUE,
 	"name"	TEXT UNIQUE,
 	"comment"	TEXT,
@@ -48,9 +48,9 @@ CREATE TABLE "place" (
 	"ownerClass"	TEXT DEFAULT '',
 	"planning"	TEXT DEFAULT '',
 	PRIMARY KEY("id" AUTOINCREMENT)
-)
+);
 
-CREATE TABLE "pupil" (
+CREATE TABLE IF NOT EXISTS "pupil" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"grade"	TEXT DEFAULT "",
 	"classP"	TEXT DEFAULT "",
@@ -59,12 +59,12 @@ CREATE TABLE "pupil" (
 	"lastname"	TEXT DEFAULT "",
 	"comment"	TEXT DEFAULT "",
 	"inschool"	INTEGER DEFAULT 1
-)
+);
 
-CREATE TABLE "type" (
+CREATE TABLE IF NOT EXISTS "type" (
 	"id"	INTEGER UNIQUE,
 	"name"	TEXT NOT NULL UNIQUE,
 	PRIMARY KEY("id" AUTOINCREMENT)
-)
+);
 
-CREATE TABLE users(username TEXT primary key, password TEXT not null)
+CREATE TABLE IF NOT EXISTS users(username TEXT primary key, password TEXT not null);
