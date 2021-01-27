@@ -16,8 +16,6 @@ var Netmask = require("netmask").Netmask;
 var block = null;
 var localOnly = true;
 
-const saltRounds = 10;
-
 dotenv.config();
 
 const port = 80;
@@ -61,13 +59,6 @@ function getNetwork() {
 	} catch (error) {}
 }
 
-// bcrypt.hash("admin", saltRounds, function (err, hash) {
-//   console.log(hash);
-//   db.run(
-//     "create table IF NOT EXISTS users(username TEXT primary key, password TEXT not null);"
-//   );
-//   db.run("insert into users(username,password) values(?,?)", ["admin", hash]);
-// });
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
