@@ -30,8 +30,14 @@ async function createUser() {
 			db.run(
 				"create table IF NOT EXISTS users(username TEXT primary key, password TEXT not null);"
 			);
-			db.run("insert into users(username,password) values(?,?)", [user, hash]);
-			console.log(`Done!\nUser:${user}\nPass:${pass}`);
+			db.run(
+				"insert into users(username,password) values(?,?)",
+				[user, hash],
+				function (err) {
+					if (err) console.log(err);
+					else console.log(`Done!\nUser:${user}\nPass:${pass}`);
+				}
+			);
 		});
 	} else {
 		console.log("Error input!");
