@@ -1195,11 +1195,13 @@ const statusInventoryColor = {
 	0: "LIMEGREEN",
 	1: "RED",
 	2: "YELLOW",
+	3: "BLUE",
 };
 const statusInventoryText = {
 	0: "OK",
 	1: "SÖNDER",
 	2: "REPARERAS",
+	3: "UTLÅNAD",
 };
 const owner_table_Enum = {
 	"-1": "general",
