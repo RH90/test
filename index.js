@@ -21,7 +21,7 @@ dotenv.config();
 
 const port = 80;
 
-var db = new sqlite3.Database("skåp.db");
+var db = new sqlite3.Database("db/database.db");
 //hej
 // or just '{}', an empty object
 getNetwork();
