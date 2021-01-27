@@ -14,6 +14,7 @@ const { json } = require("body-parser");
 var serverWifiIP = {};
 var Netmask = require("netmask").Netmask;
 var block = null;
+var localOnly = true;
 
 const saltRounds = 10;
 
@@ -76,6 +77,7 @@ app.use(cookieParser());
 
 app.set("view engine", "pug");
 
+console.log("Local only: ", localOnly);
 var middleware = function (req, res, next) {
 	req.setTimeout(10000);
 	var ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
@@ -105,7 +107,13 @@ var middleware = function (req, res, next) {
 	console.log("params: " + JSON.stringify(req.params || {}));
 
 	//console.log("token:" + req.cookies.token);
-	if (!block || !localNetwork) {
+	if (
+		localOnly &&
+		!(found.toLowerCase() == "localhost" || found.toLowerCase() == "127.0.0.1")
+	) {
+		console.log("Localhost only!");
+		res.sendStatus(401);
+	} else if (!block || !localNetwork) {
 		res.sendStatus(404);
 	} else if (req.cookies) {
 		try {

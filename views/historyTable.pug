@@ -12,9 +12,9 @@ center
 		table(class="sortable")
 			thead
 				tr
-					th!="Comment"
-					th!="type"
 					th!="Date"
+					th!="type"
+					th!="Comment"
 			if !history.length
 				tr
 					td
@@ -22,6 +22,6 @@ center
 					td
 			each val in history
 				tr
-					td(style="white-space:pre-wrap")!=val.comment
-					td!=val.type
 					td!=val.date
+					td!=val.type
+					td(style="white-space:pre-wrap")!=val.comment
