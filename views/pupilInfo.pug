@@ -41,17 +41,7 @@ html
 								td
 								td
 									button(type="submit")!="Spara"
-					table(style="width:auto;margin-right:10px")
-						tr
-							td(colspan="2")!="Inventarie"
-						tr
-							td!="Name"
-							td!="Serienummer"
-						each val in inventory
-							tr
-								td
-									a(href="/inventory/"+val.id)!=val.type+", "+val.model
-								td!=val.serial	
+					include inventoryTable	
 					include historyTable
 					table(style="width:auto!important")
 						if row.inschool==1

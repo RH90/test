@@ -618,6 +618,8 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
 							statusSelected,
 							history,
 							historyPost: req.originalUrl,
+							statusInventoryText,
+							statusInventoryColor,
 						});
 					}
 				);
@@ -734,6 +736,8 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
 									history,
 									historyPost: req.originalUrl,
 									inventory,
+									statusInventoryText,
+									statusInventoryColor,
 								});
 							}
 						);
@@ -772,6 +776,8 @@ app.get("/place/:placeid", middleware, (req, res) => {
 									history,
 									historyPost: req.originalUrl,
 									inventory,
+									statusInventoryText,
+									statusInventoryColor,
 								});
 							}
 						);

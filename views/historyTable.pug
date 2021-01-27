@@ -1,6 +1,7 @@
 center
-	div!="Historia"
 	table(style="margin-right:10px;width:auto;max-width:50vw")
+		tr
+			td(colspan="2",style="text-align:center")!="Historia"
 		form(action=historyPost,method="POST")
 				tr
 					td
@@ -14,6 +15,11 @@ center
 					th!="Comment"
 					th!="type"
 					th!="Date"
+			if !history.length
+				tr
+					td
+					td
+					td
 			each val in history
 				tr
 					td(style="white-space:pre-wrap")!=val.comment

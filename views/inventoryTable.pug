@@ -1,0 +1,23 @@
+div
+	div(style="margin-right:10px")
+		table
+			tr
+				td(colspan="3",style="text-align:center")!="Inventarie"
+	div(class="tableFixHead",style="margin-right:10px")
+		table(class="sortable")
+			thead
+				tr
+					th!="Name"
+					th!="Serienummer"
+					th!="Status"
+			if !inventory.length
+				tr
+					td
+					td
+					td
+			each val in inventory
+				tr
+					td
+						a(href="/inventory/"+val.id)!=val.type+", "+val.model
+					td!=val.serial
+					td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventoryColor[val.status]}`)!=statusInventoryText[val.status]
