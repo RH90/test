@@ -1150,7 +1150,7 @@ app.post("/auth", (req, res) => {
 					console.error(err.message);
 					res.sendStatus(404);
 				} else if (!row) {
-					res.sendStatus(401);
+					res.send("Username does not exist!");
 				} else {
 					console.log("Logging in: " + row.username);
 					bcrypt.compare(
@@ -1170,7 +1170,7 @@ app.post("/auth", (req, res) => {
 								res.cookie("token", token);
 								res.redirect("/locker");
 							} else {
-								res.sendStatus(401);
+								res.send("Wrong Password!");
 							}
 							//res.end();
 						}
