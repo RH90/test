@@ -1,6 +1,6 @@
-center
+center(style="margin-right:10px")
 	if(historyPost)
-		table(style="margin-right:10px;width:auto;max-width:50vw")
+		table(style="width:auto;max-width:50vw")
 			tr
 				td(colspan="2",style="text-align:center")!="Historia"
 			form(action=historyPost,method="POST")
@@ -9,7 +9,7 @@ center
 							textarea(rows="3",cols="40",name="comment")
 						td
 							button(type="submit")!="Lägg till commentar"
-	div(class="tableFixHead",style="margin-right:10px")
+	div(class="tableFixHead")
 		table(class="sortable")
 			thead
 				tr
