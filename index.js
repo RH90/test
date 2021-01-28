@@ -615,7 +615,7 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
 								statusSelected[row.status] = true;
 
 								res.render("lockerinfo", {
-									title: "Skåp " + req.params.lockerNumb,
+									title: "Skåp: " + req.params.lockerNumb,
 									lockerNumb: req.params.lockerNumb,
 									row,
 									statusSelected,
@@ -668,7 +668,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 								[row.owner_id],
 								function (err, pupil) {
 									res.render("inventoryInfo", {
-										title: "Inventarie,  " + req.params.inventoryId,
+										title: `Inventarie: ${row.type}, ${row.brand} ${row.model}`,
 										row,
 										statusSelected,
 										history,
@@ -686,7 +686,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 								[row.owner_id],
 								function (err, place) {
 									res.render("inventoryInfo", {
-										title: "Inventarie,  " + req.params.inventoryId,
+										title: `Inventarie: ${row.type}, ${row.brand} ${row.model}`,
 										row,
 										statusSelected,
 										history,
@@ -700,7 +700,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 							);
 						} else {
 							res.render("inventoryInfo", {
-								title: "Inventarie,  " + req.params.inventoryId,
+								title: `Inventarie: ${row.type}, ${row.brand} ${row.model}`,
 								row,
 								statusSelected,
 								history,
@@ -739,7 +739,7 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
 								}
 								//console.log(statusSelected);
 								res.render("pupilInfo", {
-									title: row.firstname + " " + row.lastname,
+									title: "Elev: " + row.firstname + " " + row.lastname,
 									row,
 									history,
 									historyPost: req.originalUrl,
@@ -779,7 +779,7 @@ app.get("/place/:placeid", middleware, (req, res) => {
 								}
 								//console.log(statusSelected);
 								res.render("placeinfo", {
-									title: row.name,
+									title: "Plats: " + row.name,
 									row,
 									history,
 									historyPost: req.originalUrl,

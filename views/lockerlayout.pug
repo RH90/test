@@ -15,6 +15,8 @@ html
 			button(onclick=`location.href='/lockerlayout?tab=3'`)!="Plan 3"
 		if tab==1
 			div(class="grid-container")
+				div(style=`background:white;grid-row:15 /span 3;grid-column:2/span 3;text-align:center;vertical-align:middle`)
+					p!="Källaren"
 				- var cnt=0
 				while cnt<13
 					- var numb = 79+cnt,row= 4+ cnt,col=8
@@ -127,6 +129,8 @@ html
 					- cnt++
 		if tab==2
 			div(class="grid-container")
+				div(style=`background:white;grid-row:15 /span 3;grid-column:2/span 5;text-align:center;vertical-align:middle`)
+					p!="Huvudingång"
 				- var cnt=0
 				- cnt=0
 				while cnt<2
@@ -245,6 +249,8 @@ html
 					- cnt++
 		if tab==3
 			div(class="grid-container")
+				div(style=`background:white;grid-row:2 /span 3;grid-column:23/span 3;text-align:center;vertical-align:middle`)
+					p!="Aulan"
 				- var cnt=0
 				- cnt=0
 				while cnt<21
