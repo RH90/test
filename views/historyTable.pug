@@ -1,13 +1,14 @@
 center
-	table(style="margin-right:10px;width:auto;max-width:50vw")
-		tr
-			td(colspan="2",style="text-align:center")!="Historia"
-		form(action=historyPost,method="POST")
-				tr
-					td
-						textarea(rows="3",cols="40",name="comment")
-					td
-						button(type="submit")!="Lägg till commentar"
+	if(historyPost)
+		table(style="margin-right:10px;width:auto;max-width:50vw")
+			tr
+				td(colspan="2",style="text-align:center")!="Historia"
+			form(action=historyPost,method="POST")
+					tr
+						td
+							textarea(rows="3",cols="40",name="comment")
+						td
+							button(type="submit")!="Lägg till commentar"
 	div(class="tableFixHead",style="margin-right:10px")
 		table(class="sortable")
 			thead

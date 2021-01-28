@@ -198,7 +198,7 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 		db.get(
 			"select inventory.id,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial," +
 				"\tCASE" +
-				"\twhen inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade)" +
+				"\twhen inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade||pupil.classP)" +
 				"\twhen inventory.owner_table=3 then place.name" +
 				"\tEND 'historyPreOwner',owner_id from inventory" +
 				"\tleft join pupil on owner_table=0 AND inventory.owner_id=pupil.id" +
@@ -591,35 +591,44 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
 					"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=1 and owner_id=? ORDER by date DESC",
 					[row.id],
 					function (err, history) {
-						if (history) {
-							console.log("history true");
-						} else {
-							history = {};
-						}
-						var statusSelected = {
-							0: false,
-							1: false,
-							2: false,
-							3: false,
-							4: false,
-							5: false,
-							6: false,
-							7: false,
-							8: false,
-						};
+						db.all(
+							"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
+							[row.owner_id],
+							function (err, historyPupil) {
+								if (history) {
+									console.log("history true");
+								} else {
+									history = {};
+								}
+								var statusSelected = {
+									0: false,
+									1: false,
+									2: false,
+									3: false,
+									4: false,
+									5: false,
+									6: false,
+									7: false,
+									8: false,
+								};
 
-						statusSelected[row.status] = true;
+								statusSelected[row.status] = true;
 
-						res.render("lockerinfo", {
-							title: "Skåp " + req.params.lockerNumb,
-							lockerNumb: req.params.lockerNumb,
-							row,
-							statusSelected,
-							history,
-							historyPost: req.originalUrl,
-							statusInventoryText,
-							statusInventoryColor,
-						});
+								res.render("lockerinfo", {
+									title: "Skåp " + req.params.lockerNumb,
+									lockerNumb: req.params.lockerNumb,
+									row,
+									statusSelected,
+									history,
+									historyPupil,
+									historyPost: req.originalUrl,
+									statusInventoryText,
+									statusInventoryColor,
+									statusLockerColor,
+									statusLockerText,
+								});
+							}
+						);
 					}
 				);
 			}

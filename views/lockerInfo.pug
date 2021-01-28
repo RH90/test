@@ -25,14 +25,10 @@ html
 								td!="Status"
 								td
 									select(name="status")
-										option(value="0",selected=statusSelected[0])!="Elev har skåp"
-										option(value="1",selected=statusSelected[1])!="Låst av skolan"
-										option(value="2",selected=statusSelected[2])!="Elev med eget lås"
-										option(value="3",selected=statusSelected[3])!="Skåp repareras"
-										option(value="4",selected=statusSelected[4])!="Multilås"
-										option(value="5",selected=statusSelected[5])!="Elev Med d. skåp"
-										option(value="6",selected=statusSelected[6])!="Andvänds ej"
-										option(value="7",selected=statusSelected[7])!="Utan nyckel elev innehåll"
+										- var cnt=0
+										each val in statusLockerText
+											option(selected=statusSelected[cnt],value=`${cnt}`,style=`font-weight:bold;background: ${statusLockerColor[cnt]}`)!=statusLockerText[cnt]
+											-cnt++
 							tr
 								td!="Plan"
 								td!=row.floor
@@ -45,3 +41,10 @@ html
 								td
 									button(type="submit")!="Spara"
 					include historyTable
+					- history=historyPupil
+					- historyPost=null
+					div
+						table(style="margin-right:10px;width:100%;max-width:50vw")
+							tr
+								td(colspan="2",style="text-align:center")!="Historia Elev"
+						include historyTable
