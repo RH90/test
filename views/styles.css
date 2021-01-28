@@ -33,9 +33,9 @@ li {
 
 .grid-container {
 	display: grid;
-	background: brown;
-	grid-template-columns: repeat(60, 1.65vw);
-	grid-template-rows: repeat(40, 2.5vh);
+	background: darkslateblue;
+	grid-template-columns: repeat(60, 1.645vw);
+	grid-template-rows: repeat(35, 2.5vh);
 }
 .locker-cell {
 	text-shadow: -1px 1px 0 #000, -1px 1px 0 #000;

@@ -1126,7 +1126,7 @@ app.get("/lockerlayout", middleware, (req, res) => {
 				tab = req.query.tab;
 			}
 			res.render("lockerlayout", {
-				title: "Locker layout",
+				title: `Skåp layout: ${tab * 100} Plan`,
 				rows,
 				statusLockerColor,
 				tab,
