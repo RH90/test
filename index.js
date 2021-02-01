@@ -1210,12 +1210,14 @@ const statusInventoryColor = {
 	1: "RED",
 	2: "YELLOW",
 	3: "BLUE",
+	4: "PURPLE",
 };
 const statusInventoryText = {
 	0: "OK",
 	1: "SÖNDER",
 	2: "REPARERAS",
 	3: "UTLÅNAD",
+	4: "VÄNTAR PÅ RESERVDEL",
 };
 const owner_table_Enum = {
 	"-1": "general",
