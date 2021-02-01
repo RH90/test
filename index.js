@@ -1108,7 +1108,7 @@ app.get("/lockerlayout", middleware, (req, res) => {
 	db.all("select * from locker", function (err, rows) {
 		if (err) console.log(err.message);
 		if (req.query.dataonly) {
-			res.json(rows);
+			res.json({ rows, statusLocker });
 			res.end();
 			console.log("lockerlayout get");
 		} else {

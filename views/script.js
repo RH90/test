@@ -64,14 +64,14 @@ function lockerlayout() {
 			"Content-Type": "application/json",
 		},
 	}).then((res) => {
-		res.json().then((rows) => {
-			console.log(rows);
+		res.json().then((output) => {
+			const rows = output.rows;
 			var cells = document.querySelectorAll(".locker-cell");
 			for (let i = 0; i < cells.length; i++) {
 				var locker = rows.filter((rows) => {
 					return rows.number == cells[i].innerText;
 				})[0];
-				cells[i].style.background = statusLockerColor[locker.status];
+				cells[i].style.background = output.statusLocker[locker.status].color;
 
 				if (locker.keys > 2) {
 					cells[i].style.color = "blue";
@@ -84,16 +84,6 @@ function lockerlayout() {
 		});
 	});
 }
-const statusLockerColor = {
-	0: "LIMEGREEN",
-	1: "PINK",
-	2: "YELLOW",
-	3: "ORANGE",
-	4: "BLUE",
-	5: "GRAY",
-	6: "LIGHTGRAY",
-	7: "purple",
-};
 function geUt(locker, pupil) {
 	console.log("locker: " + locker + ", pupil: " + pupil);
 }
