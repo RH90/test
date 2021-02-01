@@ -20,4 +20,4 @@ div
 					td
 						a(href="/inventory/"+val.id)!=val.type+", "+val.model
 					td!=val.serial
-					td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventoryColor[val.status]}`)!=statusInventoryText[val.status]
+					td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text

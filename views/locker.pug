@@ -20,8 +20,8 @@ html
 				select(name="status")
 					option(value="-1")!="Status"
 					- var cnt=0
-					each val in statusLockerText
-						option(value=`${cnt}`,style=`font-weight:bold;background: ${statusLockerColor[cnt]}`)!=statusLockerText[cnt]
+					each val in statusLocker
+						option(value=`${cnt}`,style=`font-weight:bold;background: ${statusLocker[cnt].color}`)!=statusLocker[cnt].text
 						-cnt++
 				button(id="buttonSearch",type="submit")!="Search"
 			b= rows.length + " Resuslts for: \"" + search + "\""
@@ -43,7 +43,7 @@ html
 							a(href="/locker/"+val["number"])!=val["number"]
 						td!=val.floor
 						td!=val.keys
-						td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLockerColor[val["status"]])!=statusLockerText[val["status"]]
+						td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLocker[val["status"]].color)!=statusLocker[val["status"]].text
 						td
 							a(href="/pupil/"+val["owner_id"])!=val["firstname"]
 						if val.inschool==1

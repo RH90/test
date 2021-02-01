@@ -622,10 +622,8 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
 									history,
 									historyPupil,
 									historyPost: req.originalUrl,
-									statusInventoryText,
-									statusInventoryColor,
-									statusLockerColor,
-									statusLockerText,
+									statusInventory,
+									statusLocker,
 								});
 							}
 						);
@@ -675,8 +673,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 										historyPost: req.originalUrl,
 										owner: `${pupil.firstname} ${pupil.lastname},${pupil.grade}${pupil.classP}`,
 										link: `/pupil/${pupil.id}`,
-										statusInventoryText,
-										statusInventoryColor,
+										statusInventory,
 									});
 								}
 							);
@@ -693,8 +690,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 										historyPost: req.originalUrl,
 										owner: `${place.name}`,
 										link: `/place/${place.id}`,
-										statusInventoryText,
-										statusInventoryColor,
+										statusInventory,
 									});
 								}
 							);
@@ -705,8 +701,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 								statusSelected,
 								history,
 								historyPost: req.originalUrl,
-								statusInventoryText,
-								statusInventoryColor,
+								statusInventory,
 							});
 						}
 					}
@@ -744,8 +739,7 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
 									history,
 									historyPost: req.originalUrl,
 									inventory,
-									statusInventoryText,
-									statusInventoryColor,
+									statusInventory,
 								});
 							}
 						);
@@ -784,8 +778,7 @@ app.get("/place/:placeid", middleware, (req, res) => {
 									history,
 									historyPost: req.originalUrl,
 									inventory,
-									statusInventoryText,
-									statusInventoryColor,
+									statusInventory,
 								});
 							}
 						);
@@ -1064,8 +1057,7 @@ app.all("/locker", middleware, (req, res) => {
 				search,
 				planValue,
 				statusValue,
-				statusLockerText,
-				statusLockerColor,
+				statusLocker,
 			});
 		}
 	);
@@ -1108,8 +1100,7 @@ app.all("/inventory", middleware, (req, res) => {
 			title: "Inventory",
 			rows,
 			search,
-			statusInventoryText,
-			statusInventoryColor,
+			statusInventory,
 		});
 	});
 });
@@ -1128,7 +1119,7 @@ app.get("/lockerlayout", middleware, (req, res) => {
 			res.render("lockerlayout", {
 				title: `Skåp layout: ${tab * 100} Plan`,
 				rows,
-				statusLockerColor,
+				statusLocker,
 				tab,
 			});
 		}
@@ -1185,40 +1176,24 @@ app.listen(port, () => {
 	console.log(`Server started: http://localhost:${port}`);
 });
 
-const statusLockerText = {
-	0: "ELEVE HAR SLÅPET",
-	1: "LÅST AV SKOLAN",
-	2: "ELEV MED EGET LÅS",
-	3: "SKÅPET REPARERAS",
-	4: "LÅST M. MULTILÅS",
-	5: "ELEV MED DED. SKÅP",
-	6: "ANVÄNDS EJ",
-	7: "UTAN NYCKEL ELEVINNEHÅLL",
+const statusLocker = {
+	0: { text: "ELEVE HAR SLÅPET", color: "LIMEGREEN" },
+	1: { text: "LÅST AV SKOLAN", color: "PINK" },
+	2: { text: "ELEV MED EGET LÅS", color: "YELLOW" },
+	3: { text: "SKÅPET REPARERAS", color: "ORANGE" },
+	4: { text: "LÅST M. MULTILÅS", color: "BLUE" },
+	5: { text: "ELEV MED DED. SKÅP", color: "GRAY" },
+	6: { text: "ANVÄNDS EJ", color: "LIGHTGRAY" },
+	7: { text: "UTAN NYCKEL ELEVINNEHÅLL", color: "purple" },
 };
-const statusLockerColor = {
-	0: "LIMEGREEN",
-	1: "PINK",
-	2: "YELLOW",
-	3: "ORANGE",
-	4: "BLUE",
-	5: "GRAY",
-	6: "LIGHTGRAY",
-	7: "purple",
+const statusInventory = {
+	0: { text: "OK", color: "LIMEGREEN" },
+	1: { text: "SÖNDER", color: "RED" },
+	2: { text: "REPARERAS", color: "YELLOW" },
+	3: { text: "UTLÅNAD", color: "BLUE" },
+	4: { text: "VÄNTAR PÅ RESERVDEL", color: "PURPLE" },
 };
-const statusInventoryColor = {
-	0: "LIMEGREEN",
-	1: "RED",
-	2: "YELLOW",
-	3: "BLUE",
-	4: "PURPLE",
-};
-const statusInventoryText = {
-	0: "OK",
-	1: "SÖNDER",
-	2: "REPARERAS",
-	3: "UTLÅNAD",
-	4: "VÄNTAR PÅ RESERVDEL",
-};
+
 const owner_table_Enum = {
 	"-1": "general",
 	0: "pupil",

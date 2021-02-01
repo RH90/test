@@ -35,8 +35,8 @@ html
 								td
 									select(name="status")
 										- var cnt=0
-										each val in statusInventoryText
-											option(value=`${cnt}`,selected=statusSelected[cnt])!=statusInventoryText[cnt]
+										each val in statusInventory
+											option(value=`${cnt}`,selected=statusSelected[cnt])!=statusInventory[cnt].text
 											- cnt++
 							tr
 								td!="Owner"

@@ -26,8 +26,8 @@ html
 								td
 									select(name="status")
 										- var cnt=0
-										each val in statusLockerText
-											option(selected=statusSelected[cnt],value=`${cnt}`,style=`font-weight:bold;background: ${statusLockerColor[cnt]}`)!=statusLockerText[cnt]
+										each val in statusLocker
+											option(selected=statusSelected[cnt],value=`${cnt}`,style=`font-weight:bold;background: ${statusLocker[cnt].color}`)!=statusLocker[cnt].text
 											-cnt++
 							tr
 								td!="Plan"
