@@ -1,41 +1,19 @@
-// setTimeout(function f() {
-//   alert("test");
-// }, 1000);
-
-// var username = prompt("Enter Username", "Username");
-// var password = prompt("Enter Password", "Password");
-
-// const parseCookie = (str) =>
-//   str
-//     .split(";")
-//     .map((v) => v.split("="))
-//     .reduce((acc, v) => {
-//       acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-//       return acc;
-//     }, {});
-// console.log(parseCookie(document.cookie).token);
 function downloadCSV(csv, filename) {
 	var csvFile;
 	var downloadLink;
 
 	// CSV file
 	csvFile = new Blob([csv], { type: "text/csv" });
-
 	// Download link
 	downloadLink = document.createElement("a");
-
 	// File name
 	downloadLink.download = filename;
-
 	// Create a link to the file
 	downloadLink.href = window.URL.createObjectURL(csvFile);
-
 	// Hide download link
 	downloadLink.style.display = "none";
-
 	// Add the link to DOM
 	document.body.appendChild(downloadLink);
-
 	// Click download link
 	downloadLink.click();
 }
@@ -103,24 +81,6 @@ function copytable(el) {
 		document.execCommand("copy");
 	}
 }
-// function overlayOn(number) {
-//   var container = document.getElementById("container");
-//   document.getElementById("overlay").style.display = "block";
-//   fetch("/skap/" + number + "/geut", {
-//     method: "GET",
-//   }).then((res) => {
-//     res.text().then(function (data) {
-//       container.innerHTML = data;
-//     });
-//     console.log("Request complete! response:", res);
-//   });
-// }
-
-// function overlayOff() {
-//   var container = document.getElementById("container");
-//   container.innerHTML = "";
-//   document.getElementById("overlay").style.display = "none";
-// }
 
 function clearLocker(owner_id, klass, firstname, lastname, numb, search) {
 	if (

@@ -14,7 +14,7 @@ const { json } = require("body-parser");
 var serverWifiIP = {};
 var Netmask = require("netmask").Netmask;
 var block = null;
-var localOnly = true;
+var localOnly = false;
 
 dotenv.config();
 
