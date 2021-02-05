@@ -5,7 +5,10 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
-		"create": "node createdb.js && node createdotenv.js && node createuser.js",
+		"createuser": "node -e \"require('./scripts').createuser()\"",
+		"changepass": "node -e \"require('./scripts').changepass()\"",
+		"createdotenv": "node -e \"require('./scripts').createdotenv()\"",
+		"createdb": "node -e \"require('./scripts').createdb()\"",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "",
