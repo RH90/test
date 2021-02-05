@@ -9,6 +9,7 @@
 		"changepass": "node -e \"require('./scripts').changepass()\"",
 		"createdotenv": "node -e \"require('./scripts').createdotenv()\"",
 		"createdb": "node -e \"require('./scripts').createdb()\"",
+		"removeuser": "node -e \"require('./scripts').removeuser()\"",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "",

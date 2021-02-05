@@ -159,6 +159,21 @@ async function createUser() {
 		console.log("Error input!");
 	}
 }
+
+async function removeUser() {
+	console.log("Remove user");
+	var user = await askQuestion("Username: ");
+	user = user.trim();
+	var db = new sqlite3.Database("db/database.db");
+	db.run("Delete from users where username=?", [user], function (err) {
+		if (err) console.log(err);
+		else console.log(`Done!\nUser:${user} Removed!`);
+	});
+}
+module.exports.removeuser = function () {
+	removeUser();
+};
+
 module.exports.createuser = function () {
 	createUser();
 };
