@@ -77,7 +77,7 @@ var middleware = function (req, res, next) {
 	var found = ip.match(regex);
 	if (ip.includes("::1")) {
 		found = "localhost";
-	} else if (found.length > 0) {
+	} else if (found && found.length > 0) {
 		found = found[0];
 	}
 	console.log("\n===Middleware===");

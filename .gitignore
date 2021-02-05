@@ -3,3 +3,4 @@
 /node_modules/
 db/database.db
 db/.tmp.drivedownload
+db/backup
