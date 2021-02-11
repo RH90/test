@@ -1024,18 +1024,30 @@ app.all("/locker", middleware, (req, res) => {
 		planValue = req.query.plan;
 		statusValue = req.query.status;
 	}
-
-	if (planValue && planValue != "undefined" && planValue != -1) {
+	planValue = parseInt(planValue);
+	statusValue = parseInt(statusValue);
+	if (
+		planValue &&
+		Number.isInteger(planValue) &&
+		planValue != "undefined" &&
+		planValue != -1
+	) {
 		plan = " and floor=" + planValue;
 	} else {
 		planValue = -1;
 	}
 
-	if (statusValue && statusValue != "undefined" && statusValue != -1) {
+	if (
+		statusValue &&
+		Number.isInteger(statusValue) &&
+		statusValue != "undefined" &&
+		statusValue != -1
+	) {
 		status = " and status=" + statusValue;
 	} else {
 		statusValue = -1;
 	}
+
 	var query =
 		"select " +
 		" locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname,inschool" +
