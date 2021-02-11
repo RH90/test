@@ -1184,7 +1184,7 @@ const statusLocker = {
 	4: { text: "LÅST M. MULTILÅS", color: "BLUE" },
 	5: { text: "ELEV MED DED. SKÅP", color: "GRAY" },
 	6: { text: "ANVÄNDS EJ", color: "LIGHTGRAY" },
-	7: { text: "UTAN NYCKEL ELEVINNEHÅLL", color: "purple" },
+	7: { text: "UTAN NYCKEL ELEVINNEHÅLL", color: "PURPLE" },
 };
 const statusInventory = {
 	0: { text: "OK", color: "LIMEGREEN" },
@@ -1192,6 +1192,7 @@ const statusInventory = {
 	2: { text: "REPARERAS", color: "YELLOW" },
 	3: { text: "UTLÅNAD", color: "BLUE" },
 	4: { text: "VÄNTAR PÅ RESERVDEL", color: "PURPLE" },
+	5: { text: "LÅST", color: "ORANGE" },
 };
 
 const owner_table_Enum = {
