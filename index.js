@@ -52,7 +52,7 @@ function getNetwork() {
 			console.log(
 				"Current local ip: http://" +
 					serverWifiIP.address +
-					":3333, mask: " +
+					`:${port}, mask: ` +
 					serverWifiIP.netmask
 			);
 		}
@@ -923,17 +923,24 @@ app.all("/pupil", middleware, (req, res) => {
 		search = req.body.search.toLowerCase();
 	}
 	var inschool = 1;
+	var nolocketStr = "";
 	if (req.query.inschool == 0) {
 		inschool = 0;
 	}
+	if (req.query.nolocker == 1) {
+		nolocketStr = " AND owner_id is NULL ";
+	}
 	var query =
 		"select " +
-		" * " +
+		" pupil.id,firstname,lastname,classP,grade,year,owner_id" +
 		" from pupil " +
-		" where ((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 " +
+		" left join locker on locker.owner_id=pupil.id" +
+		" where (((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 " +
 		" OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
-		" OR (grade||classP)=?)) AND inschool=?" +
+		" OR (grade||classP)=?)) AND inschool=?)" +
+		nolocketStr +
 		" ORDER BY grade,classP,lastname,firstname ASC";
+
 	db.all(
 		query,
 		[search, search, search, search, search, search, inschool],
