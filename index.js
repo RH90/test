@@ -1047,22 +1047,53 @@ app.all("/locker", middleware, (req, res) => {
 	} else {
 		statusValue = -1;
 	}
-
+	var queryTmp =
+		"\tSELECT *,substr(group_concat(Ldate||': '||Lhistory,x'0a'),0,150) as locker_history\n" +
+		"\tFROM\n" +
+		"\t(\n" +
+		"\t\tSELECT *,history.comment as Lhistory,DATE(round(history.date/1000),'unixepoch','localtime') as Ldate\n" +
+		"\t\tFROM\n" +
+		"\t\t(\n" +
+		"\t\t\tselect *,substr(group_concat(Pdate||': '||Phistory,x'0a'),0,150) as pupil_history\n" +
+		"\t\t\tFROM\n" +
+		"\t\t\t(\n" +
+		"\t\t\t\tselect locker.id as locker_id,keys,floor,locker.status,number,locker.owner_id as locker_owner_id,grade,pupil.year,classP,firstname,lastname,inschool,\n" +
+		"\t\t\t\thistory.comment as Phistory,DATE(round(history.date/1000),'unixepoch','localtime') as Pdate\n" +
+		"\t\t\t\tfrom locker\n" +
+		"\t\t\t\tleft join pupil on pupil.id = locker.owner_id\n" +
+		"\t\t\t\tleft join history on pupil.id = history.owner_id AND history.owner_table=0\n" +
+		"\t\t\t\tORDER by history.date DESC\n" +
+		"\t\t\t)\n" +
+		"\t\t\tGROUP by locker_id\n" +
+		"\t\t)\n" +
+		"\t\tleft join history on locker_id = history.owner_id AND history.owner_table=1\n" +
+		"\t\tORDER by history.date DESC\n" +
+		"\t)\n" +
+		" where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR number=?" +
+		" OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
+		" OR (grade||classP)=?) " +
+		plan +
+		status +
+		"\tGROUP by locker_id" +
+		" ORDER BY grade,classP,lastname,firstname,status ASC";
 	var query =
 		"select " +
 		" locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname,inschool" +
 		" from locker " +
 		" left join pupil on pupil.id = locker.owner_id " +
-		" where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR locker.number=?" +
+		" where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR number=?" +
 		" OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
 		" OR (grade||classP)=?) " +
 		plan +
 		status +
 		" ORDER BY grade,classP,lastname,firstname,status ASC";
 	db.all(
-		query,
+		queryTmp,
 		[search, search, search, search, search, search, search],
 		function (err, rows) {
+			if (err) {
+				console.log(err);
+			}
 			res.render("locker", {
 				title: "Skåp",
 				rows,

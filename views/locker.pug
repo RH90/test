@@ -36,6 +36,8 @@ html
 						th!="Förnamn"
 						th!="Efternamn"
 						th!="Klass"
+						th!="Komment Skåp"
+						th!="Komment Elev"
 						th!="Ge/Ta bort"
 				each val in rows
 					tr
@@ -45,12 +47,14 @@ html
 						td!=val.keys
 						td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLocker[val["status"]].color)!=statusLocker[val["status"]].text
 						td
-							a(href="/pupil/"+val["owner_id"])!=val["firstname"]
+							a(href="/pupil/"+val["locker_owner_id"])!=val["firstname"]
 						if val.inschool==1
 							td!=val.lastname
 						else
 							td(style="color:red")!=val.lastname
 						td!=(val.grade+val.classP)||""
+						td!=(val.locker_history)||""
+						td!=(val.pupil_history)||""
 						td
 							if val.firstname
 								button(onclick="clearLocker('"+val["owner_id"]+"','"+(val.grade+val.classP)+"','"+val.firstname+"','"+val.lastname+"',"+val["number"]+",\""+search+"\")")!="Ta bort"
