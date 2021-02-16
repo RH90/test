@@ -1054,6 +1054,30 @@ app.all("/locker", middleware, (req, res) => {
 	} else {
 		statusValue = -1;
 	}
+	var planSelected = {
+		"-1": false,
+		1: false,
+		2: false,
+		3: false,
+	};
+
+	planSelected[planValue] = true;
+
+	var statusSelected = {
+		"-1": false,
+		0: false,
+		1: false,
+		2: false,
+		3: false,
+		4: false,
+		5: false,
+		6: false,
+		7: false,
+		8: false,
+	};
+
+	statusSelected[statusValue] = true;
+
 	var queryTmp =
 		"\tSELECT *,substr(group_concat(Ldate||': '||Lhistory,x'0a'),0,150) as locker_history\n" +
 		"\tFROM\n" +
@@ -1106,8 +1130,10 @@ app.all("/locker", middleware, (req, res) => {
 				rows,
 				search,
 				planValue,
+				planSelected,
 				statusValue,
 				statusLocker,
+				statusSelected,
 			});
 		}
 	);
