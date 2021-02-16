@@ -85,7 +85,14 @@ function copytable(el) {
 function clearLocker(owner_id, klass, firstname, lastname, numb, search) {
 	if (
 		confirm(
-			"Ta bort " + firstname + " " + lastname + " från skåp " + numb + "?"
+			"Ta bort " +
+				firstname +
+				" " +
+				lastname +
+				" från skåp " +
+				numb +
+				"? id:" +
+				owner_id
 		)
 	) {
 		console.log("numb");

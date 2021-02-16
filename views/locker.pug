@@ -11,17 +11,17 @@ html
 		include head.pug
 		div(class="top")
 			form(action="/locker",method="POST",style="margin-right:5px")
-				input(id="inputSearch",type="text",name="search")
+				input(id="inputSearch",type="text",name="search",value=search)
 				select(name="plan")
-					option(value="-1")!="Plan"
-					option(value="1")!="Plan 1"
-					option(value="2")!="Plan 2"
-					option(value="3")!="Plan 3"
+					option(value="-1",selected=planSelected["-1"])!="Plan"
+					option(value="1",selected=planSelected[1])!="Plan 1"
+					option(value="2",selected=planSelected[2])!="Plan 2"
+					option(value="3",selected=planSelected[3])!="Plan 3"
 				select(name="status")
-					option(value="-1")!="Status"
+					option(value="-1",selected=statusSelected["-1"])!="Status"
 					- var cnt=0
 					each val in statusLocker
-						option(value=`${cnt}`,style=`font-weight:bold;background: ${statusLocker[cnt].color}`)!=statusLocker[cnt].text
+						option(value=`${cnt}`,style=`font-weight:bold;background: ${statusLocker[cnt].color}`,selected=statusSelected[cnt])!=statusLocker[cnt].text
 						-cnt++
 				button(id="buttonSearch",type="submit")!="Search"
 			b= rows.length + " Resuslts for: \"" + search + "\""
@@ -57,6 +57,6 @@ html
 						td!=(val.pupil_history)||""
 						td
 							if val.firstname
-								button(onclick="clearLocker('"+val["owner_id"]+"','"+(val.grade+val.classP)+"','"+val.firstname+"','"+val.lastname+"',"+val["number"]+",\""+search+"\")")!="Ta bort"
+								button(onclick="clearLocker('"+val["locker_owner_id"]+"','"+(val.grade+val.classP)+"','"+val.firstname+"','"+val.lastname+"',"+val["number"]+",\""+search+"\")")!="Ta bort"
 							else
 								button(onclick="location.href='/locker/"+val["number"]+"/give?search="+search+"&plan="+planValue+"&status="+statusValue+"'")!="Ge bort"
