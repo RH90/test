@@ -1,8 +1,13 @@
 import sqlite3
 
-conn = sqlite3.connect('database.db')
-file1 = open('diff.txt', 'r', encoding='utf8')
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+conn = sqlite3.connect(os.path.join( dir_path,'database.db'))
+
+file1 = open(os.path.join( dir_path,'diff.txt'), 'r', encoding='utf8')
 Lines = file1.readlines()
+
 index=0
 for line in Lines:
 	line = line.replace("\n","")
