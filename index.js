@@ -1045,10 +1045,9 @@ app.all("/locker", middleware, (req, res) => {
 	}
 
 	if (
-		statusValue &&
+		statusValue > -1 &&
 		Number.isInteger(statusValue) &&
-		statusValue != "undefined" &&
-		statusValue != -1
+		statusValue != "undefined"
 	) {
 		status = " and status=" + statusValue;
 	} else {
@@ -1060,7 +1059,7 @@ app.all("/locker", middleware, (req, res) => {
 		2: false,
 		3: false,
 	};
-
+	console.log(status);
 	planSelected[planValue] = true;
 
 	var statusSelected = {
@@ -1106,7 +1105,7 @@ app.all("/locker", middleware, (req, res) => {
 		plan +
 		status +
 		"\tGROUP by locker_id" +
-		" ORDER BY grade,classP,lastname,firstname,status ASC";
+		" ORDER BY grade,classP,lastname,firstname,status";
 	var query =
 		"select " +
 		" locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname,inschool" +
@@ -1117,7 +1116,7 @@ app.all("/locker", middleware, (req, res) => {
 		" OR (grade||classP)=?) " +
 		plan +
 		status +
-		" ORDER BY grade,classP,lastname,firstname,status ASC";
+		" ORDER BY grade,classP,lastname,firstname,status";
 	db.all(
 		queryTmp,
 		[search, search, search, search, search, search, search],
