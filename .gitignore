@@ -4,3 +4,4 @@
 db/database.db
 db/.tmp.drivedownload
 db/backup
+db/diff.txt
