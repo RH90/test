@@ -286,6 +286,7 @@ app.get("/inventory/add", middleware, (req, res) => {
 		res.render("inventoryadd", {
 			title: "Lägg till inventarie",
 			rows,
+			statusInventory,
 		});
 	});
 });
@@ -303,13 +304,14 @@ app.post("/inventory/add", middleware, (req, res) => {
 			function (err) {}
 		);
 		db.run(
-			"insert into inventory(serial,type,brand,model,comment) VALUES (?,?,?,?,?);",
+			"insert into inventory(serial,type,brand,model,status,comment) VALUES (?,?,?,?,?,?);",
 			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
 			[
 				req.body.serial,
 				req.body.type.toUpperCase(),
 				req.body.brand,
 				req.body.model,
+				req.body.status,
 				req.body.comment,
 			],
 			function (err) {

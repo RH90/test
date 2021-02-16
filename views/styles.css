@@ -1,9 +1,9 @@
 .top {
-	height: 6%;
 	display: flex;
 }
 body {
 	background: lightblue;
+	margin: 2px;
 }
 h1 {
 	text-align: center;

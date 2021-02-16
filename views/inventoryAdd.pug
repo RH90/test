@@ -34,6 +34,14 @@ html
 								td
 									input(type="text", name="serial",value="")
 							tr
+								td!="Status"
+								td
+									select(name="status")
+										- var cnt=0
+										each val in statusInventory
+											option(value=`${cnt}`)!=statusInventory[cnt].text
+											- cnt++
+							tr
 								td!="Comment"
 								td
 									input(type="text", name="comment",value="")
