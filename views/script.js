@@ -113,9 +113,13 @@ function clearLocker(owner_id, klass, firstname, lastname, numb, search) {
 		}).then((res) => {
 			console.log("Request complete! response:", res);
 			var input = document.getElementById("inputSearch");
-			input.value = search;
-			var b = document.getElementById("buttonSearch");
-			b.click();
+			if (input) {
+				input.value = search;
+				var b = document.getElementById("buttonSearch");
+				b.click();
+			} else {
+				location.reload();
+			}
 		});
 	}
 }
