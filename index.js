@@ -424,16 +424,10 @@ app.post("/pupil/graduate", middleware, (req, res) => {
 					[req.body.id],
 					function (err, pupil) {
 						sqlInsertHistory({
-							owner_table: -1,
-							id: -1,
-							type: "graduated",
-							comment:
-								pupil.firstname +
-								" " +
-								pupil.lastname +
-								"," +
-								pupil.grade +
-								pupil.classP,
+							owner_table: 0,
+							id: req.body.id,
+							type: "comment",
+							comment: "Graduated",
 						});
 					}
 				);
@@ -456,16 +450,10 @@ app.post("/pupil/enroll", middleware, (req, res) => {
 					[req.body.id],
 					function (err, pupil) {
 						sqlInsertHistory({
-							owner_table: -1,
-							id: -1,
-							type: "enrolled",
-							comment:
-								pupil.firstname +
-								" " +
-								pupil.lastname +
-								"," +
-								pupil.grade +
-								pupil.classP,
+							owner_table: 0,
+							id: req.body.id,
+							type: "comment",
+							comment: "Enrolled",
 						});
 					}
 				);
