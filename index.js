@@ -317,12 +317,13 @@ app.post("/inventory/add", middleware, (req, res) => {
 			function (err) {
 				if (err) {
 					console.log(err.message);
-					db.all("select name from type", function (err, rows) {
-						res.render("inventoryadd", {
-							title: "Lägg till inventarie, Kunde inte lägga till inventarie!",
-							rows,
-						});
-					});
+					// db.all("select name from type", function (err, rows) {
+					// 	res.render("inventoryadd", {
+					// 		title: "Lägg till inventarie, Kunde inte lägga till inventarie!",
+					// 		rows,
+					// 	});
+					// });
+					res.send("Serial exists");
 				} else {
 					sqlInsertHistory({
 						owner_table: -1,
@@ -337,7 +338,14 @@ app.post("/inventory/add", middleware, (req, res) => {
 							", " +
 							req.body.serial,
 					});
-					res.redirect("/inventory");
+					db.get(
+						"SELECT id from inventory order by ROWID DESC limit 1",
+						function f(err, row) {
+							if (row) {
+								res.redirect("/inventory/" + row.id);
+							} else res.redirect("/inventory");
+						}
+					);
 				}
 			}
 		);
@@ -828,8 +836,10 @@ app.post("/inventory/:inventoryId", middleware, (req, res) => {
 		});
 	} else if (req.body) {
 		db.run(
-			"update inventory set comment=?,status=? where id=?",
+			"update inventory set brand=?,model=?,comment=?,status=? where id=?",
 			[
+				req.body["brand"],
+				req.body["model"],
 				req.body["commentInventory"],
 				req.body["status"],
 				req.params.inventoryId,
@@ -1152,7 +1162,7 @@ app.all("/inventory", middleware, (req, res) => {
 		"\tWHEN inventory.owner_table=3 THEN\n" +
 		"\t\t'/place/'||place.id\n" +
 		"\tEND link,\n" +
-		"\tinventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id" +
+		"\tinventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment" +
 		" from inventory " +
 		"\tleft JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id\n" +
 		"\tleft JOIN place on owner='place' AND inventory.owner_id=place.id\n" +

@@ -19,10 +19,12 @@ html
 								td!=row.type
 							tr
 								td!="Brand"
-								td!=row.brand
+								td
+									input(type="text", name="brand",value=(row.brand))
 							tr
 								td!="Model"
-								td!=row.model
+								td
+									input(type="text", name="model",value=(row.model))
 							tr
 								td!="Serial"
 								td!=row.serial

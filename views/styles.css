@@ -24,6 +24,7 @@ li {
 	height: 85%;
 	overflow-y: auto;
 }
+
 .tableFixHead thead th {
 	background: darkgray;
 	position: sticky;
@@ -90,6 +91,13 @@ tr:hover td {
 	padding: 1vh 4px 1vh 10px;
 	text-decoration: none;
 	font-size: 3vh;
+	color: #818181;
+	display: block;
+}
+.sidenav a.sub {
+	padding: 1vh 1px 1vh 20px;
+	text-decoration: none;
+	font-size: 2vh;
 	color: #818181;
 	display: block;
 }
