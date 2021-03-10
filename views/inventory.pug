@@ -13,6 +13,12 @@ html
 			div
 				form(style="float:left;margin-right:10px;",action="/inventory",method="POST")
 					input(id="inputSearch",type="text",name="search",value=search)
+					select(name="status")
+						option(value="-1",selected=statusSelected["-1"])!="Status"
+						- var cnt=0
+						each val in statusInventory
+							option(value=`${cnt}`,style=`font-weight:bold;background: ${statusInventory[cnt].color}`,selected=statusSelected[cnt])!=statusInventory[cnt].text
+							-cnt++
 					button(type="submit")!="Search"
 				button(onclick="location.href='/inventory/add'",style="margin-right:10px")!="Lägg till inventarie"
 			b= rows.length + " Resuslts for: \"" + search + "\""

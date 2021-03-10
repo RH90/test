@@ -1053,28 +1053,10 @@ app.all("/locker", middleware, (req, res) => {
 	} else {
 		statusValue = -1;
 	}
-	var planSelected = {
-		"-1": false,
-		1: false,
-		2: false,
-		3: false,
-	};
-	console.log(status);
+	var planSelected = {};
+	var statusSelected = {};
+
 	planSelected[planValue] = true;
-
-	var statusSelected = {
-		"-1": false,
-		0: false,
-		1: false,
-		2: false,
-		3: false,
-		4: false,
-		5: false,
-		6: false,
-		7: false,
-		8: false,
-	};
-
 	statusSelected[statusValue] = true;
 
 	var queryTmp =
@@ -1142,6 +1124,17 @@ app.all("/inventory", middleware, (req, res) => {
 	if (req.body && req.body.search) {
 		search = req.body.search.toLowerCase();
 	}
+
+	var statusSelected = {};
+	const status = parseInt(req.body.status);
+	var statusString = "";
+	if (Number.isInteger(status) && status != -1) {
+		statusSelected[status] = true;
+		statusString = " AND inventory.status=" + status;
+	} else {
+		statusSelected["-1"] = true;
+	}
+
 	var query =
 		"select " +
 		"\tCase " +
@@ -1166,9 +1159,10 @@ app.all("/inventory", middleware, (req, res) => {
 		" from inventory " +
 		"\tleft JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id\n" +
 		"\tleft JOIN place on owner='place' AND inventory.owner_id=place.id\n" +
-		" where (instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 " +
+		" where ((instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 " +
 		" OR instr(LOWER(inventory.type),?) > 0) " +
-		" OR instr(LOWER(res),?) > 0";
+		" OR instr(LOWER(res),?) > 0)" +
+		statusString;
 	db.all(query, [search, search, search, search], function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("inventory", {
@@ -1176,6 +1170,7 @@ app.all("/inventory", middleware, (req, res) => {
 			rows,
 			search,
 			statusInventory,
+			statusSelected,
 		});
 	});
 });
