@@ -9,7 +9,7 @@ html
 			include sorttable.js
 	body(style="display:inline-block",onload=`lockerlayout()`)
 		include head.pug
-		div
+		div(class="top")
 			button(onclick=`location.href='/lockerlayout?tab=1'`)!="Plan 1"
 			button(onclick=`location.href='/lockerlayout?tab=2'`)!="Plan 2"
 			button(onclick=`location.href='/lockerlayout?tab=3'`)!="Plan 3"

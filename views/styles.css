@@ -1,16 +1,27 @@
+:root {
+	min-height: 10vh;
+}
+
 .top {
 	display: flex;
 	width: fit-content;
 	margin: auto;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	min-height: 4vh;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.top * {
+	min-height: 100%;
 }
 .top form {
 	margin-bottom: 0px;
 }
 body {
+	display: flex;
+	flex-direction: column;
 	background: lightblue;
-	margin: 2px;
+	max-height: 100vh !important;
+	margin: 0 4px 0 4px;
 }
 h1 {
 	text-align: center;
@@ -28,7 +39,7 @@ li {
 	margin: 0 1.875rem 0 0;
 }
 .tableFixHead {
-	height: 88vh;
+	height: auto;
 	overflow-y: auto;
 }
 
@@ -43,7 +54,7 @@ li {
 	display: grid;
 	background: darkslateblue;
 	grid-template-columns: repeat(60, 1.645vw);
-	grid-template-rows: repeat(35, 2.5vh);
+	grid-template-rows: repeat(35, 1.23vw);
 }
 .locker-cell {
 	text-shadow: -0.1vh 0 black, 0 0.1vh black, 0.1vh 0 black, 0 -0.1vh black;
