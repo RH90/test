@@ -1,5 +1,12 @@
 .top {
 	display: flex;
+	width: fit-content;
+	margin: auto;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.top form {
+	margin-bottom: 0px;
 }
 body {
 	background: lightblue;
@@ -21,7 +28,7 @@ li {
 	margin: 0 1.875rem 0 0;
 }
 .tableFixHead {
-	height: 85%;
+	height: 88vh;
 	overflow-y: auto;
 }
 
@@ -71,6 +78,7 @@ th {
 tr:hover td {
 	background: rgba(111, 0, 201, 0.308) !important;
 }
+
 .sidenav {
 	border-radius: 0 0 25px 0;
 	display: none;
@@ -91,14 +99,14 @@ tr:hover td {
 	padding: 1vh 4px 1vh 10px;
 	text-decoration: none;
 	font-size: 3vh;
-	color: #818181;
+	color: #c4c4c4;
 	display: block;
 }
 .sidenav a.sub {
 	padding: 1vh 1px 1vh 20px;
 	text-decoration: none;
 	font-size: 2vh;
-	color: #818181;
+	color: #9b9b9b;
 	display: block;
 }
 #sideNavButton:hover {

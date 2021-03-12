@@ -1006,7 +1006,7 @@ app.get("/history", middleware, (req, res) => {
 		"\tleft JOIN locker on owner='locker' AND history.owner_id=locker.id\n" +
 		"\tleft JOIN inventory on owner='inventory' AND history.owner_id=inventory.id" +
 		"\tleft JOIN place on owner='place' AND history.owner_id=place.id" +
-		"\tOrder by history.date DESC";
+		"\tOrder by history.date DESC LIMIT 1000";
 	db.all(query, function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("history", {
