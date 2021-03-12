@@ -159,11 +159,12 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 	if (req.query.table) {
 		var dbCheck = false;
 		if (req.query.table == 0) {
-			query =
-				"select id as owner_id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil" +
-				" where ((instr(LOWER(Firstname), ?) > 0 OR instr(LOWER(Lastname), ?) > 0 " +
-				" OR (instr(?, LOWER(Firstname)) > 0 AND instr(?, LOWER(Lastname)) > 0) OR ?='' " +
-				" OR (Klass)=?)) AND inschool=1 order by Klass";
+			query = `
+			SELECT 
+				id as owner_id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil
+				where ((instr(LOWER(Firstname), ?) > 0 OR instr(LOWER(Lastname), ?) > 0 
+				OR (instr(?, LOWER(Firstname)) > 0 AND instr(?, LOWER(Lastname)) > 0) OR ?='' 
+				OR (Klass)=?)) AND inschool=1 order by Klass`;
 			q = [search, search, search, search, search, search];
 			cols = ["Firstname", "Lastname", "Klass"];
 			dbCheck = true;
@@ -192,18 +193,18 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 	}
 });
 app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
-	var query = "";
-	var search = (req.query.search || "").toLowerCase();
 	if (req.body.table && req.body.owner_id) {
 		db.get(
-			"select inventory.id,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial," +
-				"\tCASE" +
-				"\twhen inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade||pupil.classP)" +
-				"\twhen inventory.owner_table=3 then place.name" +
-				"\tEND 'historyPreOwner',owner_id from inventory" +
-				"\tleft join pupil on owner_table=0 AND inventory.owner_id=pupil.id" +
-				"\tleft join place on owner_table=3 AND inventory.owner_id=place.id" +
-				"\twhere inventory.id=?",
+			`
+			SELECT 
+				inventory.id,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial,	
+				CASE	
+					when inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade||pupil.classP)	
+					when inventory.owner_table=3 then place.name	
+				END 'historyPreOwner',owner_id from inventory	
+				left join pupil on owner_table=0 AND inventory.owner_id=pupil.id	
+				left join place on owner_table=3 AND inventory.owner_id=place.id	
+				where inventory.id=?`,
 			[req.params.inventoryId],
 			function (err, preOwner) {
 				if (!err && preOwner.owner_id) {
@@ -930,17 +931,12 @@ app.all("/pupil", middleware, (req, res) => {
 	if (req.query.nolocker == 1) {
 		nolocketStr = " AND owner_id is NULL ";
 	}
-	var query =
-		"select " +
-		" pupil.id,firstname,lastname,classP,grade,year,owner_id" +
-		" from pupil " +
-		" left join locker on locker.owner_id=pupil.id" +
-		" where (((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 " +
-		" OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
-		" OR (grade||classP)=?)) AND inschool=?)" +
-		nolocketStr +
-		" ORDER BY grade,classP,lastname,firstname ASC";
-
+	var query = `
+			select
+				pupil.id,firstname,lastname,classP,grade,year,owner_id from pupil  
+				left join locker on locker.owner_id=pupil.id where (((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' OR (grade||classP)=?)) AND inschool=?)
+				${nolocketStr} 
+				ORDER BY grade,classP,lastname,firstname ASC`;
 	db.all(
 		query,
 		[search, search, search, search, search, search, inschool],
@@ -964,49 +960,48 @@ app.all("/place", middleware, (req, res) => {
 		});
 	});
 });
-//TODO computer->Inventory
+
 app.get("/history", middleware, (req, res) => {
-	var query =
-		"select \n" +
-		"\tCASE \n" +
-		"\tWHEN history.owner_table=-1 then \n" +
-		"\t\t'general' \n" +
-		"\tWHEN history.owner_table=0 THEN\n" +
-		"\t\t'pupil'\n" +
-		"\tWHEN history.owner_table=1 THEN\n" +
-		"\t\t'locker'\n" +
-		"\tWHEN history.owner_table=2 THEN\n" +
-		"\t\t'inventory'\n" +
-		"\tWHEN history.owner_table=3 THEN\n" +
-		"\t\t'place'\n" +
-		"\tEND owner,\n" +
-		"\tCASE\n" +
-		"\tWHEN history.owner_table=0 THEN\n" +
-		"\t\t(firstname||' '||lastname||','||(grade||classP))\n" +
-		"\tWHEN history.owner_table=1 THEN\n" +
-		"\t\tlocker.number\n" +
-		"\tWHEN history.owner_table=2 THEN\n" +
-		"\t\tinventory.serial|inventory.id\n" +
-		"\tWHEN history.owner_table=3 THEN\n" +
-		"\t\tplace.name\n" +
-		"\tEND res,\n" +
-		"\tCASE\n" +
-		"\tWHEN history.owner_table=0 THEN\n" +
-		"\t\t'/pupil/'||pupil.id\n" +
-		"\tWHEN history.owner_table=1 THEN\n" +
-		"\t\t'/locker/'||locker.number\n" +
-		"\tWHEN history.owner_table=2 THEN\n" +
-		"\t\t'/inventory/'||inventory.id\n" +
-		"\tWHEN history.owner_table=3 THEN\n" +
-		"\t\t'/place/'||place.id\n" +
-		"\tEND link,\n" +
-		"\thistory.type,history.comment,DATETIME(round(date/1000),'unixepoch','localtime') as date\n" +
-		"\tfrom history\n" +
-		"\tleft JOIN pupil on owner='pupil' AND history.owner_id=pupil.id\n" +
-		"\tleft JOIN locker on owner='locker' AND history.owner_id=locker.id\n" +
-		"\tleft JOIN inventory on owner='inventory' AND history.owner_id=inventory.id" +
-		"\tleft JOIN place on owner='place' AND history.owner_id=place.id" +
-		"\tOrder by history.date DESC LIMIT 1000";
+	var query = `
+		SELECT 
+			CASE 
+				WHEN history.owner_table=-1 then 
+					'general' 
+				WHEN history.owner_table=0 THEN
+					'pupil'
+				WHEN history.owner_table=1 THEN
+					'locker'
+				WHEN history.owner_table=2 THEN
+					'inventory'
+				WHEN history.owner_table=3 THEN
+					'place'
+			END owner,
+			CASE
+				WHEN history.owner_table=0 THEN
+					(firstname||' '||lastname||','||(grade||classP))
+				WHEN history.owner_table=1 THEN
+					locker.number
+				WHEN history.owner_table=2 THEN
+					inventory.serial|inventory.id
+				WHEN history.owner_table=3 THEN
+					place.name
+			END res,
+			CASE
+				WHEN history.owner_table=0 THEN
+					'/pupil/'||pupil.id
+				WHEN history.owner_table=1 THEN
+					'/locker/'||locker.number
+				WHEN history.owner_table=2 THEN
+					'/inventory/'||inventory.id
+				WHEN history.owner_table=3 THEN
+					'/place/'||place.id
+			END link,
+			history.type,history.comment,DATETIME(round(date/1000),'unixepoch','localtime') as date
+			from history
+			left JOIN pupil on owner='pupil' AND history.owner_id=pupil.id
+			left JOIN locker on owner='locker' AND history.owner_id=locker.id
+			left JOIN inventory on owner='inventory' AND history.owner_id=inventory.id	left JOIN place on owner='place' AND history.owner_id=place.id	Order by history.date DESC LIMIT 1000
+	`;
 	db.all(query, function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("history", {
@@ -1059,48 +1054,35 @@ app.all("/locker", middleware, (req, res) => {
 	planSelected[planValue] = true;
 	statusSelected[statusValue] = true;
 
-	var queryTmp =
-		"\tSELECT *,substr(group_concat(Ldate||': '||Lhistory,x'0a'),0,150) as locker_history\n" +
-		"\tFROM\n" +
-		"\t(\n" +
-		"\t\tSELECT *,history.comment as Lhistory,DATE(round(history.date/1000),'unixepoch','localtime') as Ldate\n" +
-		"\t\tFROM\n" +
-		"\t\t(\n" +
-		"\t\t\tselect *,substr(group_concat(Pdate||': '||Phistory,x'0a'),0,150) as pupil_history\n" +
-		"\t\t\tFROM\n" +
-		"\t\t\t(\n" +
-		"\t\t\t\tselect locker.id as locker_id,keys,floor,locker.status,number,locker.owner_id as locker_owner_id,grade,pupil.year,classP,firstname,lastname,inschool,\n" +
-		"\t\t\t\thistory.comment as Phistory,DATE(round(history.date/1000),'unixepoch','localtime') as Pdate\n" +
-		"\t\t\t\tfrom locker\n" +
-		"\t\t\t\tleft join pupil on pupil.id = locker.owner_id\n" +
-		"\t\t\t\tleft join history on pupil.id = history.owner_id AND history.owner_table=0\n" +
-		"\t\t\t\tORDER by history.date DESC\n" +
-		"\t\t\t)\n" +
-		"\t\t\tGROUP by locker_id\n" +
-		"\t\t)\n" +
-		"\t\tleft join history on locker_id = history.owner_id AND history.owner_table=1\n" +
-		"\t\tORDER by history.date DESC\n" +
-		"\t)\n" +
-		" where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR number=?" +
-		" OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
-		" OR (grade||classP)=?) " +
-		plan +
-		status +
-		"\tGROUP by locker_id" +
-		" ORDER BY grade,classP,lastname,firstname,status";
-	var query =
-		"select " +
-		" locker.id,locker.keys,locker.floor,locker.status,locker.number,locker.owner_id,grade,pupil.year,classP,firstname,lastname,inschool" +
-		" from locker " +
-		" left join pupil on pupil.id = locker.owner_id " +
-		" where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR number=?" +
-		" OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' " +
-		" OR (grade||classP)=?) " +
-		plan +
-		status +
-		" ORDER BY grade,classP,lastname,firstname,status";
+	var query = `	
+	SELECT *,substr(group_concat(Ldate||': '||Lhistory,x'0a'),0,150) as locker_history
+		FROM
+		(
+			SELECT *,history.comment as Lhistory,DATE(round(history.date/1000),'unixepoch','localtime') as Ldate
+			FROM
+			(
+				select *,substr(group_concat(Pdate||': '||Phistory,x'0a'),0,150) as pupil_history
+				FROM
+				(
+					select locker.id as locker_id,keys,floor,locker.status,number,locker.owner_id as locker_owner_id,grade,pupil.year,classP,firstname,lastname,inschool,
+					history.comment as Phistory,DATE(round(history.date/1000),'unixepoch','localtime') as Pdate
+					from locker
+					left join pupil on pupil.id = locker.owner_id
+					left join history on pupil.id = history.owner_id AND history.owner_table=0
+					ORDER by history.date DESC
+				)
+				GROUP by locker_id
+			)
+			left join history on locker_id = history.owner_id AND history.owner_table=1
+			ORDER by history.date DESC
+		)
+		where (instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR number=? OR (instr(?, LOWER(firstname)) > 0 
+		AND instr(?, LOWER(lastname)) > 0) OR ?=''  OR (grade||classP)=?) 
+		${plan} 
+		${status}	
+		GROUP by locker_id ORDER BY grade,classP,lastname,firstname,status`;
 	db.all(
-		queryTmp,
+		query,
 		[search, search, search, search, search, search, search],
 		function (err, rows) {
 			if (err) {
@@ -1135,34 +1117,31 @@ app.all("/inventory", middleware, (req, res) => {
 		statusSelected["-1"] = true;
 	}
 
-	var query =
-		"select " +
-		"\tCase " +
-		"\tWHEN inventory.owner_table=0 THEN\n" +
-		"\t\t'pupil'\n" +
-		"\tWHEN inventory.owner_table=3 THEN\n" +
-		"\t\t'place'\n" +
-		"\tEND owner,\n" +
-		"\tCASE\n" +
-		"\tWHEN inventory.owner_table=0 THEN\n" +
-		"\t\t(firstname||' '||lastname||','||(grade||classP))\n" +
-		"\tWHEN inventory.owner_table=3 THEN\n" +
-		"\t\tname\n" +
-		"\tEND res,\n" +
-		"\tCASE\n" +
-		"\tWHEN inventory.owner_table=0 THEN\n" +
-		"\t\t'/pupil/'||pupil.id\n" +
-		"\tWHEN inventory.owner_table=3 THEN\n" +
-		"\t\t'/place/'||place.id\n" +
-		"\tEND link,\n" +
-		"\tinventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment" +
-		" from inventory " +
-		"\tleft JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id\n" +
-		"\tleft JOIN place on owner='place' AND inventory.owner_id=place.id\n" +
-		" where ((instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 " +
-		" OR instr(LOWER(inventory.type),?) > 0) " +
-		" OR instr(LOWER(res),?) > 0)" +
-		statusString;
+	var query = `
+		SELECT 	
+			Case 	
+				WHEN inventory.owner_table=0 THEN
+				'pupil'
+				WHEN inventory.owner_table=3 THEN
+					'place'
+			END owner,
+			CASE
+				WHEN inventory.owner_table=0 THEN
+					(firstname||' '||lastname||','||(grade||classP))
+				WHEN inventory.owner_table=3 THEN
+					name
+			END res,
+			CASE
+				WHEN inventory.owner_table=0 THEN
+					'/pupil/'||pupil.id
+				WHEN inventory.owner_table=3 THEN
+					'/place/'||place.id
+			END link,
+			inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment from inventory 	
+			left JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id
+			left JOIN place on owner='place' AND inventory.owner_id=place.id
+			where ((instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 OR instr(LOWER(inventory.type),?) > 0) OR instr(LOWER(res),?) > 0)
+			${statusString}`;
 	db.all(query, [search, search, search, search], function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("inventory", {
