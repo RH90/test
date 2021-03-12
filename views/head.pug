@@ -4,14 +4,14 @@ div(id="mySidenav",class="sidenav")
     a(href="/pupil/add",class="sub")!="-Lägg till"
     //a!="Personal"
     a(href="/locker")!="Skåp"
-    a(href="/lockerlayout")!="Skåp layout"
+    a(href="/lockerlayout",class="sub")!="-Layout"
     a(href="/inventory")!="Inventarie"
     a(href="/inventory/add",class="sub")!="-Lägg till"
     a(href="/place")!="Platser"
     a(href="/place/add",class="sub")!="-Lägg till"
     //a!="Misc"
     a(href="/history")!="Historia"
-    a(href="/login")!="Logout"
+    a(href="/login",style="margin-top:50px")!="Logga ut"
 div(style="border-bottom: 1px solid black;border-top: 1px solid black;;display:flex;background:mediumpurple;")
     span(id="sideNavButton",style="white-space: nowrap;;text-align:center;background:blue;font-size:3vh;cursor:pointer;vertical-align: baseline;padding-right:5px;padding-left:5px",onclick="openNav()",onmouseover="openNav()")!="&#9776; Menu"
     h1(style="margin:0;font-size:4vh;width:80%")=title
