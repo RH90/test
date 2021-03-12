@@ -1,14 +1,10 @@
-:root {
-	min-height: 10vh;
-}
-
 .top {
 	display: flex;
 	width: fit-content;
 	margin: auto;
 	min-height: 4vh;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
 .top * {
 	min-height: 100%;
@@ -20,8 +16,10 @@ body {
 	display: flex;
 	flex-direction: column;
 	background: lightblue;
-	max-height: 100vh !important;
+	max-height: 100%;
+	height: 100%;
 	margin: 0 4px 0 4px;
+	overflow-y: hidden;
 }
 h1 {
 	text-align: center;
@@ -39,8 +37,9 @@ li {
 	margin: 0 1.875rem 0 0;
 }
 .tableFixHead {
-	height: auto;
 	overflow-y: auto;
+	height: auto;
+	margin-bottom: 3px;
 }
 
 .tableFixHead thead th {
@@ -54,12 +53,12 @@ li {
 	display: grid;
 	background: darkslateblue;
 	grid-template-columns: repeat(60, 1.645vw);
-	grid-template-rows: repeat(35, 1.23vw);
+	grid-template-rows: repeat(35, 1.2vw);
 }
 .locker-cell {
-	text-shadow: -0.1vh 0 black, 0 0.1vh black, 0.1vh 0 black, 0 -0.1vh black;
+	text-shadow: -0.05vw 0 black, 0 0.05vw black, 0.05vw 0 black, 0 -0.05vw black;
 	text-align: center;
-	font-size: 1.8vh;
+	font-size: 0.85vw;
 	font-family: sans-serif;
 }
 .grid-container div {
@@ -84,6 +83,7 @@ th {
 	text-align: left;
 	padding: 3px !important;
 	width: auto;
+	height: 10px;
 	white-space: pre-wrap;
 }
 tr:hover td {
