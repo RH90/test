@@ -1061,10 +1061,10 @@ app.all("/locker", middleware, (req, res) => {
 			SELECT *,history.comment as Lhistory,DATE(round(history.date/1000),'unixepoch','localtime') as Ldate
 			FROM
 			(
-				select *,substr(group_concat(Pdate||': '||Phistory,x'0a'),0,150) as pupil_history
+				SELECT *,substr(group_concat(Pdate||': '||Phistory,x'0a'),0,150) as pupil_history
 				FROM
 				(
-					select locker.id as locker_id,keys,floor,locker.status,number,locker.owner_id as locker_owner_id,grade,pupil.year,classP,firstname,lastname,inschool,
+					SELECT locker.id as locker_id,keys,floor,locker.status,number,locker.owner_id as locker_owner_id,grade,pupil.year,classP,firstname,lastname,inschool,
 					history.comment as Phistory,DATE(round(history.date/1000),'unixepoch','localtime') as Pdate
 					from locker
 					left join pupil on pupil.id = locker.owner_id
