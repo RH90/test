@@ -151,7 +151,6 @@ tr:hover td {
 	display: flex;
 	background: mediumpurple;
 	margin-top: 1px;
-	margin-bottom: 2px;
 }
 .sidenav a:hover {
 	background: gray;
