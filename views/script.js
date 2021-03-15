@@ -67,7 +67,10 @@ function geUt(locker, pupil) {
 }
 
 function openNav() {
-	document.getElementById("mySidenav").style.display = "block";
+	const display = document.getElementById("mySidenav").style.display;
+	if (display == "block")
+		document.getElementById("mySidenav").style.display = "none";
+	else document.getElementById("mySidenav").style.display = "block";
 }
 function closeNav() {
 	document.getElementById("mySidenav").style.display = "none";
