@@ -17,7 +17,10 @@ body {
 	flex-direction: column;
 	background: lightblue;
 	height: 100vh;
+	width: auto;
 	margin: 0 4px 0 4px;
+}
+body.main {
 	overflow-y: hidden;
 }
 h1 {
@@ -36,11 +39,12 @@ li {
 	margin: 0 1.875rem 0 0;
 }
 .tableFixHead {
+	display: block;
 	overflow-y: auto;
-	height: auto;
+	max-height: 100%;
 	margin-bottom: 3px;
+	flex: 1;
 }
-
 .tableFixHead thead th {
 	background: darkgray;
 	position: sticky;
@@ -64,6 +68,7 @@ li {
 	border: 1px solid #000000;
 }
 table {
+	display: table;
 	font-family: arial, sans-serif;
 	border-spacing: 0;
 	width: 100%;
@@ -71,7 +76,6 @@ table {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 }
-
 form {
 	display: table-cell;
 }
