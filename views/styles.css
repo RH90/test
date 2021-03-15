@@ -83,7 +83,7 @@ th {
 	text-align: left;
 	padding: 3px !important;
 	width: auto;
-	height: 10px;
+	height: auto;
 	white-space: pre-wrap;
 }
 tr:hover td {
