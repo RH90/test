@@ -1,7 +1,6 @@
 div(id="topBar")
     div(id="sideNavButton",onclick="openNav()")!="&#9776; Menu"
         div(id="mySidenav",class="sidenav")
-            //- a(href="javascript:void(0)",class="closebtn",onclick="closeNav()")!="&times;"
             a(href="/pupil")!="Elever"
             a(href="/pupil/add",class="sub")!="-Lägg till"
             //a!="Personal"
@@ -16,4 +15,3 @@ div(id="topBar")
             a(href="/login",style="margin-top:50px")!="Logga ut"
     h1(style="margin:0;font-size:4vh;width:80%")=title
     input(type="button", value="Ladda ner CSV", onClick="exportTableToCSV('tabel.csv')")
-div(id="hideAll",style="position: fixed;left: 0px; right: 0px; top: 0px; bottom: 0px; background-color: lightblue;z-index: 99;")

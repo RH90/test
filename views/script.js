@@ -1,6 +1,6 @@
 window.addEventListener("load", (event) => {
 	const div = document.getElementById("hideAll");
-	if (div) div.style.display = "none";
+	if (div) div.style.display = "block";
 });
 function downloadCSV(csv, filename) {
 	var csvFile;
