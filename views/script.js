@@ -1,3 +1,7 @@
+window.addEventListener("load", (event) => {
+	const div = document.getElementById("hideAll");
+	if (div) div.style.display = "none";
+});
 function downloadCSV(csv, filename) {
 	var csvFile;
 	var downloadLink;
