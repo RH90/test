@@ -84,9 +84,7 @@ th {
 	border-top: 1px solid #000000;
 	border-left: 1px solid #000000;
 	text-align: left;
-	padding: 3px !important;
-	width: auto;
-	height: auto;
+	padding: 3px;
 	white-space: pre-wrap;
 	/* font-size: calc(5px + 1.5vh); */
 }
