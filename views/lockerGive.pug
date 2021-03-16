@@ -9,6 +9,13 @@ html
 			include sorttable.js
 	body
 		include head.pug
+		div(class="top")
+			div
+				form(style="float:left;margin-right:10px;",action="",method="GET")
+					input(id="inputSearch",type="text",name="search",value=search)
+					input(type="hidden",name="table",value=table)
+					button(type="submit")!="Search"
+			b= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead")
 			table(class="sortable")
 				thead

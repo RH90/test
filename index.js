@@ -136,19 +136,29 @@ app.get("/", middleware, (req, res) => {
 
 app.get("/locker/:lockerNumb/give", middleware, (req, res) => {
 	console.log(req.params.lockerNumb);
-	var query =
-		"select * from pupil where not EXISTS(select * from locker where owner_id=pupil.id) AND inschool=1 ORDER BY grade,classP,lastname,firstname ASC";
-	db.all(query, function (err, rows) {
-		//console.log(rows);
-		res.render("lockerGive", {
-			title: "Give locker " + req.params.lockerNumb,
-			lockerNumb: req.params.lockerNumb,
-			search: req.query.search,
-			plan: req.query.plan,
-			status: req.query.status,
-			rows,
-		});
-	});
+	var search = (req.query.search || "").toLowerCase();
+	var query = `select * from pupil 
+			where not EXISTS(select * from locker where owner_id=pupil.id) 
+				AND inschool=1 
+				AND ((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 
+					OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' 
+					OR (grade||classP)=?))
+			ORDER BY grade,classP,lastname,firstname ASC`;
+	db.all(
+		query,
+		[search, search, search, search, search, search],
+		function (err, rows) {
+			//console.log(rows);
+			res.render("lockerGive", {
+				title: "Give locker " + req.params.lockerNumb,
+				lockerNumb: req.params.lockerNumb,
+				search,
+				plan: req.query.plan,
+				status: req.query.status,
+				rows,
+			});
+		}
+	);
 });
 //add search
 app.get("/inventory/:inventoryId/give", middleware, (req, res) => {

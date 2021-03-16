@@ -42,7 +42,7 @@ html
 									if row.firstname
 										button(type="button",onclick="clearLocker('"+row.owner_id+"','"+(row.grade+row.classP)+"','"+row.firstname+"','"+row.lastname+"',"+row.number+",'"+row.number+"')")!="Ta bort elev"
 									else
-										a(href="/locker/"+row.number+"/give?search="+row.number+"&plan=-1&status=-1")!="Ge bort"
+										a(href="/locker/"+row.number+"/give")!="Ge bort"
 							tr
 								td
 								td
