@@ -30,10 +30,11 @@ html
 						th!="Efternamn"
 						th!="Klass"
 						th!="År"
-				each val in rows
-					tr
-						td
-							a(href="/pupil/"+val["id"])!=val["firstname"]
-						td!=val.lastname
-						td!=(val.grade+val.classP)||""
-						td!=(val.year)
+				tbody
+					each val in rows
+						tr
+							td
+								a(href="/pupil/"+val["id"])!=val["firstname"]
+							td!=val.lastname
+							td!=(val.grade+val.classP)||""
+							td!=(val.year)

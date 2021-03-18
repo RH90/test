@@ -39,24 +39,25 @@ html
 						th!="Komment Skåp"
 						th!="Komment Elev"
 						th!="Ge/Ta bort"
-				each val in rows
-					tr
-						td
-							a(href="/locker/"+val["number"])!=val["number"]
-						td!=val.floor
-						td!=val.keys
-						td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLocker[val["status"]].color)!=statusLocker[val["status"]].text
-						td
-							a(href="/pupil/"+val["locker_owner_id"])!=val["firstname"]
-						if val.inschool==1
-							td!=val.lastname
-						else
-							td(style="color:red")!=val.lastname
-						td!=(val.grade+val.classP)||""
-						td!=(val.locker_history)||""
-						td!=(val.pupil_history)||""
-						td
-							if val.firstname
-								button(onclick="clearLocker('"+val["locker_owner_id"]+"','"+(val.grade+val.classP)+"','"+val.firstname+"','"+val.lastname+"',"+val["number"]+",\""+search+"\")")!="Ta bort"
+				tbody
+					each val in rows
+						tr
+							td
+								a(href="/locker/"+val["number"])!=val["number"]
+							td!=val.floor
+							td!=val.keys
+							td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLocker[val["status"]].color)!=statusLocker[val["status"]].text
+							td
+								a(href="/pupil/"+val["locker_owner_id"])!=val["firstname"]
+							if val.inschool==1
+								td!=val.lastname
 							else
-								button(onclick="location.href='/locker/"+val["number"]+"/give?search="+search+"&plan="+planValue+"&status="+statusValue+"'")!="Ge bort"
+								td(style="color:red")!=val.lastname
+							td!=(val.grade+val.classP)||""
+							td!=(val.locker_history)||""
+							td!=(val.pupil_history)||""
+							td
+								if val.firstname
+									button(onclick="clearLocker('"+val["locker_owner_id"]+"','"+(val.grade+val.classP)+"','"+val.firstname+"','"+val.lastname+"',"+val["number"]+",\""+search+"\")")!="Ta bort"
+								else
+									button(onclick="location.href='/locker/"+val["number"]+"/give?search="+search+"&plan="+planValue+"&status="+statusValue+"'")!="Ge bort"

@@ -177,7 +177,3 @@ tr:hover td {
 	z-index: 2;
 	cursor: pointer;
 }
-
-#hideAll {
-	display: none;
-}

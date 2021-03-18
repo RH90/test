@@ -18,8 +18,9 @@ html
 					tr
 						th!="Name"
 						th!="Type"
-				each val in rows
-					tr
-						td
-							a(href="/place/"+val.id)!=val.name
-						td!=val.type
+				tbody
+					each val in rows
+						tr
+							td
+								a(href="/place/"+val.id)!=val.name
+							td!=val.type

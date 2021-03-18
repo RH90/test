@@ -33,14 +33,15 @@ html
 						th!="Comment"
 						th!="Status"
 						th!="Owner"
-				each val in rows
-					tr
-						td
-							a(href="/inventory/"+val.id)!=val.type
-						td!=val.brand
-						td!=val.model
-						td!=val.serial
-						td!=val.comment
-						td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text
-						td
-							a(href=val.link)!=val.res
+				tbody
+					each val in rows
+						tr
+							td
+								a(href="/inventory/"+val.id)!=val.type
+							td!=val.brand
+							td!=val.model
+							td!=val.serial
+							td!=val.comment
+							td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text
+							td
+								a(href=val.link)!=val.res
