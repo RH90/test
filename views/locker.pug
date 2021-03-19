@@ -46,7 +46,7 @@ html
 								a(href="/locker/"+val["number"])!=val["number"]
 							td!=val.floor
 							td!=val.keys
-							td(style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; ;color: "+statusLocker[val["status"]].color)!=statusLocker[val["status"]].text
+							td(class="status",style="color:"+statusLocker[val["status"]].color)!=statusLocker[val["status"]].text
 							td
 								a(href="/pupil/"+val["locker_owner_id"])!=val["firstname"]
 							if val.inschool==1

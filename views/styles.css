@@ -57,7 +57,7 @@ li {
 	flex: 1;
 }
 .tableFixHead thead th {
-	background: darkgray;
+	background: rgb(169, 135, 185);
 	position: sticky;
 	top: 0%;
 	border-bottom: 1px solid #000000;
@@ -83,10 +83,11 @@ table {
 	font-family: arial, sans-serif;
 	border-spacing: 0;
 	width: 100%;
-	background: lightgray;
+	background: rgb(214, 214, 214);
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 }
+
 form {
 	display: table-cell;
 }
@@ -102,7 +103,9 @@ th {
 tr:hover td {
 	background: rgba(111, 0, 201, 0.308) !important;
 }
-
+tr:nth-child(even) {
+	background-color: rgb(228, 228, 228);
+}
 .sidenav {
 	border-radius: 0 25px 25px 0;
 	display: none;
@@ -176,4 +179,8 @@ tr:hover td {
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 2;
 	cursor: pointer;
+}
+.status {
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+		1px 1px 0 #000;
 }
