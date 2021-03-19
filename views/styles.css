@@ -184,3 +184,14 @@ tr:nth-child(even) {
 	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
 		1px 1px 0 #000;
 }
+input[type="button"],
+button {
+	transition-duration: 0.2s;
+	border-radius: 4px;
+}
+
+input[type="button"]:hover,
+button:hover {
+	background-color: purple; /* Green */
+	color: white;
+}
