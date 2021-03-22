@@ -14,4 +14,4 @@ div(id="topBar")
             a(href="/history")!="Historia"
             a(href="/login",style="margin-top:50px")!="Logga ut"
     h1(style="margin:0;font-size:4vh;width:80%")=title
-    input(type="button", value="Ladda ner CSV", onClick="exportTableToCSV('tabel.csv')")
+    input(type="button",id="csvButton", value="Ladda ner CSV", onClick="exportTableToCSV('tabel.csv')")
