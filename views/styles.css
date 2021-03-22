@@ -131,14 +131,14 @@ tr:nth-child(even) {
 	display: block;
 }
 .sidenav a.sub {
-	padding: 1vh 1px 1vh 20px;
+	padding: 0.5vh 1px 0.5vh 20px;
 	text-decoration: none;
 	font-size: 2vh;
 	color: #bdbdbd;
 	display: block;
 }
 #sideNavButton:hover {
-	color: white;
+	background: rgba(125, 0, 136, 0.445);
 }
 #sideNavButton {
 	display: inline-block;
@@ -147,7 +147,8 @@ tr:nth-child(even) {
 	border-radius: 2px;
 	white-space: nowrap;
 	text-align: center;
-	background: lightskyblue;
+	background: black;
+	color: white;
 	font-size: 3vh;
 	cursor: pointer;
 	vertical-align: baseline;
