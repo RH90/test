@@ -1,6 +1,14 @@
 window.addEventListener("load", (event) => {
 	const div = document.getElementById("hideAll");
 	if (div) div.style.display = "block";
+
+	var input = document.querySelectorAll("input,select,textarea");
+	for (let k = 0; k < input.length; k++) {
+		const element = input[k];
+		element.onchange = function () {
+			element.style.backgroundColor = "#E0ECFF";
+		};
+	}
 });
 function downloadCSV(csv, filename) {
 	var csvFile;
