@@ -101,13 +101,13 @@ th {
 	/* font-size: calc(5px + 1.5vh); */
 }
 tr:hover td {
-	background: rgba(111, 0, 201, 0.308) !important;
+	background: rgba(111, 0, 201, 0.2) !important;
 }
 tr:nth-child(even) {
 	background-color: rgb(228, 228, 228);
 }
 .sidenav {
-	border-radius: 0 25px 25px 0;
+	border-radius: 0 15px 15px 0;
 	display: none;
 	height: auto;
 	position: absolute;
@@ -127,14 +127,14 @@ tr:nth-child(even) {
 	padding: 1vh 4px 1vh 10px;
 	text-decoration: none;
 	font-size: 3vh;
-	color: #c4c4c4;
+	color: #dadada;
 	display: block;
 }
 .sidenav a.sub {
 	padding: 1vh 1px 1vh 20px;
 	text-decoration: none;
 	font-size: 2vh;
-	color: #9b9b9b;
+	color: #bdbdbd;
 	display: block;
 }
 #sideNavButton:hover {
@@ -163,7 +163,8 @@ tr:nth-child(even) {
 }
 
 .sidenav a:hover {
-	background: gray;
+	background: rgba(125, 0, 136, 0.445);
+	border-radius: 5px;
 	color: #f1f1f1 !important;
 }
 
