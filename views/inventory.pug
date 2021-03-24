@@ -31,6 +31,7 @@ html
 						th!="Model/Sort"
 						th!="Serial"
 						th!="Comment"
+						th!="History"
 						th!="Status"
 						th!="Owner"
 				tbody
@@ -42,6 +43,7 @@ html
 							td!=val.model
 							td!=val.serial
 							td!=val.comment
+							td!=val.inventory_history||""
 							td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text
 							td
 								a(href=val.link)!=val.res

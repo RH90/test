@@ -1090,7 +1090,8 @@ app.all("/locker", middleware, (req, res) => {
 		AND instr(?, LOWER(lastname)) > 0) OR ?=''  OR (grade||classP)=?) 
 		${plan} 
 		${status}	
-		GROUP by locker_id ORDER BY grade,classP,lastname,firstname,status`;
+		GROUP by locker_id 
+		ORDER BY grade,classP,lastname,firstname,status`;
 	db.all(
 		query,
 		[search, search, search, search, search, search, search],
@@ -1126,32 +1127,39 @@ app.all("/inventory", middleware, (req, res) => {
 	} else {
 		statusSelected["-1"] = true;
 	}
-
 	var query = `
-		SELECT 	
-			Case 	
-				WHEN inventory.owner_table=0 THEN
-				'pupil'
-				WHEN inventory.owner_table=3 THEN
-					'place'
-			END owner,
-			CASE
-				WHEN inventory.owner_table=0 THEN
-					(firstname||' '||lastname||','||(grade||classP))
-				WHEN inventory.owner_table=3 THEN
-					name
-			END res,
-			CASE
-				WHEN inventory.owner_table=0 THEN
-					'/pupil/'||pupil.id
-				WHEN inventory.owner_table=3 THEN
-					'/place/'||place.id
-			END link,
-			inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment from inventory 	
-			left JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id
-			left JOIN place on owner='place' AND inventory.owner_id=place.id
-			where ((instr(LOWER(inventory.serial), ?) > 0 OR instr(LOWER(inventory.model), ?) > 0 OR instr(LOWER(inventory.type),?) > 0) OR instr(LOWER(res),?) > 0)
-			${statusString}`;
+	SELECT *,substr(group_concat(hDate||': '||hComment,x'0a'),0,150) as inventory_history from
+	(SELECT 	
+		Case 	
+			WHEN inventory.owner_table=0 THEN
+			'pupil'
+			WHEN inventory.owner_table=3 THEN
+				'place'
+		END owner,
+		CASE
+			WHEN inventory.owner_table=0 THEN
+				(firstname||' '||lastname||','||(grade||classP))
+			WHEN inventory.owner_table=3 THEN
+				name
+		END res,
+		CASE
+			WHEN inventory.owner_table=0 THEN
+				'/pupil/'||pupil.id
+			WHEN inventory.owner_table=3 THEN
+				'/place/'||place.id
+		END link,
+		inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment
+		, DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment
+		from inventory 
+		left JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id
+		left JOIN place on owner='place' AND inventory.owner_id=place.id
+		left JOIN history on history.owner_id=inventory.id AND history.owner_table=2
+		order by date DESC)
+	where ((instr(LOWER(serial), ?) > 0 OR instr(LOWER(model), ?) > 0 
+	OR instr(LOWER(type),?) > 0) OR instr(LOWER(res),?) > 0)
+	${statusString}
+	GROUP by id
+	`;
 	db.all(query, [search, search, search, search], function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("inventory", {
