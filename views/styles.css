@@ -140,8 +140,11 @@ tr:nth-child(even) {
 #sideNavButton:hover {
 	background: rgba(125, 0, 136, 0.445);
 }
+.title {
+	margin: auto;
+}
 #sideNavButton {
-	display: inline-block;
+	display: flex;
 	position: relative;
 	color: black;
 	border-radius: 2px;
@@ -149,7 +152,7 @@ tr:nth-child(even) {
 	text-align: center;
 	background: black;
 	color: white;
-	font-size: 3vh;
+	font-size: calc(10px + 1.5vh);
 	cursor: pointer;
 	vertical-align: baseline;
 	padding-right: 5px;
