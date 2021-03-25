@@ -1149,16 +1149,17 @@ app.all("/inventory", middleware, (req, res) => {
 				'/place/'||place.id
 		END link,
 		inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment
-		, DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment
+		, DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment,date
 		from inventory 
 		left JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id
 		left JOIN place on owner='place' AND inventory.owner_id=place.id
 		left JOIN history on history.owner_id=inventory.id AND history.owner_table=2
-		order by date DESC)
+		ORDER by date DESC)
 	where ((instr(LOWER(serial), ?) > 0 OR instr(LOWER(model), ?) > 0 
 	OR instr(LOWER(type),?) > 0) OR instr(LOWER(res),?) > 0)
 	${statusString}
 	GROUP by id
+	ORDER by date desc
 	`;
 	db.all(query, [search, search, search, search], function (err, rows) {
 		if (err) console.log(err.message);
