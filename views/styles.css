@@ -147,7 +147,7 @@ hr.solid {
 	display: block;
 }
 #sideNavButton:hover {
-	background: rgba(125, 0, 136, 0.445);
+	background: purple;
 }
 .title {
 	margin: auto;
@@ -180,7 +180,7 @@ a.placeholder {
 }
 
 .sidenav a:hover {
-	background: rgba(125, 0, 136, 0.445);
+	background: purple;
 	border-radius: 5px;
 	color: #f1f1f1 !important;
 }
