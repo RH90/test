@@ -1,4 +1,6 @@
 #topBar {
+	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+		"Lucida Sans", Arial, sans-serif;
 	border-bottom: 1px solid black;
 	border-top: 1px solid black;
 	display: flex;
@@ -121,6 +123,8 @@ tr:nth-child(even) {
 	padding-right: 15px;
 	padding-bottom: 20px;
 	text-align: left;
+	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+		"Lucida Sans", Arial, sans-serif;
 }
 hr.solid {
 	margin: 0;
