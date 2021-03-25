@@ -122,7 +122,11 @@ tr:nth-child(even) {
 	padding-bottom: 20px;
 	text-align: left;
 }
-
+hr.solid {
+	margin: 0;
+	border: 0;
+	border-top: 1px solid white;
+}
 .sidenav a {
 	padding: 1vh 4px 1vh 10px;
 	text-decoration: none;
@@ -142,6 +146,9 @@ tr:nth-child(even) {
 }
 .title {
 	margin: auto;
+}
+a.placeholder {
+	color: #666 !important;
 }
 #sideNavButton {
 	display: flex;
