@@ -1125,7 +1125,7 @@ app.all("/inventory", middleware, (req, res) => {
 	var statusString = "";
 	if (Number.isInteger(status) && status != -1) {
 		statusSelected[status] = true;
-		statusString = " AND inventory.status=" + status;
+		statusString = " AND status=" + status;
 	} else {
 		statusSelected["-1"] = true;
 	}

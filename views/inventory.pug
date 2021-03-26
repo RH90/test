@@ -25,7 +25,7 @@ html
 					button(type="submit")!="Search"
 					div
 				button(onclick="location.href='/inventory/add'",style="margin-right:10px")!="Lägg till inventarie"
-			b= rows.length + " Resuslts for: \"" + search + "\""
+			b= (rows?rows.length:"") + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead",id="hideAll")
 			table(class="sortable")
 				if group == 1
