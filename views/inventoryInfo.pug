@@ -33,6 +33,10 @@ html
 								td
 									textarea(rows="3",cols="40",name="commentInventory")!=row.comment
 							tr
+								td!="Stycke"
+								td
+									input(type="number", name="count",value=(row.count))
+							tr
 								td!="Status"
 								td
 									select(name="status")

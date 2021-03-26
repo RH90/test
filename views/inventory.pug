@@ -19,31 +19,52 @@ html
 						each val in statusInventory
 							option(value=`${cnt}`,style=`font-weight:bold;background: ${statusInventory[cnt].color}`,selected=statusSelected[cnt])!=statusInventory[cnt].text
 							-cnt++
+					select(name="group")
+						option(value="0",selected=groupSelected[0])!="Alla"
+						option(value="1",selected=groupSelected[1])!="Grupera"
 					button(type="submit")!="Search"
+					div
 				button(onclick="location.href='/inventory/add'",style="margin-right:10px")!="Lägg till inventarie"
 			b= rows.length + " Resuslts for: \"" + search + "\""
 		div(class="tableFixHead",id="hideAll")
 			table(class="sortable")
-				thead
-					tr
-						th!="Type"
-						th!="Brand"
-						th!="Model/Sort"
-						th!="Serial"
-						th!="Comment"
-						th!="History"
-						th!="Status"
-						th!="Owner"
-				tbody
-					each val in rows
+				if group == 1
+					thead
 						tr
-							td
-								a(href="/inventory/"+val.id)!=val.type
-							td!=val.brand
-							td!=val.model
-							td!=val.serial
-							td!=val.comment
-							td!=val.inventory_history||""
-							td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text
-							td
-								a(href=val.link)!=val.res
+							th!="Type"
+							th!="Brand"
+							th!="Model/Sort"
+							th!="Stycke"
+					tbody
+						each val in rows
+							tr
+								td!=val.type
+								td!=val.brand
+								td!=val.model
+								td!=val.count
+				else 
+					thead
+						tr
+							th!="Type"
+							th!="Brand"
+							th!="Model/Sort"
+							th!="Serial"
+							th!="Comment"
+							th!="History"
+							th!="Status"
+							th!="Stycke"
+							th!="Owner"
+					tbody
+						each val in rows
+							tr
+								td
+									a(href="/inventory/"+val.id)!=val.type
+								td!=val.brand
+								td!=val.model
+								td!=val.serial
+								td!=val.comment
+								td!=val.inventory_history||""
+								td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text
+								td!=val.count
+								td
+									a(href=val.link)!=val.res

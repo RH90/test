@@ -847,12 +847,13 @@ app.post("/inventory/:inventoryId", middleware, (req, res) => {
 		});
 	} else if (req.body) {
 		db.run(
-			"update inventory set brand=?,model=?,comment=?,status=? where id=?",
+			"update inventory set brand=?,model=?,comment=?,status=?,count=? where id=?",
 			[
 				req.body["brand"],
 				req.body["model"],
 				req.body["commentInventory"],
 				req.body["status"],
+				req.body["count"],
 				req.params.inventoryId,
 			],
 			function (err) {
@@ -1119,6 +1120,7 @@ app.all("/inventory", middleware, (req, res) => {
 	}
 
 	var statusSelected = {};
+	var groupSelected = {};
 	const status = parseInt(req.body.status);
 	var statusString = "";
 	if (Number.isInteger(status) && status != -1) {
@@ -1127,6 +1129,7 @@ app.all("/inventory", middleware, (req, res) => {
 	} else {
 		statusSelected["-1"] = true;
 	}
+	groupSelected[req.body.group] = true;
 	var query = `
 	SELECT *,substr(group_concat(hDate||': '||hComment,x'0a'),0,150) as inventory_history from
 	(SELECT 	
@@ -1149,7 +1152,7 @@ app.all("/inventory", middleware, (req, res) => {
 				'/place/'||place.id
 		END link,
 		inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment
-		, DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment,date
+		, DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment,date,count
 		from inventory 
 		left JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id
 		left JOIN place on owner='place' AND inventory.owner_id=place.id
@@ -1161,6 +1164,14 @@ app.all("/inventory", middleware, (req, res) => {
 	GROUP by id
 	ORDER by date desc
 	`;
+	if (req.body.group == 1) {
+		query = `
+		Select *,COUNT(*) as count from
+		(${query})
+		group by type,brand,model
+		`;
+	}
+
 	db.all(query, [search, search, search, search], function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("inventory", {
@@ -1169,6 +1180,8 @@ app.all("/inventory", middleware, (req, res) => {
 			search,
 			statusInventory,
 			statusSelected,
+			groupSelected,
+			group: req.body.group,
 		});
 	});
 });
