@@ -36,12 +36,19 @@ html
 							th!="Model/Sort"
 							th!="Stycke"
 					tbody
+						- var total=0
 						each val in rows
 							tr
 								td!=val.type
 								td!=val.brand
 								td!=val.model
 								td!=val.count
+							- total=val.count+total
+						tr
+							td
+							td
+							td!="Total"
+							td!=total
 				else 
 					thead
 						tr
