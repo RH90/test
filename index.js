@@ -572,14 +572,7 @@ app.post("/checkout", middleware, (req, res) => {
 						}
 					}
 				);
-				res.redirect(
-					"/locker?search=" +
-						req.body.search +
-						"&plan=" +
-						req.body.plan +
-						"&status=" +
-						req.body.status
-				);
+				res.redirect("/locker?search=" + req.query.numb);
 			}
 		);
 	} else {

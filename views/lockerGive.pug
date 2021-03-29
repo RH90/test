@@ -30,7 +30,7 @@ html
 						td!=val.lastname
 						td!=(val.grade+val.classP)||""
 						td
-							form(action="/checkout" method="POST")
+							form(action=`/checkout?numb=${lockerNumb}` method="POST")
 								input(type="hidden" name="table" value="locker")
 								input(type="hidden" name="idItem" value=lockerNumb)
 								input(type="hidden" name="idPupil" value=val.id)

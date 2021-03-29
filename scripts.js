@@ -73,6 +73,7 @@ function createDatabase() {
 			"owner_id"	INTEGER,
 			"smarwater"	TEXT DEFAULT '',
 			"brand"	TEXT DEFAULT '',
+			"count"	INTEGER DEFAULT 1,
 			PRIMARY KEY("id")
 		);
 		
