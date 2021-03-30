@@ -207,7 +207,7 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 		db.get(
 			`
 			SELECT 
-				inventory.id,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial,	
+				inventory.id,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial,inventory.type,	
 				CASE	
 					when inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade||pupil.classP)	
 					when inventory.owner_table=3 then place.name	
