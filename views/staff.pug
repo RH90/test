@@ -1,0 +1,40 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script(type="text/javascript")
+			include script.js
+		script(type="text/javascript")
+			include sorttable.js
+	body(class="main")
+		include head.pug
+		div(class="top")
+			div
+				form(style="float:left;margin-right:10px",action="",method="POST")
+					input(id="inputSearch",type="text",name="search",value=search)
+					button(type="submit")!="Search"
+				button(onclick="location.href='/staff/add'",style="margin-right:10px")!="Lägg till Personal"
+			b= rows.length + " Resuslts for: \"" + search + "\""
+		div(class="tableFixHead",id="hideAll")
+			table(class="sortable")
+				thead
+					tr
+						th!="ID"
+						th!="Förnamn"
+						th!="Efternamn"
+						th!="Jobb"
+						th!="Telefon"
+						th!="Avdelning"
+						th!="Kommentar"
+				tbody
+					each val in rows
+						tr
+							td!=val.id
+							td
+								a(href="/staff/"+val["id"])!=val["firstname"]
+							td!=val.lastname
+							td!=val.job
+							td!=val.phone
+							td!=val.section
+							td!=val.comment

@@ -1,0 +1,44 @@
+html
+	head
+		title!=title
+		style
+			include styles.css
+		script(type="text/javascript")
+			include script.js
+		script(type="text/javascript")
+			include sorttable.js
+	body
+		include head.pug
+		CENTER
+			div(style="display:inline-block")
+				div(style="display: flex;")
+					form(action="/staff/add",method="POST")
+						table(style="width:auto;margin-right:10px")
+							tr
+								td!="Förnamn"
+								td
+									input(type="text", name="firstname")
+							tr
+								td!="Efternamn"
+								td
+									input(type="text", name="lastname")
+							tr
+								td!="Jobb"
+								td
+									input(type="text", name="job")
+							tr
+								td!="Telefon"
+								td
+									input(type="text", name="phone")
+							tr
+								td!="Avdelning"
+								td
+									input(type="text", name="section")
+							tr
+								td!="Kommentar"
+								td
+									input(type="text", name="comment")
+							tr
+								td
+								td
+									button(type="submit")!="Lägg Till"
