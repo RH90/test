@@ -922,6 +922,7 @@ app.post("/place/:placeid", middleware, (req, res) => {
 		res.sendStatus(404);
 	}
 });
+//TODO lägg till
 app.all("/pupil", middleware, (req, res) => {
 	var search = "";
 	if (req.body && req.body.search) {
@@ -938,12 +939,17 @@ app.all("/pupil", middleware, (req, res) => {
 	var query = `
 			select
 				pupil.id,firstname,lastname,classP,grade,year,owner_id from pupil  
-				left join locker on locker.owner_id=pupil.id where (((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' OR (grade||classP)=?)) AND inschool=?)
+				left join locker on locker.owner_id=pupil.id 
+				where 
+						((((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0) 
+							OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0)  
+						OR (grade||classP)=?)) 
+						AND inschool=?)
 				${nolocketStr} 
 				ORDER BY grade,classP,lastname,firstname ASC`;
 	db.all(
 		query,
-		[search, search, search, search, search, search, inschool],
+		[search, search, search, search, search, inschool],
 		function (err, rows) {
 			if (err) console.log(err.message);
 			res.render("pupil", {
@@ -953,6 +959,27 @@ app.all("/pupil", middleware, (req, res) => {
 			});
 		}
 	);
+});
+app.all("/staff", middleware, (req, res) => {
+	var search = "";
+	if (req.body && req.body.search) {
+		search = req.body.search.toLowerCase();
+	}
+	var query = `
+			SELECT
+				* FROM staff
+				WHERE 
+					instr(LOWER(firstname), $search) > 0
+				  	OR instr(LOWER(lastname), $search) > 0 
+				ORDER BY lastname,firstname ASC`;
+	db.all(query, { $search: search }, function (err, rows) {
+		if (err) console.log(err.message);
+		res.render("staff", {
+			title: "Personal",
+			rows,
+			search,
+		});
+	});
 });
 app.all("/place", middleware, (req, res) => {
 	var query = "select * from place order by name";
@@ -1127,28 +1154,26 @@ app.all("/inventory", middleware, (req, res) => {
 	SELECT *,substr(group_concat(hDate||': '||hComment,x'0a'),0,150) as inventory_history from
 	(SELECT 	
 		Case 	
-			WHEN inventory.owner_table=0 THEN
-			'pupil'
-			WHEN inventory.owner_table=3 THEN
-				'place'
+			WHEN inventory.owner_table=0 THEN 'pupil'
+			WHEN inventory.owner_table=3 THEN 'place'
+			WHEN inventory.owner_table=4 THEN 'staff'
 		END owner,
 		CASE
-			WHEN inventory.owner_table=0 THEN
-				(firstname||' '||lastname||','||(grade||classP))
-			WHEN inventory.owner_table=3 THEN
-				name
+			WHEN inventory.owner_table=0 THEN (pupil.firstname||' '||pupil.lastname||','||(pupil.grade||pupil.classP))
+			WHEN inventory.owner_table=3 THEN name
+			WHEN inventory.owner_table=4 THEN (staff.firstname||' '||staff.lastname||', Personal')
 		END res,
 		CASE
-			WHEN inventory.owner_table=0 THEN
-				'/pupil/'||pupil.id
-			WHEN inventory.owner_table=3 THEN
-				'/place/'||place.id
+			WHEN inventory.owner_table=0 THEN '/pupil/'||pupil.id
+			WHEN inventory.owner_table=3 THEN '/place/'||place.id
+			WHEN inventory.owner_table=4 THEN '/staff/'||staff.id
 		END link,
 		inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment
 		, DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment,date,count
 		from inventory 
 		left JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id
 		left JOIN place on owner='place' AND inventory.owner_id=place.id
+		left JOIN staff on owner='staff' AND inventory.owner_id=staff.id
 		left JOIN history on history.owner_id=inventory.id AND history.owner_table=2
 		ORDER by date DESC)
 	where ((instr(LOWER(serial), ?) > 0 OR instr(LOWER(model), ?) > 0 
@@ -1275,7 +1300,7 @@ const owner_table_Enum = {
 	1: "locker",
 	2: "inventory",
 	3: "place",
-	4: "teacher",
+	4: "staff",
 };
 function sqlInsertHistory({
 	owner_table,
