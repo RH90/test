@@ -185,6 +185,11 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 			cols = ["Name", "Type"];
 			dbCheck = true;
 		} else if (req.query.table == 4) {
+			query = `
+			SELECT firstname,lastname,id as owner_id from staff order by firstname,lastname`;
+			q = [];
+			cols = ["firstname", "lastname"];
+			dbCheck = true;
 		}
 		if (dbCheck)
 			db.all(query, q, function (err, rows) {
@@ -211,9 +216,11 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 				CASE	
 					when inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade||pupil.classP)	
 					when inventory.owner_table=3 then place.name	
+					when inventory.owner_table=4 then (staff.firstname||' '||staff.lastname||', Personal')	
 				END 'historyPreOwner',owner_id from inventory	
 				left join pupil on owner_table=0 AND inventory.owner_id=pupil.id	
-				left join place on owner_table=3 AND inventory.owner_id=place.id	
+				left join place on owner_table=3 AND inventory.owner_id=place.id
+				left join staff on owner_table=4 AND inventory.owner_id=staff.id		
 				where inventory.id=?`,
 			[req.params.inventoryId],
 			function (err, preOwner) {
@@ -285,6 +292,11 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 app.get("/pupil/add", middleware, (req, res) => {
 	res.render("pupiladd", {
 		title: "Lägg till elev",
+	});
+});
+app.get("/staff/add", middleware, (req, res) => {
+	res.render("staffadd", {
+		title: "Lägg till personal",
 	});
 });
 app.get("/place/add", middleware, (req, res) => {
@@ -399,6 +411,39 @@ app.post("/pupil/add", middleware, (req, res) => {
 						req.body.classP,
 				});
 				res.redirect("/pupil");
+			}
+		);
+	} else {
+		res.sendStatus(404);
+	}
+});
+app.post("/staff/add", middleware, (req, res) => {
+	const { firstname, lastname, job, phone, section, comment } = req.body;
+	if (!req.body) {
+		res.sendStatus(404);
+	} else if (firstname && lastname) {
+		db.run(
+			"insert into staff(firstname,lastname,job,phone,section,comment) VALUES (?,?,?,?,?,?);",
+			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
+			[
+				firstname,
+				lastname,
+				job || "",
+				phone || "",
+				section || "",
+				comment || "",
+			],
+			function (err) {
+				if (err) {
+					console.log(err.message);
+				}
+				sqlInsertHistory({
+					owner_table: -1,
+					id: -1,
+					type: "added",
+					comment: firstname + " " + lastname + ", Personal",
+				});
+				res.redirect("/staff");
 			}
 		);
 	} else {
@@ -696,6 +741,23 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 									});
 								}
 							);
+						} else if (owner_table_Enum[row.owner_table] == "staff") {
+							db.get(
+								`select * from staff where id=?`,
+								[row.owner_id],
+								function (err, staff) {
+									res.render("inventoryInfo", {
+										title: `Inventarie: ${row.type}, ${row.brand} ${row.model}`,
+										row,
+										statusSelected,
+										history,
+										historyPost: req.originalUrl,
+										owner: `${staff.firstname} ${staff.lastname}, Personal`,
+										link: `/staff/${staff.id}`,
+										statusInventory,
+									});
+								}
+							);
 						} else {
 							res.render("inventoryInfo", {
 								title: `Inventarie: ${row.type}, ${row.brand} ${row.model}`,
@@ -750,6 +812,42 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
 			}
 		}
 	);
+});
+app.get("/staff/:staffId", middleware, (req, res) => {
+	const id = req.params.staffId;
+	db.get("select * from staff where id=?", [id], function (err, row) {
+		if (err || !row) {
+			console.log(err);
+			res.sendStatus(404);
+		} else {
+			db.all(
+				"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=4 and owner_id=? ORDER by date DESC",
+				[row.id],
+				function (err, history) {
+					db.all(
+						"select * from inventory where owner_id=? AND owner_table=4",
+						[id],
+						function (err, inventory) {
+							if (history) {
+								console.log("history true");
+							} else {
+								history = {};
+							}
+							//console.log(statusSelected);
+							res.render("staffInfo", {
+								title: "Staff: " + row.firstname + " " + row.lastname,
+								row,
+								history,
+								historyPost: req.originalUrl,
+								inventory,
+								statusInventory,
+							});
+						}
+					);
+				}
+			);
+		}
+	});
 });
 app.get("/place/:placeid", middleware, (req, res) => {
 	db.get(
@@ -895,6 +993,43 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
 		res.sendStatus(404);
 	}
 });
+app.post("/staff/:staffId", middleware, (req, res) => {
+	const id = req.params.staffId;
+	const {
+		firstname,
+		lastname,
+		job,
+		phone,
+		section,
+		commentStaff,
+		comment,
+	} = req.body;
+	if (req.body && !comment) {
+		db.run(
+			"update staff set firstname=?,lastname=?,job=?,phone=?,section=?,comment=? where id=?",
+			[firstname, lastname, job, phone, section, commentStaff, id],
+			function (err) {
+				if (err) {
+					console.log(err);
+					res.sendStatus(404);
+				} else {
+					res.redirect("/staff/" + id);
+				}
+			}
+		);
+	} else if (req.body && comment) {
+		sqlInsertHistory({
+			owner_table: 4,
+			id: id,
+			type: "comment",
+			comment: comment,
+			res: res,
+			redirect: "/staff/" + id,
+		});
+	} else {
+		res.sendStatus(404);
+	}
+});
 app.post("/place/:placeid", middleware, (req, res) => {
 	if (req.body && req.body["name"]) {
 		db.run(
@@ -941,24 +1076,20 @@ app.all("/pupil", middleware, (req, res) => {
 				pupil.id,firstname,lastname,classP,grade,year,owner_id from pupil  
 				left join locker on locker.owner_id=pupil.id 
 				where 
-						((((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0) 
-							OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0)  
-						OR (grade||classP)=?)) 
-						AND inschool=?)
+						((((instr(LOWER(firstname), $search) > 0 OR instr(LOWER(lastname), $search) > 0) 
+							OR (instr($search, LOWER(firstname)) > 0 AND instr($search, LOWER(lastname)) > 0)  
+						OR (grade||classP)=$search)) 
+						AND inschool=$inschool)
 				${nolocketStr} 
 				ORDER BY grade,classP,lastname,firstname ASC`;
-	db.all(
-		query,
-		[search, search, search, search, search, inschool],
-		function (err, rows) {
-			if (err) console.log(err.message);
-			res.render("pupil", {
-				title: "Elever",
-				rows,
-				search,
-			});
-		}
-	);
+	db.all(query, { $search: search, $inschool: inschool }, function (err, rows) {
+		if (err) console.log(err.message);
+		res.render("pupil", {
+			title: "Elever",
+			rows,
+			search,
+		});
+	});
 });
 app.all("/staff", middleware, (req, res) => {
 	var search = "";
@@ -1176,8 +1307,8 @@ app.all("/inventory", middleware, (req, res) => {
 		left JOIN staff on owner='staff' AND inventory.owner_id=staff.id
 		left JOIN history on history.owner_id=inventory.id AND history.owner_table=2
 		ORDER by date DESC)
-	where ((instr(LOWER(serial), ?) > 0 OR instr(LOWER(model), ?) > 0 
-	OR instr(LOWER(type),?) > 0) OR instr(LOWER(res),?) > 0)
+	where ((instr(LOWER(serial), $search) > 0 OR instr(LOWER(model), $search) > 0 
+	OR instr(LOWER(type),$search) > 0) OR instr(LOWER(res),$search) > 0)
 	${statusString}
 	GROUP by id
 	ORDER by date desc
@@ -1190,7 +1321,7 @@ app.all("/inventory", middleware, (req, res) => {
 		`;
 	}
 
-	db.all(query, [search, search, search, search], function (err, rows) {
+	db.all(query, { $search: search }, function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("inventory", {
 			title: "Inventory",
