@@ -313,30 +313,25 @@ app.get("/inventory/add", middleware, (req, res) => {
 		});
 	});
 });
+//TODO lägg till tag
 app.post("/inventory/add", middleware, (req, res) => {
-	if (!req.body && !(req.body.serial && req.body.type)) {
+	var { serial, type, brand, model, status, comment, tag } = req.body;
+	if (!req.body && !(serial && type)) {
 		res.sendStatus(404);
 	} else {
-		req.body.serial = req.body.serial.trim();
-		if (req.body.serial == "") {
-			req.body.serial = null;
+		serial = serial.trim();
+		if (serial == "") {
+			serial = null;
 		}
 		db.run(
 			"insert into type (name) values (?)",
-			[req.body.type.toUpperCase()],
+			[type.toUpperCase()],
 			function (err) {}
 		);
 		db.run(
-			"insert into inventory(serial,type,brand,model,status,comment) VALUES (?,?,?,?,?,?);",
+			"insert into inventory(serial,type,brand,model,status,comment,tag) VALUES (?,?,?,?,?,?,?);",
 			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
-			[
-				req.body.serial,
-				req.body.type.toUpperCase(),
-				req.body.brand,
-				req.body.model,
-				req.body.status,
-				req.body.comment,
-			],
+			[serial, type.toUpperCase(), brand, model, status, comment, tag],
 			function (err) {
 				if (err) {
 					console.log(err.message);
@@ -352,14 +347,7 @@ app.post("/inventory/add", middleware, (req, res) => {
 						owner_table: -1,
 						id: -1,
 						type: "added",
-						comment:
-							req.body.type +
-							", " +
-							req.body.brand +
-							" " +
-							req.body.model +
-							", " +
-							req.body.serial,
+						comment: type + ", " + brand + " " + model + ", " + serial,
 					});
 					db.get(
 						"SELECT id from inventory order by ROWID DESC limit 1",
@@ -1299,8 +1287,8 @@ app.all("/inventory", middleware, (req, res) => {
 			WHEN inventory.owner_table=3 THEN '/place/'||place.id
 			WHEN inventory.owner_table=4 THEN '/staff/'||staff.id
 		END link,
-		inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment
-		, DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment,date,count
+		inventory.type,inventory.brand,inventory.model,inventory.status,inventory.serial,inventory.id,inventory.comment,inventory.tag
+		,DATE(round(history.date/1000),'unixepoch','localtime') as hDate, history.comment as hComment,date,count
 		from inventory 
 		left JOIN pupil on owner='pupil' AND inventory.owner_id=pupil.id
 		left JOIN place on owner='place' AND inventory.owner_id=place.id
