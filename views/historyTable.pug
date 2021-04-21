@@ -8,6 +8,12 @@ center(style="margin-right:10px")
 						td
 							textarea(rows="3",cols="40",name="comment")
 						td
+							select(name="type")
+								option(value="comment")!="comment"
+								option(value="invoice")!="invoice"
+								option(value="inventory")!="inventory"
+								option(value="locker")!="locker" 
+						td
 							button(type="submit")!="Lägg till commentar"
 	div(class="tableFixHead",style=";overflow-y:visible")
 		table(class="sortable")

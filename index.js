@@ -903,7 +903,7 @@ app.post("/locker/:lockerNumb", middleware, (req, res) => {
 				sqlInsertHistory({
 					owner_table: 1,
 					id: row.id,
-					type: "comment",
+					type: req.body["type"],
 					comment: req.body["comment"],
 					res: res,
 					redirect: "/locker/" + req.params.lockerNumb,
@@ -915,24 +915,35 @@ app.post("/locker/:lockerNumb", middleware, (req, res) => {
 	}
 });
 app.post("/inventory/:inventoryId", middleware, (req, res) => {
-	if (req.body && req.body["comment"]) {
+	var {
+		brand,
+		model,
+		commentInventory,
+		status,
+		count,
+		tag,
+		type,
+		comment,
+	} = req.body;
+	if (req.body && comment) {
 		sqlInsertHistory({
 			owner_table: 2,
 			id: req.params.inventoryId,
-			type: "comment",
-			comment: req.body["comment"],
+			type: type,
+			comment: comment,
 			res: res,
 			redirect: "/inventory/" + req.params.inventoryId,
 		});
 	} else if (req.body) {
 		db.run(
-			"update inventory set brand=?,model=?,comment=?,status=?,count=? where id=?",
+			"update inventory set brand=?,model=?,comment=?,status=?,count=?,tag=? where id=?",
 			[
-				req.body["brand"],
-				req.body["model"],
-				req.body["commentInventory"],
-				req.body["status"],
-				req.body["count"],
+				brand,
+				model,
+				commentInventory,
+				status,
+				count,
+				tag,
 				req.params.inventoryId,
 			],
 			function (err) {
@@ -972,7 +983,7 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
 		sqlInsertHistory({
 			owner_table: 0,
 			id: req.params.pupilId,
-			type: "comment",
+			type: req.body["type"],
 			comment: req.body["comment"],
 			res: res,
 			redirect: "/pupil/" + req.params.pupilId,
@@ -990,6 +1001,7 @@ app.post("/staff/:staffId", middleware, (req, res) => {
 		phone,
 		section,
 		commentStaff,
+		type,
 		comment,
 	} = req.body;
 	if (req.body && !comment) {
@@ -1009,7 +1021,7 @@ app.post("/staff/:staffId", middleware, (req, res) => {
 		sqlInsertHistory({
 			owner_table: 4,
 			id: id,
-			type: "comment",
+			type: type,
 			comment: comment,
 			res: res,
 			redirect: "/staff/" + id,
@@ -1125,16 +1137,20 @@ app.get("/history", middleware, (req, res) => {
 					'inventory'
 				WHEN history.owner_table=3 THEN
 					'place'
+				WHEN history.owner_table=4 THEN
+					'staff'
 			END owner,
 			CASE
 				WHEN history.owner_table=0 THEN
-					(firstname||' '||lastname||','||(grade||classP))
+					(pupil.firstname||' '||pupil.lastname||','||(pupil.grade||pupil.classP))
 				WHEN history.owner_table=1 THEN
 					locker.number
 				WHEN history.owner_table=2 THEN
-					inventory.serial|inventory.id
+					(ifnull(inventory.serial,'null'))||','||inventory.type
 				WHEN history.owner_table=3 THEN
 					place.name
+				WHEN history.owner_table=4 THEN
+					(staff.firstname||' '||staff.lastname||','||(staff.job))
 			END res,
 			CASE
 				WHEN history.owner_table=0 THEN
@@ -1145,13 +1161,19 @@ app.get("/history", middleware, (req, res) => {
 					'/inventory/'||inventory.id
 				WHEN history.owner_table=3 THEN
 					'/place/'||place.id
+				WHEN history.owner_table=4 THEN
+					'/staff/'||staff.id
 			END link,
 			history.type,history.comment,DATETIME(round(date/1000),'unixepoch','localtime') as date
 			from history
 			left JOIN pupil on owner='pupil' AND history.owner_id=pupil.id
+			left JOIN staff on owner='staff' AND history.owner_id=staff.id
 			left JOIN locker on owner='locker' AND history.owner_id=locker.id
-			left JOIN inventory on owner='inventory' AND history.owner_id=inventory.id	left JOIN place on owner='place' AND history.owner_id=place.id	Order by history.date DESC LIMIT 1000
+			left JOIN inventory on owner='inventory' AND history.owner_id=inventory.id	
+			left JOIN place on owner='place' AND history.owner_id=place.id
+			Order by history.date DESC LIMIT 1000
 	`;
+
 	db.all(query, function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("history", {
@@ -1295,8 +1317,11 @@ app.all("/inventory", middleware, (req, res) => {
 		left JOIN staff on owner='staff' AND inventory.owner_id=staff.id
 		left JOIN history on history.owner_id=inventory.id AND history.owner_table=2
 		ORDER by date DESC)
-	where ((instr(LOWER(serial), $search) > 0 OR instr(LOWER(model), $search) > 0 
-	OR instr(LOWER(type),$search) > 0) OR instr(LOWER(res),$search) > 0)
+	where ((instr(LOWER(serial), $search) > 0 
+	OR instr(LOWER(comment),$search) > 0 
+	OR instr(LOWER(model), $search) > 0 
+	OR instr(LOWER(tag), $search) > 0 
+	OR instr(LOWER(type), $search) > 0) OR instr(LOWER(res),$search) > 0)
 	${statusString}
 	GROUP by id
 	ORDER by date desc

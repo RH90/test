@@ -30,7 +30,8 @@ html
 								td!=row.serial
 							tr
 								td!="Tag"
-								td!=row.tag
+								td
+									input(type="text", name="tag",value=(row.tag))
 							tr
 								td!="Comment"
 								td
