@@ -980,6 +980,11 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
 			}
 		);
 	} else if (req.body && req.body["comment"]) {
+		var d = null;
+		if (req.body["date"]) {
+			d = new Date(req.body["date"]);
+		}
+
 		sqlInsertHistory({
 			owner_table: 0,
 			id: req.params.pupilId,
@@ -987,6 +992,7 @@ app.post("/pupil/:pupilId", middleware, (req, res) => {
 			comment: req.body["comment"],
 			res: res,
 			redirect: "/pupil/" + req.params.pupilId,
+			date: d,
 		});
 	} else {
 		res.sendStatus(404);
@@ -1453,8 +1459,11 @@ function sqlInsertHistory({
 	comment,
 	res,
 	redirect,
-	date = new Date(),
+	date,
 }) {
+	if (!date) {
+		date = new Date();
+	}
 	console.log("\nHistory insert: ");
 	console.log({
 		owner: owner_table_Enum[owner_table],
