@@ -6,16 +6,14 @@ center(style="margin-right:10px")
 			form(action=historyPost,method="POST")
 					tr
 						td
-							textarea(rows="3",cols="40",name="comment")
-						td 
-							input(type="datetime-local",name="date")
-						td
-							select(name="type")
+							textarea(rows="5",cols="50",name="comment")
+						td(class="history-form")
+							select(style="margin-bottom:5px",name="type")
 								option(value="comment")!="comment"
 								option(value="invoice")!="invoice"
 								option(value="inventory")!="inventory"
 								option(value="locker")!="locker" 
-						td
+							input(style="margin-bottom:15px",type="datetime-local",name="date")
 							button(type="submit")!="Lägg till commentar"
 	div(class="tableFixHead",style=";overflow-y:visible")
 		table(class="sortable")

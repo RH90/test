@@ -150,6 +150,10 @@ hr.solid {
 #sideNavButton:hover {
 	background: purple;
 }
+.history-form {
+	display: flex;
+	flex-direction: column;
+}
 .title {
 	margin: auto;
 }

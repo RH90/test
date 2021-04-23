@@ -13,11 +13,12 @@ for line in Lines:
 	line = line.replace("\n","")
 	if " Pin " not in line:
 		parts=line.split(", ")
-		firstname=parts[1].strip()
-		lastname=parts[0].strip()
-		cur = conn.cursor()
-		cur.execute("SELECT * FROM pupil where firstname=? AND lastname=? AND inschool=1",(firstname,lastname))
-		row = cur.fetchone()
-		if row is None:
-			print(index,":",firstname,lastname,":",row)
-		index=index+1
+		if len(parts)>1:
+			firstname=parts[1].strip().lower()
+			lastname=parts[0].strip().lower()
+			cur = conn.cursor()
+			cur.execute("SELECT * FROM pupil where LOWER(firstname)=? AND LOWER(lastname)=? AND inschool=1",(firstname,lastname))
+			row = cur.fetchone()
+			if row is None:
+				print(index,":",firstname,lastname,":",row)
+			index=index+1
