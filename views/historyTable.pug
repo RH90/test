@@ -29,6 +29,6 @@ center(style="margin-right:10px")
 					td
 			each val in history
 				tr
-					td!=val.date
+					td(style="white-space: nowrap;")!=val.date
 					td!=val.type
 					td(style="white-space:pre-wrap")!=val.comment
