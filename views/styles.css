@@ -86,7 +86,7 @@ table {
 	font-family: arial, sans-serif;
 	border-spacing: 0;
 	width: 100%;
-	background: rgb(214, 214, 214);
+	background: rgb(230, 230, 230);
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 }
@@ -111,7 +111,7 @@ tr:hover td {
 	background: rgba(111, 0, 201, 0.2) !important;
 }
 tr:nth-child(even) {
-	background-color: rgb(228, 228, 228);
+	background-color: rgb(220, 220, 220);
 }
 .sidenav {
 	border-radius: 0 15px 15px 0;
@@ -210,6 +210,7 @@ input[type="button"],
 button {
 	transition-duration: 0.2s;
 	border-radius: 4px;
+	background-color: white;
 }
 
 input[type="button"]:hover,

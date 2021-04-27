@@ -331,7 +331,15 @@ app.post("/inventory/add", middleware, (req, res) => {
 		db.run(
 			"insert into inventory(serial,type,brand,model,status,comment,tag) VALUES (?,?,?,?,?,?,?);",
 			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
-			[serial, type.toUpperCase(), brand, model, status, comment, tag],
+			[
+				serial.toUpperCase(),
+				type.toUpperCase(),
+				brand.toUpperCase(),
+				model.toUpperCase(),
+				status,
+				comment,
+				tag,
+			],
 			function (err) {
 				if (err) {
 					console.log(err.message);
@@ -1078,16 +1086,45 @@ app.all("/pupil", middleware, (req, res) => {
 		nolocketStr = " AND owner_id is NULL ";
 	}
 	var query = `
+		select *, group_concat(statusx||': '||type||serialx,x'0a') as inv
+			FROM
+			(
 			select
-				pupil.id,firstname,lastname,classP,grade,year,owner_id from pupil  
-				left join locker on locker.owner_id=pupil.id 
+				CASE
+				WHEN serial is null THEN
+				''
+				ELSE (', '||serial)
+				END serialx,
+				CASE 
+				WHEN inventory.status=0
+				THEN '${statusInventory[0].text}'
+				WHEN inventory.status=1
+				THEN '${statusInventory[1].text}'
+				WHEN inventory.status=2
+				THEN '${statusInventory[2].text}'
+				WHEN inventory.status=3
+				THEN '${statusInventory[3].text}'
+				WHEN inventory.status=4
+				THEN '${statusInventory[4].text}'
+				WHEN inventory.status=5
+				THEN '${statusInventory[5].text}'
+				WHEN inventory.status=6
+				THEN '${statusInventory[6].text}'
+				ELSE inventory.status
+				END statusx,
+				pupil.id,firstname,lastname,classP,grade,year,locker.owner_id,type from pupil  
+				left join locker on locker.owner_id=pupil.id
+				left join inventory on owner_table=0 and inventory.owner_id=pupil.id
 				where 
 						((((instr(LOWER(firstname), $search) > 0 OR instr(LOWER(lastname), $search) > 0) 
 							OR (instr($search, LOWER(firstname)) > 0 AND instr($search, LOWER(lastname)) > 0)  
 						OR (grade||classP)=$search)) 
 						AND inschool=$inschool)
 				${nolocketStr} 
-				ORDER BY grade,classP,lastname,firstname ASC`;
+			)
+			GROUP BY id
+			ORDER BY grade,classP,lastname,firstname ASC
+			`;
 	db.all(query, { $search: search, $inschool: inschool }, function (err, rows) {
 		if (err) console.log(err.message);
 		res.render("pupil", {
@@ -1442,6 +1479,7 @@ const statusInventory = {
 	3: { text: "UTLÅNAD", color: "BLUE" },
 	4: { text: "VÄNTAR PÅ RESERVDEL", color: "PURPLE" },
 	5: { text: "LÅST", color: "ORANGE" },
+	6: { text: "KÖPT", color: "PINK" },
 };
 
 const owner_table_Enum = {

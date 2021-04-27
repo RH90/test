@@ -31,6 +31,7 @@ html
 						th!="Efternamn"
 						th!="Klass"
 						th!="År"
+						th!="Inventarie"
 				tbody
 					each val in rows
 						tr
@@ -40,3 +41,7 @@ html
 							td!=val.lastname
 							td!=(val.grade+val.classP)||""
 							td!=(val.year)
+							if val.inv
+								td!=(val.inv)
+							else 
+								td
