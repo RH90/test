@@ -37,6 +37,10 @@ html
 								td!="Skåp"
 								td
 									a(href="/locker/"+row.number)!=row.number
+							tr 
+								td!="Kommentar"
+								td 
+									textarea(rows="4",name="commentPupil")!=row.comment
 							tr
 								td
 								td

@@ -42,15 +42,23 @@ function getNetwork() {
 				}
 			}
 		}
-
-		if (results["Wi-Fi"] == undefined && serverWifiIP != "") {
-			serverWifiIP = {};
-			console.log("Current local ip: No wifi connection");
-		} else if (results["Wi-Fi"][0].address != serverWifiIP.address) {
-			serverWifiIP = results["Wi-Fi"][0];
+		var res = null;
+		var text = "";
+		if (results["Wi-Fi"] != undefined) {
+			res = results["Wi-Fi"][0];
+			text = "Wi-Fi";
+		} else if (results["Ethernet"] != undefined) {
+			res = results["Ethernet"][0];
+			text = "Ethernet";
+		}
+		if (res == null && serverWifiIP != "") {
+			console.log("Current local ip: No wifi/ethernet connection");
+		} else if (res.address != serverWifiIP.address) {
+			serverWifiIP = res;
 			block = new Netmask(serverWifiIP.address + "/" + serverWifiIP.netmask);
 			console.log(
-				"Current local ip: http://" +
+				text +
+					": Current local ip: http://" +
 					serverWifiIP.address +
 					`:${port}, mask: ` +
 					serverWifiIP.netmask
@@ -772,7 +780,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 });
 app.get("/pupil/:pupilId", middleware, (req, res) => {
 	db.get(
-		"select pupil.id,firstname,lastname,grade,classP,locker.number,year,inschool from pupil left join locker on pupil.id=locker.owner_id where pupil.id=?",
+		"select pupil.comment,pupil.id,firstname,lastname,grade,classP,locker.number,year,inschool from pupil left join locker on pupil.id=locker.owner_id where pupil.id=?",
 		[req.params.pupilId],
 		function (err, row) {
 			if (err || !row) {
@@ -970,12 +978,13 @@ app.post("/inventory/:inventoryId", middleware, (req, res) => {
 app.post("/pupil/:pupilId", middleware, (req, res) => {
 	if (req.body && req.body["classP"]) {
 		db.run(
-			"update pupil set firstname=?,lastname=?,classP=?,grade=? where id=?",
+			"update pupil set firstname=?,lastname=?,classP=?,grade=?,comment=? where id=?",
 			[
 				req.body["firstname"],
 				req.body["lastname"],
 				req.body["classP"],
 				req.body["grade"],
+				req.body["commentPupil"],
 				req.params.pupilId,
 			],
 			function (err) {
