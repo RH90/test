@@ -1084,7 +1084,7 @@ app.post("/place/:placeid", middleware, (req, res) => {
 app.all("/pupil", middleware, (req, res) => {
 	var search = "";
 	if (req.body && req.body.search) {
-		search = req.body.search.toLowerCase();
+		search = req.body.search.toLowerCase().trim();
 	}
 	var inschool = 1;
 	var nolocketStr = "";
@@ -1092,7 +1092,7 @@ app.all("/pupil", middleware, (req, res) => {
 		inschool = 0;
 	}
 	if (req.query.nolocker == 1) {
-		nolocketStr = " AND owner_id is NULL ";
+		nolocketStr = " AND locker.owner_id is NULL ";
 	}
 	var query = `
 		select *, group_concat(statusx||': '||type||serialx,x'0a') as inv
@@ -1489,6 +1489,7 @@ const statusInventory = {
 	4: { text: "VÄNTAR PÅ RESERVDEL", color: "PURPLE" },
 	5: { text: "LÅST", color: "ORANGE" },
 	6: { text: "KÖPT", color: "PINK" },
+	7: { text: "SKROTAD/RENSAD", color: "GRAY" },
 };
 
 const owner_table_Enum = {
