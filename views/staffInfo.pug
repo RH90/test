@@ -35,9 +35,13 @@ html
 								td
 									input(type="text", name="section",value=(row.section))
 							tr
+								td!="Mail"
+								td
+									input(type="text", name="mail",value=(row.mail))
+							tr
 								td!="Kommentar"
 								td
-									input(type="text", name="commentStaff",value=(row.comment))
+									textarea(rows="3",cols="40",name="commentStaff")!=row.comment
 							tr
 								td
 								td

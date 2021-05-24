@@ -422,12 +422,12 @@ app.post("/pupil/add", middleware, (req, res) => {
 	}
 });
 app.post("/staff/add", middleware, (req, res) => {
-	const { firstname, lastname, job, phone, section, comment } = req.body;
+	const { firstname, lastname, job, phone, section, comment, mail } = req.body;
 	if (!req.body) {
 		res.sendStatus(404);
 	} else if (firstname && lastname) {
 		db.run(
-			"insert into staff(firstname,lastname,job,phone,section,comment) VALUES (?,?,?,?,?,?);",
+			"insert into staff(firstname,lastname,job,phone,section,comment,mail) VALUES (?,?,?,?,?,?,?);",
 			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
 			[
 				firstname,
@@ -436,6 +436,7 @@ app.post("/staff/add", middleware, (req, res) => {
 				phone || "",
 				section || "",
 				comment || "",
+				mail || "",
 			],
 			function (err) {
 				if (err) {
@@ -931,16 +932,8 @@ app.post("/locker/:lockerNumb", middleware, (req, res) => {
 	}
 });
 app.post("/inventory/:inventoryId", middleware, (req, res) => {
-	var {
-		brand,
-		model,
-		commentInventory,
-		status,
-		count,
-		tag,
-		type,
-		comment,
-	} = req.body;
+	var { brand, model, commentInventory, status, count, tag, type, comment } =
+		req.body;
 	if (req.body && comment) {
 		sqlInsertHistory({
 			owner_table: 2,
@@ -1026,11 +1019,12 @@ app.post("/staff/:staffId", middleware, (req, res) => {
 		commentStaff,
 		type,
 		comment,
+		mail,
 	} = req.body;
 	if (req.body && !comment) {
 		db.run(
-			"update staff set firstname=?,lastname=?,job=?,phone=?,section=?,comment=? where id=?",
-			[firstname, lastname, job, phone, section, commentStaff, id],
+			"update staff set firstname=?,lastname=?,job=?,phone=?,section=?,comment=?,mail=? where id=?",
+			[firstname, lastname, job, phone, section, commentStaff, mail, id],
 			function (err) {
 				if (err) {
 					console.log(err);
