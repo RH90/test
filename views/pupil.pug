@@ -31,6 +31,7 @@ html
 						th!="Efternamn"
 						th!="Klass"
 						th!="År"
+						th!="Skåp"
 						th!="Inventarie"
 				tbody
 					each val in rows
@@ -41,6 +42,7 @@ html
 							td!=val.lastname
 							td!=(val.grade+val.classP)||""
 							td!=(val.year)
+							td!=(val.number)
 							if val.inv
 								td!=(val.inv)
 							else 

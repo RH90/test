@@ -327,7 +327,7 @@ app.post("/inventory/add", middleware, (req, res) => {
 	if (!req.body && !(serial && type)) {
 		res.sendStatus(404);
 	} else {
-		serial = serial.trim();
+		serial = serial.trim().toUpperCase();
 		if (serial == "") {
 			serial = null;
 		}
@@ -336,46 +336,46 @@ app.post("/inventory/add", middleware, (req, res) => {
 			[type.toUpperCase()],
 			function (err) {}
 		);
-		db.run(
-			"insert into inventory(serial,type,brand,model,status,comment,tag) VALUES (?,?,?,?,?,?,?);",
-			//"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
-			[
-				serial.toUpperCase(),
-				type.toUpperCase(),
-				brand.toUpperCase(),
-				model.toUpperCase(),
-				status,
-				comment,
-				tag,
-			],
-			function (err) {
-				if (err) {
-					console.log(err.message);
-					// db.all("select name from type", function (err, rows) {
-					// 	res.render("inventoryadd", {
-					// 		title: "Lägg till inventarie, Kunde inte lägga till inventarie!",
-					// 		rows,
-					// 	});
-					// });
-					res.send("Serial exists");
-				} else {
-					sqlInsertHistory({
-						owner_table: -1,
-						id: -1,
-						type: "added",
-						comment: type + ", " + brand + " " + model + ", " + serial,
-					});
-					db.get(
-						"SELECT id from inventory order by ROWID DESC limit 1",
-						function f(err, row) {
-							if (row) {
-								res.redirect("/inventory/" + row.id);
-							} else res.redirect("/inventory");
+		db.get("select * from inventory where tag=?", [tag], function (err, row) {
+			if (tag != "" && row) {
+				console.log("Tag exists!");
+				res.send("Tag exist!");
+			} else {
+				db.run(
+					"insert into inventory(serial,type,brand,model,status,comment,tag) VALUES (?,?,?,?,?,?,?);",
+					[
+						serial,
+						type.toUpperCase(),
+						brand.toUpperCase(),
+						model.toUpperCase(),
+						status,
+						comment,
+						tag,
+					],
+					function (err) {
+						if (err) {
+							console.log(err.message);
+							res.send("Serial exists");
+						} else {
+							sqlInsertHistory({
+								owner_table: -1,
+								id: -1,
+								type: "added",
+								comment: type + ", " + brand + " " + model + ", " + serial,
+							});
+							db.get(
+								"SELECT id from inventory order by ROWID DESC limit 1",
+								function f(err, row) {
+									if (row) {
+										res.redirect("/inventory/" + row.id);
+									} else res.redirect("/inventory");
+								}
+							);
 						}
-					);
-				}
+					}
+				);
 			}
-		);
+		});
 	}
 });
 app.post("/pupil/add", middleware, (req, res) => {
@@ -1115,7 +1115,7 @@ app.all("/pupil", middleware, (req, res) => {
 				THEN '${statusInventory[6].text}'
 				ELSE inventory.status
 				END statusx,
-				pupil.id,firstname,lastname,classP,grade,year,locker.owner_id,type from pupil  
+				pupil.id,firstname,lastname,classP,grade,year,locker.owner_id,type,locker.number from pupil 
 				left join locker on locker.owner_id=pupil.id
 				left join inventory on owner_table=0 and inventory.owner_id=pupil.id
 				where 
@@ -1484,6 +1484,7 @@ const statusInventory = {
 	5: { text: "LÅST", color: "ORANGE" },
 	6: { text: "KÖPT", color: "PINK" },
 	7: { text: "SKROTAD/RENSAD", color: "GRAY" },
+	8: { text: "STULEN/BORTTAPPAD", color: "WHITE" },
 };
 
 const owner_table_Enum = {
