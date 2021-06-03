@@ -9,6 +9,7 @@ div
 				tr
 					th!="Name"
 					th!="Serienummer"
+					th!="Tag"
 					th!="Status"
 			if !inventory.length
 				tr
@@ -20,4 +21,5 @@ div
 					td
 						a(href="/inventory/"+val.id)!=val.type+", "+val.model
 					td!=val.serial
+					td!=val.tag
 					td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text

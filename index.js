@@ -194,8 +194,10 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 			dbCheck = true;
 		} else if (req.query.table == 4) {
 			query = `
-			SELECT firstname,lastname,id as owner_id from staff order by firstname,lastname`;
-			q = [];
+			SELECT firstname,lastname,id as owner_id from staff
+				where instr(LOWER(firstname), $search) > 0 OR instr(LOWER(lastname), $search) > 0  OR $search=''
+				order by firstname,lastname`;
+			q = { $search: search };
 			cols = ["firstname", "lastname"];
 			dbCheck = true;
 		}
