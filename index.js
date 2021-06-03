@@ -1117,7 +1117,7 @@ app.post("/place/:placeid", middleware, (req, res) => {
 app.all("/pupil", middleware, (req, res) => {
 	var search = "";
 	if (req.body && req.body.search) {
-		search = req.body.search.toLowerCase().trim();
+		search = req.body.search.trim();
 	}
 	var inschool = 1;
 	var nolocketStr = "";
@@ -1158,8 +1158,8 @@ app.all("/pupil", middleware, (req, res) => {
 				left join locker on locker.owner_id=pupil.id
 				left join inventory on owner_table=0 and inventory.owner_id=pupil.id
 				where 
-						((((instr(LOWER(firstname), $search) > 0 OR instr(LOWER(lastname), $search) > 0) 
-							OR (instr($search, LOWER(firstname)) > 0 AND instr($search, LOWER(lastname)) > 0)  
+						((((instr(LOWER(firstname), LOWER($search)) > 0 OR instr(LOWER(lastname), LOWER($search)) > 0) 
+							OR (instr(LOWER($search), LOWER(firstname)) > 0 AND instr(LOWER($search), LOWER(lastname)) > 0)  
 						OR (grade||classP)=$search)) 
 						AND inschool=$inschool)
 				${nolocketStr} 
@@ -1179,14 +1179,14 @@ app.all("/pupil", middleware, (req, res) => {
 app.all("/staff", middleware, (req, res) => {
 	var search = "";
 	if (req.body && req.body.search) {
-		search = req.body.search.toLowerCase();
+		search = req.body.search;
 	}
 	var query = `
 			SELECT
 				* FROM staff
 				WHERE 
-					instr(LOWER(firstname), $search) > 0
-				  	OR instr(LOWER(lastname), $search) > 0 
+					instr(lower(firstname), lower($search)) > 0
+				  	OR instr(lower(lastname), lower($search)) > 0
 				ORDER BY lastname,firstname ASC`;
 	db.all(query, { $search: search }, function (err, rows) {
 		if (err) console.log(err.message);
