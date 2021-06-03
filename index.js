@@ -240,11 +240,18 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 						id: preOwner.owner_id,
 						type: "inventory",
 						comment:
+							preOwner.id +
+							"|Serial:" +
 							preOwner.serial +
 							", " +
+							"Type:" +
 							preOwner.type +
 							", " +
+							"Model:" +
 							preOwner.model +
+							", " +
+							"Tag:" +
+							preOwner.tag +
 							"->",
 					});
 					sqlInsertHistory({
@@ -273,11 +280,18 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 											type: "inventory",
 											comment:
 												"->" +
+												inventory.id +
+												"|Serial:" +
 												inventory.serial +
 												", " +
+												"Type:" +
 												inventory.type +
 												", " +
-												inventory.model,
+												"Model:" +
+												inventory.model +
+												", " +
+												"Tag:" +
+												inventory.tag,
 										});
 										sqlInsertHistory({
 											owner_table: 2,
@@ -365,14 +379,14 @@ app.post("/inventory/add", middleware, (req, res) => {
 								type: "added",
 								comment: type + ", " + brand + " " + model + ", " + serial,
 							});
-							db.get(
-								"SELECT id from inventory order by ROWID DESC limit 1",
-								function f(err, row) {
-									if (row) {
-										res.redirect("/inventory/" + row.id);
-									} else res.redirect("/inventory");
-								}
-							);
+							sqlInsertHistory({
+								owner_table: 2,
+								id: this.lastID,
+								type: "added",
+								comment: "Added to databse!",
+							});
+
+							res.redirect("/inventory/" + this.lastID);
 						}
 					}
 				);
@@ -403,19 +417,26 @@ app.post("/pupil/add", middleware, (req, res) => {
 			function (err) {
 				if (err) {
 					console.log(err.message);
+				} else {
+					sqlInsertHistory({
+						owner_table: -1,
+						id: -1,
+						type: "added",
+						comment:
+							req.body.firstname +
+							" " +
+							req.body.lastname +
+							"," +
+							req.body.grade +
+							req.body.classP,
+					});
+					sqlInsertHistory({
+						owner_table: 0,
+						id: this.lastID,
+						type: "added",
+						comment: "Added to databse!",
+					});
 				}
-				sqlInsertHistory({
-					owner_table: -1,
-					id: -1,
-					type: "added",
-					comment:
-						req.body.firstname +
-						" " +
-						req.body.lastname +
-						"," +
-						req.body.grade +
-						req.body.classP,
-				});
 				res.redirect("/pupil");
 			}
 		);
@@ -443,13 +464,21 @@ app.post("/staff/add", middleware, (req, res) => {
 			function (err) {
 				if (err) {
 					console.log(err.message);
+				} else {
+					sqlInsertHistory({
+						owner_table: -1,
+						id: -1,
+						type: "added",
+						comment: firstname + " " + lastname + ", Personal",
+					});
+					sqlInsertHistory({
+						owner_table: 4,
+						id: this.lastID,
+						type: "added",
+						comment: "Added to databse!",
+					});
 				}
-				sqlInsertHistory({
-					owner_table: -1,
-					id: -1,
-					type: "added",
-					comment: firstname + " " + lastname + ", Personal",
-				});
+
 				res.redirect("/staff");
 			}
 		);
@@ -468,13 +497,21 @@ app.post("/place/add", middleware, (req, res) => {
 			function (err) {
 				if (err) {
 					console.log(err.message);
+				} else {
+					sqlInsertHistory({
+						owner_table: -1,
+						id: -1,
+						type: "added",
+						comment: "Plats: " + req.body.name + "," + req.body.type,
+					});
+					sqlInsertHistory({
+						owner_table: 3,
+						id: this.lastID,
+						type: "added",
+						comment: "Added to databse!",
+					});
 				}
-				sqlInsertHistory({
-					owner_table: -1,
-					id: -1,
-					type: "added",
-					comment: "Plats: " + req.body.name + "," + req.body.type,
-				});
+
 				res.redirect("/place");
 			}
 		);
