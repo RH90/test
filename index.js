@@ -71,7 +71,8 @@ app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-// app.use(favicon(path.join(__dirname, "/images/favicon.ico")));
+app.use(favicon(path.join(__dirname, "/images/favicon.jpg")));
+console.log(path.join(__dirname, "/images/favicon.jpg"));
 // app.use("/images", express.static("images"));
 
 app.set("view engine", "pug");
@@ -173,15 +174,15 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 	var query = "";
 	var cols = [];
 	var q = [];
-	var search = (req.query.search || "").toLowerCase();
+	var search = req.query.search || "";
 	if (req.query.table) {
 		var dbCheck = false;
 		if (req.query.table == 0) {
 			query = `
 			SELECT 
 				id as owner_id,firstname as Firstname,lastname as Lastname,grade||classP as Klass from pupil
-				where ((instr(LOWER(Firstname), ?) > 0 OR instr(LOWER(Lastname), ?) > 0 
-				OR (instr(?, LOWER(Firstname)) > 0 AND instr(?, LOWER(Lastname)) > 0) OR ?='' 
+				where ((instr(LOWER(Firstname), LOWER(?)) > 0 OR instr(LOWER(Lastname), LOWER(?)) > 0 
+				OR (instr(LOWER(?), LOWER(Firstname)) > 0 AND instr(LOWER(?), LOWER(Lastname)) > 0) OR ?='' 
 				OR (Klass)=?)) AND inschool=1 order by Klass`;
 			q = [search, search, search, search, search, search];
 			cols = ["Firstname", "Lastname", "Klass"];
@@ -195,7 +196,8 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 		} else if (req.query.table == 4) {
 			query = `
 			SELECT firstname,lastname,id as owner_id from staff
-				where instr(LOWER(firstname), $search) > 0 OR instr(LOWER(lastname), $search) > 0  OR $search=''
+				where instr(LOWER(firstname), LOWER($search)) > 0 OR instr(LOWER(lastname), LOWER($search)) > 0  
+				OR $search=''
 				order by firstname,lastname`;
 			q = { $search: search };
 			cols = ["firstname", "lastname"];
@@ -205,7 +207,11 @@ app.get("/inventory/:inventoryId/give", middleware, (req, res) => {
 			db.all(query, q, function (err, rows) {
 				if (err) console.log(err.message);
 				res.render("inventoryGive", {
-					title: "Give Inventory " + req.params.inventoryId,
+					title:
+						"Give Inventory " +
+						req.params.inventoryId +
+						", " +
+						owner_table_Enum[req.query.table],
 					search: req.query.search || "",
 					table: req.query.table,
 					cols,
