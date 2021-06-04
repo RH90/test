@@ -264,7 +264,7 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 						owner_table: 2,
 						id: preOwner.id,
 						type: "comment",
-						comment: preOwner.historyPreOwner + "->",
+						comment: preOwner.id + "|" + preOwner.historyPreOwner + "->",
 					});
 				}
 				db.run(
@@ -303,7 +303,8 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 											owner_table: 2,
 											id: inventory.id,
 											type: "comment",
-											comment: "->" + req.body.historyOwner,
+											comment:
+												"->" + inventory.id + "|" + req.body.historyOwner,
 										});
 									}
 									res.redirect("/inventory/" + req.params.inventoryId);
