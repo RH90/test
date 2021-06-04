@@ -264,7 +264,9 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 						id: preOwner.id,
 						type: "removed",
 						comment: preOwner.historyPreOwner,
-						link: `/${owner_table_Enum[preOwner.owner_table]}/${preOwner.id}`,
+						link: `/${owner_table_Enum[preOwner.owner_table]}/${
+							preOwner.owner_id
+						}`,
 					});
 				}
 				db.run(
