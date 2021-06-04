@@ -244,10 +244,9 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 					sqlInsertHistory({
 						owner_table: preOwner.owner_table,
 						id: preOwner.owner_id,
-						type: "inventory",
+						type: "removed",
 						comment:
-							preOwner.id +
-							"|Serial:" +
+							"Serial:" +
 							preOwner.serial +
 							", " +
 							"Type:" +
@@ -257,14 +256,15 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 							preOwner.model +
 							", " +
 							"Tag:" +
-							preOwner.tag +
-							"->",
+							preOwner.tag,
+						link: `/inventory/${preOwner.id}`,
 					});
 					sqlInsertHistory({
 						owner_table: 2,
 						id: preOwner.id,
-						type: "comment",
-						comment: preOwner.id + "|" + preOwner.historyPreOwner + "->",
+						type: "removed",
+						comment: preOwner.id + "| " + preOwner.historyPreOwner,
+						link: `/${owner_table_Enum[preOwner.owner_table]}/${preOwner.id}`,
 					});
 				}
 				db.run(
@@ -283,11 +283,9 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 										sqlInsertHistory({
 											owner_table: req.body.table,
 											id: req.body.owner_id,
-											type: "inventory",
+											type: "added",
 											comment:
-												"->" +
-												inventory.id +
-												"|Serial:" +
+												"Serial:" +
 												inventory.serial +
 												", " +
 												"Type:" +
@@ -298,13 +296,16 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 												", " +
 												"Tag:" +
 												inventory.tag,
+											link: `/inventory/${inventory.id}`,
 										});
 										sqlInsertHistory({
 											owner_table: 2,
 											id: inventory.id,
-											type: "comment",
-											comment:
-												"->" + inventory.id + "|" + req.body.historyOwner,
+											type: "added",
+											comment: req.body.historyOwner,
+											link: `/${owner_table_Enum[req.body.table]}/${
+												req.body.owner_id
+											}`,
 										});
 									}
 									res.redirect("/inventory/" + req.params.inventoryId);
@@ -599,22 +600,23 @@ app.post("/checkin", middleware, (req, res) => {
 								sqlInsertHistory({
 									owner_table: 1,
 									id: lockerId.id,
-									type: "comment",
+									type: "removed",
 									comment:
 										req.body.firstname +
 										" " +
 										req.body.lastname +
 										"," +
-										req.body.klass +
-										"->",
+										req.body.klass,
+									link: `/pupil/${req.body.owner_id}`,
 								});
 
 								//pupil
 								sqlInsertHistory({
 									owner_table: 0,
 									id: req.body.owner_id,
-									type: "locker",
-									comment: req.body.idItem + "->",
+									type: "removed",
+									comment: "locker: " + req.body.idItem,
+									link: `/locker/${req.body.idItem}`,
 								});
 							}
 						}
@@ -649,9 +651,8 @@ app.post("/checkout", middleware, (req, res) => {
 							sqlInsertHistory({
 								owner_table: 1,
 								id: lockerId.id,
-								type: "comment",
+								type: "added",
 								comment:
-									"->" +
 									req.body.firstname +
 									" " +
 									req.body.lastname +
@@ -662,8 +663,8 @@ app.post("/checkout", middleware, (req, res) => {
 							sqlInsertHistory({
 								owner_table: 0,
 								id: req.body.idPupil,
-								type: "locker",
-								comment: "->" + req.body.idItem,
+								type: "added",
+								comment: "locker: " + req.body.idItem,
 							});
 						}
 					}
@@ -686,11 +687,11 @@ app.get("/locker/:lockerNumb", middleware, (req, res) => {
 				res.sendStatus(404);
 			} else {
 				db.all(
-					"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=1 and owner_id=? ORDER by date DESC",
+					"select link,type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=1 and owner_id=? ORDER by date DESC",
 					[row.id],
 					function (err, history) {
 						db.all(
-							"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
+							"select link,type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
 							[row.owner_id],
 							function (err, historyPupil) {
 								if (history) {
@@ -741,7 +742,7 @@ app.get("/inventory/:inventoryId", middleware, (req, res) => {
 				res.sendStatus(404);
 			} else {
 				db.all(
-					"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=2 and owner_id=? ORDER by date DESC",
+					"select link,type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=2 and owner_id=? ORDER by date DESC",
 					[row.id],
 					function (err, history) {
 						if (history) {
@@ -835,7 +836,7 @@ app.get("/pupil/:pupilId", middleware, (req, res) => {
 				res.sendStatus(404);
 			} else {
 				db.all(
-					"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
+					"select link,type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=0 and owner_id=? ORDER by date DESC",
 					[row.id],
 					function (err, history) {
 						db.all(
@@ -872,7 +873,7 @@ app.get("/staff/:staffId", middleware, (req, res) => {
 			res.sendStatus(404);
 		} else {
 			db.all(
-				"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=4 and owner_id=? ORDER by date DESC",
+				"select link,type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=4 and owner_id=? ORDER by date DESC",
 				[row.id],
 				function (err, history) {
 					db.all(
@@ -910,7 +911,7 @@ app.get("/place/:placeid", middleware, (req, res) => {
 				res.sendStatus(404);
 			} else {
 				db.all(
-					"select type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=3 and owner_id=? ORDER by date DESC",
+					"select link,type,comment,DATETIME(round(date/1000),'unixepoch','localtime') as date from history where owner_table=3 and owner_id=? ORDER by date DESC",
 					[row.id],
 					function (err, history) {
 						db.all(
@@ -1549,9 +1550,13 @@ function sqlInsertHistory({
 	res,
 	redirect,
 	date,
+	link,
 }) {
 	if (!date) {
 		date = new Date();
+	}
+	if (!link) {
+		link = "";
 	}
 	console.log("\nHistory insert: ");
 	console.log({
@@ -1564,8 +1569,8 @@ function sqlInsertHistory({
 	});
 	if (comment.length < 1000) {
 		db.run(
-			"insert into history(owner_table,owner_id,type,comment,date) VALUES (?,?,?,?,?)",
-			[owner_table, id, type, comment, date],
+			"insert into history(owner_table,owner_id,type,comment,date,link) VALUES (?,?,?,?,?,?)",
+			[owner_table, id, type, comment, date, link],
 			function (err) {
 				if (res) {
 					if (err) {

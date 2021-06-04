@@ -31,4 +31,8 @@ center(style="margin-right:10px")
 				tr
 					td(style="white-space: nowrap;")!=val.date
 					td!=val.type
-					td(style="white-space:pre-wrap")!=val.comment
+					if val.link 
+						td(style="white-space:pre-wrap")
+							a(href=val.link)!=val.comment
+					else
+						td(style="white-space:pre-wrap")!=val.comment
