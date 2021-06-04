@@ -1,17 +1,18 @@
-CREATE TABLE IF NOT EXISTS "history" (
+CREATE TABLE "history" (
 	"id"	INTEGER,
 	"owner_table"	INTEGER DEFAULT -1,
 	"owner_id"	INTEGER DEFAULT -1,
 	"type"	TEXT,
 	"comment"	TEXT,
 	"date"	INTEGER DEFAULT 0,
+	"link"	TEXT DEFAULT '',
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
 CREATE TABLE "inventory" (
 	"id"	INTEGER UNIQUE,
 	"serial"	TEXT UNIQUE,
-	"type"	TEXT DEFAULT '',
+	"type"	BLOB DEFAULT '',
 	"model"	TEXT DEFAULT '',
 	"status"	INTEGER DEFAULT 0,
 	"comment"	TEXT DEFAULT '',
@@ -20,10 +21,11 @@ CREATE TABLE "inventory" (
 	"smarwater"	TEXT DEFAULT '',
 	"brand"	TEXT DEFAULT '',
 	"count"	INTEGER DEFAULT 1,
+	"tag"	TEXT DEFAULT '',
 	PRIMARY KEY("id")
 );
 
-CREATE TABLE IF NOT EXISTS "locker" (
+CREATE TABLE "locker" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"keys"	Integer DEFAULT 0,
 	"number"	INTEGER UNIQUE,
@@ -33,7 +35,7 @@ CREATE TABLE IF NOT EXISTS "locker" (
 	"comment"	TEXT DEFAULT ""
 );
 
-CREATE TABLE IF NOT EXISTS "place" (
+CREATE TABLE "place" (
 	"id"	INTEGER UNIQUE,
 	"name"	TEXT UNIQUE,
 	"comment"	TEXT,
@@ -51,7 +53,7 @@ CREATE TABLE IF NOT EXISTS "place" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
-CREATE TABLE IF NOT EXISTS "pupil" (
+CREATE TABLE "pupil" (
 	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"grade"	TEXT DEFAULT "",
 	"classP"	TEXT DEFAULT "",
@@ -62,10 +64,23 @@ CREATE TABLE IF NOT EXISTS "pupil" (
 	"inschool"	INTEGER DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS "type" (
+CREATE TABLE "staff" (
+	"id"	INTEGER UNIQUE,
+	"firstname"	TEXT DEFAULT '',
+	"lastname"	TEXT DEFAULT '',
+	"job"	TEXT DEFAULT '',
+	"phone"	TEXT DEFAULT '',
+	"section"	TEXT DEFAULT '',
+	"comment"	TEXT DEFAULT '',
+	"mail"	TEXT DEFAULT '',
+	"inSchool"	INTEGER DEFAULT 1,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+
+CREATE TABLE "type" (
 	"id"	INTEGER UNIQUE,
 	"name"	TEXT NOT NULL UNIQUE,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
-CREATE TABLE IF NOT EXISTS users(username TEXT primary key, password TEXT not null);
+CREATE TABLE users(username TEXT primary key, password TEXT not null);
