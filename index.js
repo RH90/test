@@ -9,8 +9,8 @@ const path = require("path");
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var favicon = require("serve-favicon");
-const { type, networkInterfaces } = require("os");
-const { json } = require("body-parser");
+const { networkInterfaces } = require("os");
+//const { json } = require("body-parser");
 var serverWifiIP = {};
 var Netmask = require("netmask").Netmask;
 var block = null;
@@ -64,8 +64,12 @@ function getNetwork() {
 					serverWifiIP.netmask
 			);
 		}
-	} catch (error) {}
+	} catch (error) {
+		console.log(error);
+	}
 }
+
+/*global __dirname,process*/
 
 app.use(compression());
 app.use(bodyParser.json());
@@ -272,7 +276,7 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 				db.run(
 					"UPDATE inventory SET owner_table=?,owner_id=? where id=?",
 					[req.body.table, req.body.owner_id, req.params.inventoryId],
-					function (err, rows) {
+					function (err) {
 						if (err) {
 							console.log(err.message);
 						} else {
@@ -281,6 +285,7 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 								[req.params.inventoryId],
 								function (err, inventory) {
 									if (err) {
+										console.log(err);
 									} else {
 										sqlInsertHistory({
 											owner_table: req.body.table,
@@ -347,7 +352,7 @@ app.get("/inventory/add", middleware, (req, res) => {
 		});
 	});
 });
-//TODO lägg till tag
+
 app.post("/inventory/add", middleware, (req, res) => {
 	var { serial, type, brand, model, status, comment, tag } = req.body;
 	if (!req.body && !(serial && type)) {
@@ -360,7 +365,9 @@ app.post("/inventory/add", middleware, (req, res) => {
 		db.run(
 			"insert into type (name) values (?)",
 			[type.toUpperCase()],
-			function (err) {}
+			function (err) {
+				console.log(err);
+			}
 		);
 		db.get("select * from inventory where tag=?", [tag], function (err, row) {
 			if (tag != "" && row) {
@@ -537,18 +544,12 @@ app.post("/pupil/graduate", middleware, (req, res) => {
 			function (err) {
 				if (err) console.log(err);
 				res.sendStatus(200);
-				db.get(
-					"select * from pupil where id=?",
-					[req.body.id],
-					function (err, pupil) {
-						sqlInsertHistory({
-							owner_table: 0,
-							id: req.body.id,
-							type: "comment",
-							comment: "Graduated",
-						});
-					}
-				);
+				sqlInsertHistory({
+					owner_table: 0,
+					id: req.body.id,
+					type: "comment",
+					comment: "Graduated",
+				});
 			}
 		);
 	} else {
@@ -563,18 +564,12 @@ app.post("/pupil/enroll", middleware, (req, res) => {
 			function (err) {
 				if (err) console.log(err);
 				res.sendStatus(200);
-				db.get(
-					"select * from pupil where id=?",
-					[req.body.id],
-					function (err, pupil) {
-						sqlInsertHistory({
-							owner_table: 0,
-							id: req.body.id,
-							type: "comment",
-							comment: "Enrolled",
-						});
-					}
-				);
+				sqlInsertHistory({
+					owner_table: 0,
+					id: req.body.id,
+					type: "comment",
+					comment: "Enrolled",
+				});
 			}
 		);
 	} else {
@@ -668,6 +663,7 @@ app.post("/checkin", middleware, (req, res) => {
 			}
 		);
 	} else if (req.body.table == "inventory") {
+		//placeholder
 	} else {
 		res.sendStatus(404);
 	}
