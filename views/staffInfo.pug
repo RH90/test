@@ -48,3 +48,10 @@ html
 									button(type="submit")!="Spara"
 					include inventoryTable	
 					include historyTable
+					table(style="width:auto!important")
+						if row.inSchool==1
+							td
+								button(onclick=`quit(${row.id})`)!="Gå ur skolan"
+						else
+							td
+								button(onclick=`hire(${row.id})`)!="Gå i skolan"

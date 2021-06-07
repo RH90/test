@@ -228,7 +228,7 @@ app.post("/inventory/:inventoryId/give", middleware, (req, res) => {
 		db.get(
 			`
 			SELECT 
-				inventory.id,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial,inventory.type,	
+				inventory.id,inventory.tag,inventory.owner_id,inventory.owner_table,inventory.model,inventory.brand,inventory.serial,inventory.type,	
 				CASE	
 					when inventory.owner_table=0 then (pupil.firstname||' '||pupil.lastname||', '||pupil.grade||pupil.classP)	
 					when inventory.owner_table=3 then place.name	
@@ -575,6 +575,46 @@ app.post("/pupil/enroll", middleware, (req, res) => {
 						});
 					}
 				);
+			}
+		);
+	} else {
+		res.sendStatus(404);
+	}
+});
+app.post("/staff/quit", middleware, (req, res) => {
+	if (req.body.id) {
+		db.run(
+			"UPDATE staff set inschool=0 where id=?",
+			[req.body.id],
+			function (err) {
+				if (err) console.log(err);
+				sqlInsertHistory({
+					owner_table: 4,
+					id: req.body.id,
+					type: "comment",
+					comment: "Graduated",
+				});
+				res.sendStatus(200);
+			}
+		);
+	} else {
+		res.sendStatus(404);
+	}
+});
+app.post("/staff/hire", middleware, (req, res) => {
+	if (req.body.id) {
+		db.run(
+			"UPDATE staff set inschool=1 where id=?",
+			[req.body.id],
+			function (err) {
+				if (err) console.log(err);
+				sqlInsertHistory({
+					owner_table: 4,
+					id: req.body.id,
+					type: "comment",
+					comment: "Enrolled",
+				});
+				res.sendStatus(200);
 			}
 		);
 	} else {
@@ -993,26 +1033,33 @@ app.post("/inventory/:inventoryId", middleware, (req, res) => {
 			redirect: "/inventory/" + req.params.inventoryId,
 		});
 	} else if (req.body) {
-		db.run(
-			"update inventory set brand=?,model=?,comment=?,status=?,count=?,tag=? where id=?",
-			[
-				brand,
-				model,
-				commentInventory,
-				status,
-				count,
-				tag,
-				req.params.inventoryId,
-			],
-			function (err) {
-				if (err) {
-					console.log(err);
-					res.sendStatus(404);
-				} else {
-					res.redirect("/inventory/" + req.params.inventoryId);
-				}
+		db.get("select * from inventory where tag=?", [tag], function (err, row) {
+			if (tag != "" && row) {
+				console.log("Tag exists!");
+				res.send("Tag exist!");
+			} else {
+				db.run(
+					"update inventory set brand=?,model=?,comment=?,status=?,count=?,tag=? where id=?",
+					[
+						brand,
+						model,
+						commentInventory,
+						status,
+						count,
+						tag,
+						req.params.inventoryId,
+					],
+					function (err) {
+						if (err) {
+							console.log(err);
+							res.sendStatus(404);
+						} else {
+							res.redirect("/inventory/" + req.params.inventoryId);
+						}
+					}
+				);
 			}
-		);
+		});
 	} else {
 		res.sendStatus(404);
 	}
@@ -1191,12 +1238,17 @@ app.all("/staff", middleware, (req, res) => {
 	if (req.body && req.body.search) {
 		search = req.body.search;
 	}
+	var inschool = 1;
+	if (req.query.inschool == 0) {
+		inschool = 0;
+	}
 	var query = `
 			SELECT
 				* FROM staff
 				WHERE 
-					instr(lower(firstname), lower($search)) > 0
-				  	OR instr(lower(lastname), lower($search)) > 0
+					(instr(lower(firstname), lower($search)) > 0
+				  	OR instr(lower(lastname), lower($search)) > 0)
+					  AND inSchool=${inschool}
 				ORDER BY lastname,firstname ASC`;
 	db.all(query, { $search: search }, function (err, rows) {
 		if (err) console.log(err.message);

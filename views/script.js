@@ -171,6 +171,39 @@ function enroll(id) {
 	}
 }
 
+function hire(id) {
+	if (confirm("Ta med Personal?")) {
+		let data = {
+			id: id,
+		};
+		fetch("/staff/hire", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		}).then((res) => {
+			window.location.href = "/staff";
+		});
+	}
+}
+function quit(id) {
+	if (confirm("Ta bort Personal?")) {
+		let data = {
+			id: id,
+		};
+		fetch("/staff/quit", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		}).then((res) => {
+			window.location.href = "/staff";
+		});
+	}
+}
+
 document.addEventListener("click", function (evnt) {
 	// console.log(evnt.target);
 	if (evnt.target.id != "sideNavButton") {
