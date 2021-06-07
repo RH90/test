@@ -134,7 +134,7 @@ var middleware = function (req, res, next) {
 			next();
 		} catch {
 			console.log("error decode");
-			res.redirect("/login?url=" + encodeURIComponent(req.originalUrl));
+			res.redirect("/login?redirect=" + encodeURIComponent(req.originalUrl));
 		}
 	} else {
 		res.redirect("/login");
@@ -1514,7 +1514,9 @@ app.get("/lockerlayout", middleware, (req, res) => {
 
 app.get("/login", (req, res) => {
 	res.cookie("token", "");
-	res.render("login");
+	res.render("login", {
+		redirect: req.query.redirect,
+	});
 	//res.sendFile(path.join(__dirname + "/login.html"));
 });
 app.post("/auth", (req, res) => {
@@ -1545,7 +1547,11 @@ app.post("/auth", (req, res) => {
 								);
 								console.log("token: " + token);
 								res.cookie("token", token);
-								res.redirect("/locker");
+								if (req.body.redirect) {
+									res.redirect(req.body.redirect);
+								} else {
+									res.redirect("/locker");
+								}
 							} else {
 								res.send("Wrong Password!");
 							}
