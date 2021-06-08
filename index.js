@@ -696,6 +696,7 @@ app.post("/checkout", middleware, (req, res) => {
 									req.body.lastname +
 									"," +
 									req.body.klass,
+								link: `/pupil/${req.body.idPupil}`,
 							});
 							//pupil
 							sqlInsertHistory({
@@ -703,6 +704,7 @@ app.post("/checkout", middleware, (req, res) => {
 								id: req.body.idPupil,
 								type: "added",
 								comment: "locker: " + req.body.idItem,
+								link: `/locker/${req.body.idItem}`,
 							});
 						}
 					}
