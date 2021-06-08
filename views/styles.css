@@ -1,10 +1,17 @@
+:root {
+	--main: #b1d4e0;
+	--sub1: #2e8bc0;
+	--sub2: #2e8bc0;
+	--sub3: #145da0;
+	--hover: #b1d4e086;
+}
 #topBar {
 	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
 		"Lucida Sans", Arial, sans-serif;
 	border-bottom: 1px solid black;
 	border-top: 1px solid black;
 	display: flex;
-	background: mediumpurple;
+	background: var(--sub1);
 	margin-top: 1px;
 }
 .top {
@@ -31,7 +38,7 @@ body {
 	flex-direction: column;
 	width: auto;
 	margin: 0 4px 0 4px;
-	background-color: #b4d4f2;
+	background-color: var(--main);
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23ffffff' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
 }
 body.main {
@@ -60,7 +67,7 @@ li {
 	flex: 1;
 }
 .tableFixHead thead th {
-	background: rgb(169, 135, 185);
+	background: var(--sub2);
 	position: sticky;
 	top: 0%;
 	border-bottom: 1px solid #000000;
@@ -112,12 +119,13 @@ th {
 	/* font-size: calc(5px + 1.5vh); */
 }
 tr:hover td {
-	background: rgba(111, 0, 201, 0.2) !important;
+	background: var(--hover);
 }
 tr:nth-child(even) {
 	background-color: rgb(220, 220, 220);
 }
 .sidenav {
+	border: 2px solid white;
 	border-radius: 0 15px 15px 0;
 	display: none;
 	height: auto;
@@ -152,7 +160,7 @@ hr.solid {
 	display: block;
 }
 #sideNavButton:hover {
-	background: purple;
+	background: var(--sub3);
 }
 .history-form {
 	display: flex;
@@ -166,6 +174,7 @@ a.placeholder {
 	pointer-events: none;
 }
 #sideNavButton {
+	border: 1px solid white;
 	display: flex;
 	position: relative;
 	color: black;
@@ -189,7 +198,7 @@ a.placeholder {
 }
 
 .sidenav a:hover {
-	background: purple;
+	background: var(--sub3);
 	border-radius: 5px;
 	color: #f1f1f1 !important;
 }
@@ -219,6 +228,6 @@ button {
 
 input[type="button"]:hover,
 button:hover {
-	background-color: purple; /* Green */
+	background-color: var(--sub3); /* Green */
 	color: white;
 }
