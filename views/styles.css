@@ -96,6 +96,8 @@ table {
 	border-spacing: 0;
 	width: 100%;
 	background: rgb(230, 230, 230);
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
 }
 
 form {
