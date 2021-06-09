@@ -61,6 +61,7 @@ li {
 	margin: 0 1.875rem 0 0;
 }
 .tableFixHead {
+	box-shadow: 0px 1px 2px 0px;
 	display: contents;
 	overflow-y: auto;
 	margin-bottom: 3px;
@@ -95,8 +96,6 @@ table {
 	border-spacing: 0;
 	width: 100%;
 	background: rgb(230, 230, 230);
-	border-right: 1px solid #000000;
-	border-bottom: 1px solid #000000;
 }
 
 form {
