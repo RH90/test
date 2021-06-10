@@ -3,23 +3,24 @@ div
 		table
 			tr
 				td(colspan="3",style="text-align:center")!="Inventarie"
-	div(class="tableFixHead",style="margin-right:10px;overflow-y:visible")
-		table(class="sortable")
-			thead
-				tr
-					th!="Name"
-					th!="Serienummer"
-					th!="Tag"
-					th!="Status"
-			if !inventory.length
-				tr
-					td
-					td
-					td
-			each val in inventory
-				tr
-					td
-						a(href="/inventory/"+val.id)!=val.type+", "+val.model
-					td!=val.serial
-					td!=val.tag
-					td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text
+	div(style="display:inline-flex;max-height:80vh;")
+		div(class="tableFixHead",style="margin-right:10px;overflow-y:visible")
+			table(class="sortable blockTable")
+				thead
+					tr
+						th!="Name"
+						th!="Serienummer"
+						th!="Tag"
+						th!="Status"
+				if !inventory.length
+					tr
+						td
+						td
+						td
+				each val in inventory
+					tr
+						td
+							a(href="/inventory/"+val.id)!=val.type+", "+val.model
+						td!=val.serial
+						td!=val.tag
+						td(style=`text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;color:${statusInventory[val.status].color}`)!=statusInventory[val.status].text

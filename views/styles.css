@@ -6,7 +6,9 @@
 	--hover: #b1d4e086;
 	font-size: calc(4px + 1.5vh);
 }
-input {
+input,
+select,
+textarea {
 	font-size: calc(4px + 1.5vh);
 }
 #topBar {
@@ -85,6 +87,9 @@ li {
 	background: darkslateblue;
 	grid-template-columns: repeat(60, 1.645vw);
 	grid-template-rows: repeat(35, 1.2vw);
+}
+.blockTable {
+	display: block;
 }
 .locker-cell {
 	text-shadow: -0.05vw 0 black, 0 0.05vw black, 0.05vw 0 black, 0 -0.05vw black;
@@ -212,6 +217,9 @@ a.placeholder {
 	background: var(--sub3);
 	border-radius: 5px;
 	color: #f1f1f1 !important;
+}
+.sortable {
+	overflow: auto;
 }
 #overlay {
 	position: fixed;

@@ -15,24 +15,25 @@ center(style="margin-right:10px")
 								option(value="locker")!="locker" 
 							input(style="margin-bottom:15px",type="datetime-local",name="date")
 							button(type="submit")!="Lägg till commentar"
-	div(class="tableFixHead",style=";overflow-y:visible")
-		table(class="sortable")
-			thead
-				tr
-					th!="Date"
-					th!="Type"
-					th!="Comment"
-			if !history.length
-				tr
-					td
-					td
-					td
-			each val in history
-				tr
-					td(style="white-space: nowrap;")!=val.date
-					td!=val.type
-					if val.link 
-						td(style="white-space:pre-wrap")
-							a(href=val.link)!=val.comment
-					else
-						td(style="white-space:pre-wrap")!=val.comment
+	div(style="display:inline-flex;max-height:80vh;overflow:auto")
+		div(class="tableFixHead",style=";overflow-y:visible")
+			table(class="sortable blockTable")
+				thead
+					tr
+						th!="Date"
+						th!="Type"
+						th!="Comment"
+				if !history.length
+					tr
+						td
+						td
+						td
+				each val in history
+					tr
+						td(style="white-space: nowrap;")!=val.date
+						td!=val.type
+						if val.link 
+							td(style="white-space:pre-wrap")
+								a(href=val.link)!=val.comment
+						else
+							td(style="white-space:pre-wrap")!=val.comment
