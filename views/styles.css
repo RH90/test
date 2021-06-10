@@ -91,6 +91,10 @@ li {
 .blockTable {
 	display: block;
 }
+.info-table-table {
+	display: inline-flex;
+	max-height: 60vh;
+}
 .locker-cell {
 	text-shadow: -0.05vw 0 black, 0 0.05vw black, 0.05vw 0 black, 0 -0.05vw black;
 	text-align: center;
