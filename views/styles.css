@@ -92,6 +92,7 @@ li {
 	display: block;
 }
 .info-table-table {
+	margin-block-end: 1em;
 	display: inline-flex;
 	max-height: 60vh;
 }
@@ -133,8 +134,9 @@ form {
 	:root {
 		font-size: 2em;
 	}
-	tr {
-		font-size: 2em;
+	td,
+	th {
+		font-size: 2em !important;
 	}
 	.info-table-table {
 		max-height: 40vh;
