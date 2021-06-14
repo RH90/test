@@ -1,5 +1,9 @@
 :root {
-	--main: #b1d4e0;
+	--main: linear-gradient(
+		0deg,
+		rgba(214, 243, 255, 1) 0%,
+		rgba(125, 223, 255, 1) 100%
+	);
 	--sub1: #2e8bc0;
 	--sub2: #2e8bc0;
 	--sub3: #145da0;
@@ -46,8 +50,8 @@ body {
 	flex-direction: column;
 	/* border: 1px solid black; */
 	margin: 0 4px 0 4px;
-	background-color: var(--main);
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23ffffff' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+	background: var(--main);
+	/* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23ffffff' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"); */
 }
 body.main {
 	height: 100vh;
@@ -99,7 +103,7 @@ li {
 .locker-cell {
 	text-shadow: -0.05vw 0 black, 0 0.05vw black, 0.05vw 0 black, 0 -0.05vw black;
 	text-align: center;
-	font-size: 1.5em;
+	font-size: 0.8vw;
 	font-family: sans-serif;
 }
 .grid-container div {
@@ -253,8 +257,11 @@ a.placeholder {
 	cursor: pointer;
 }
 .status {
-	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-		1px 1px 0 #000;
+	text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+}
+.title,
+th {
+	text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
 }
 input[type="button"],
 button {
