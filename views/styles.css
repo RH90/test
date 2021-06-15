@@ -116,7 +116,7 @@ table {
 	border-spacing: 0;
 	width: 100%;
 	background: rgb(230, 230, 230);
-	border-right: 1px solid black;
+	/* border-right: 1px solid black; */
 	border-bottom: 1px solid black;
 }
 
@@ -286,12 +286,14 @@ button:hover {
 /* Track */
 ::-webkit-scrollbar-track {
 	background: #f1f1f1;
+	border-left: 1px solid #000000;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
 	background: var(--sub2);
 	border-radius: 0.2em;
+	border: 1px solid #000000;
 }
 
 /* Handle on hover */
