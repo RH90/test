@@ -278,3 +278,23 @@ button:hover {
 	background-color: var(--sub3); /* Green */
 	color: white;
 }
+
+::-webkit-scrollbar {
+	width: 1em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: var(--sub2);
+	border-radius: 0.2em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: var(--sub3);
+}
