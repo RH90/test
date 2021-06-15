@@ -261,7 +261,9 @@ a.placeholder {
 }
 .title,
 th {
-	text-shadow: -0.4px 0 #fff, 0 0.4px #fff, 0.4px 0 #fff, 0 -0.4px #fff;
+	text-shadow: -0.5px 0 #fff, 0 0.5px #fff, 0.5px 0 #fff, 0 -0.5px #fff;
+	background: var(--sub2);
+	font-weight: bold;
 }
 input[type="button"],
 button {
