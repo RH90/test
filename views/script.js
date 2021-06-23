@@ -67,6 +67,8 @@ function lockerlayout() {
 					cells[i].style.color = "blue";
 				} else if (locker.keys > 1) {
 					cells[i].style.color = "black";
+				} else if (locker.keys == 1) {
+					cells[i].style.color = "yellow";
 				} else {
 					cells[i].style.color = "red";
 				}
