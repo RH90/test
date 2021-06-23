@@ -7,7 +7,7 @@ html
 			include script.js
 		script(type="text/javascript")
 			include sorttable.js
-	body
+	body(class="main")
 		include head.pug
 		div(class="top")
 			div
@@ -16,7 +16,7 @@ html
 					input(type="hidden",name="table",value=table)
 					button(type="submit")!="Search"
 			b= rows.length + " Resuslts for: \"" + search + "\""
-		div(class="tableFixHead")
+		div(class="tableFixHead",id="hideAll")
 			table(class="sortable")
 				thead
 					tr(style="background:gray")
@@ -24,20 +24,21 @@ html
 						th!="Efternamn"
 						th!="Klass"
 						th!="Ge Ut"
-				each val in rows
-					tr
-						td!=val.firstname
-						td!=val.lastname
-						td!=(val.grade+val.classP)||""
-						td
-							form(action=`/checkout?numb=${lockerNumb}` method="POST")
-								input(type="hidden" name="table" value="locker")
-								input(type="hidden" name="idItem" value=lockerNumb)
-								input(type="hidden" name="idPupil" value=val.id)
-								input(type="hidden" name="search" value=search)
-								input(type="hidden" name="plan" value=plan)
-								input(type="hidden" name="status" value=status)
-								input(type="hidden" name="firstname" value=val.firstname)
-								input(type="hidden" name="lastname" value=val.lastname)
-								input(type="hidden" name="klass" value=(val.grade+val.classP))
-								button(type="submit")!="Ge ut"
+				tbody 
+					each val in rows
+						tr
+							td!=val.firstname
+							td!=val.lastname
+							td!=(val.grade+val.classP)||""
+							td
+								form(action=`/checkout?numb=${lockerNumb}` method="POST")
+									input(type="hidden" name="table" value="locker")
+									input(type="hidden" name="idItem" value=lockerNumb)
+									input(type="hidden" name="idPupil" value=val.id)
+									input(type="hidden" name="search" value=search)
+									input(type="hidden" name="plan" value=plan)
+									input(type="hidden" name="status" value=status)
+									input(type="hidden" name="firstname" value=val.firstname)
+									input(type="hidden" name="lastname" value=val.lastname)
+									input(type="hidden" name="klass" value=(val.grade+val.classP))
+									button(type="submit")!="Ge ut"

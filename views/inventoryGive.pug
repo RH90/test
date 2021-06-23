@@ -7,7 +7,7 @@ html
 			include script.js
 		script(type="text/javascript")
 			include sorttable.js
-	body
+	body(class="main")
 		include head.pug
 		div(class="top")
 			div
@@ -16,26 +16,27 @@ html
 					input(type="hidden",name="table",value=table)
 					button(type="submit")!="Search"
 			b= rows.length + " Resuslts for: \"" + search + "\""
-		div(class="tableFixHead")
+		div(class="tableFixHead",id="hideAll")
 			table(class="sortable")
 				thead
 					tr(style="background:gray")
 						each valCols in cols
 							th!=valCols
 						th!="Give"
-				each val in rows
-					tr
-						each valCols in cols
-							td!=val[valCols]
-						td
-							form(action="",method="POST")
-								input(type="hidden",name="table",value=table)
-								input(type="hidden",name="owner_id",value=val.owner_id)
-								if table==0
-									input(type="hidden",name="historyOwner",value=`${val.Firstname} ${val.Lastname},${val.Klass}`)
-								if table==3
-									input(type="hidden",name="historyOwner",value=`${val.Name}`)
-								if table==4
-									input(type="hidden",name="historyOwner",value=`${val.firstname} ${val.lastname}, Personal`)
-								button(type="submit")!="Ge till"
+				tbody 
+					each val in rows
+						tr
+							each valCols in cols
+								td!=val[valCols]
+							td
+								form(action="",method="POST")
+									input(type="hidden",name="table",value=table)
+									input(type="hidden",name="owner_id",value=val.owner_id)
+									if table==0
+										input(type="hidden",name="historyOwner",value=`${val.Firstname} ${val.Lastname},${val.Klass}`)
+									if table==3
+										input(type="hidden",name="historyOwner",value=`${val.Name}`)
+									if table==4
+										input(type="hidden",name="historyOwner",value=`${val.firstname} ${val.lastname}, Personal`)
+									button(type="submit")!="Ge till"
 						
