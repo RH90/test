@@ -1182,6 +1182,11 @@ app.all("/pupil", middleware, (req, res) => {
 	if (req.query.nolocker == 1) {
 		nolocketStr = " AND locker.owner_id is NULL ";
 	}
+	var statusInventoryString = "";
+	for (let index = 0; index < Object.keys(statusInventory).length; index++) {
+		statusInventoryString += `WHEN inventory.status=${index}
+		THEN '${statusInventory[index].text}'\n`;
+	}
 	var query = `
 		select *, group_concat(statusx||': '||type||serialx,x'0a') as inv
 			FROM
@@ -1193,20 +1198,7 @@ app.all("/pupil", middleware, (req, res) => {
 				ELSE (', '||serial)
 				END serialx,
 				CASE 
-				WHEN inventory.status=0
-				THEN '${statusInventory[0].text}'
-				WHEN inventory.status=1
-				THEN '${statusInventory[1].text}'
-				WHEN inventory.status=2
-				THEN '${statusInventory[2].text}'
-				WHEN inventory.status=3
-				THEN '${statusInventory[3].text}'
-				WHEN inventory.status=4
-				THEN '${statusInventory[4].text}'
-				WHEN inventory.status=5
-				THEN '${statusInventory[5].text}'
-				WHEN inventory.status=6
-				THEN '${statusInventory[6].text}'
+				${statusInventoryString}
 				ELSE inventory.status
 				END statusx,
 				pupil.id,firstname,lastname,classP,grade,year,locker.owner_id,type,locker.number from pupil 
