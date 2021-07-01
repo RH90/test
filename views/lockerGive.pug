@@ -23,6 +23,7 @@ html
 						th!="Förnamn"
 						th!="Efternamn"
 						th!="Klass"
+						th!="History"
 						th!="Ge Ut"
 				tbody 
 					each val in rows
@@ -30,6 +31,7 @@ html
 							td!=val.firstname
 							td!=val.lastname
 							td!=(val.grade+val.classP)||""
+							td!=(val.pupil_history)||""
 							td
 								form(action=`/checkout?numb=${lockerNumb}` method="POST")
 									input(type="hidden" name="table" value="locker")

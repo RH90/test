@@ -150,13 +150,21 @@ app.get("/", middleware, (req, res) => {
 app.get("/locker/:lockerNumb/give", middleware, (req, res) => {
 	console.log(req.params.lockerNumb);
 	var search = (req.query.search || "").toLowerCase();
-	var query = `select * from pupil 
-			where not EXISTS(select * from locker where owner_id=pupil.id) 
-				AND inschool=1 
-				AND ((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 
-					OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' 
-					OR (grade||classP)=?))
-			ORDER BY grade,classP,lastname,firstname ASC`;
+	var query = `select *,substr(group_concat(Pdate||': '||Phistory,x'0a'),0,150) as pupil_history from
+				(
+					SELECT *,pupil.id as pupil_id,
+					history.comment as Phistory,DATE(round(history.date/1000),'unixepoch','localtime') as Pdate
+					from pupil
+					left join history on pupil.id = history.owner_id AND history.owner_table=0
+					ORDER by history.date DESC
+				)
+				where not EXISTS(select * from locker where owner_id=pupil_id) 
+					AND inschool=1 
+					AND ((instr(LOWER(firstname), ?) > 0 OR instr(LOWER(lastname), ?) > 0 
+						OR (instr(?, LOWER(firstname)) > 0 AND instr(?, LOWER(lastname)) > 0) OR ?='' 
+						OR (grade||classP)=?))
+				GROUP by pupil_id 
+				ORDER BY grade,classP,lastname,firstname ASC`;
 	db.all(
 		query,
 		[search, search, search, search, search, search],
