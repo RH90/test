@@ -23,14 +23,17 @@ html
 						th!="Förnamn"
 						th!="Efternamn"
 						th!="Klass"
+						th!="År"
 						th!="History"
 						th!="Ge Ut"
 				tbody 
 					each val in rows
 						tr
-							td!=val.firstname
+							td
+								a(href=`/pupil/${val.pupil_id}`)!=val.firstname
 							td!=val.lastname
 							td!=(val.grade+val.classP)||""
+							td!=(val.year)||""
 							td!=(val.pupil_history)||""
 							td
 								form(action=`/checkout?numb=${lockerNumb}` method="POST")
